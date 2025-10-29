@@ -1,25 +1,24 @@
 <?php
-session_start();
+require_once '../../includes/functions.php';
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Credentials: true');
 
-require_once '../../includes/config.php';
-require_once '../../includes/db_connect.php';
-require_once '../../includes/functions.php';
-
 // Check if user is logged in
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+if (!isLoggedIn() || !hasRole('student')) {
+    jsonResponse(['success' => false, 'error' => 'Unauthorized'], 401);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+    jsonResponse(['success' => false, 'error' => 'Method not allowed'], 405);
     exit;
 }
 
 try {
     $userId = $_SESSION['user_id'];
+    $database = Database::getInstance();
+    
     $title = trim($_POST['title'] ?? '');
     $subject = trim($_POST['subject'] ?? '');
     $description = trim($_POST['description'] ?? '');

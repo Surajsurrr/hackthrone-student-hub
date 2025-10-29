@@ -1,23 +1,42 @@
 <?php
-require_once '../../includes/functions.php';
+require_once 'api_auth.php';
 
-header('Content-Type: application/json');
-
-if (!isLoggedIn() || !hasRole('student')) {
-    jsonResponse(['error' => 'Unauthorized'], 401);
-    exit;
-}
+requireStudentAuth();
 
 try {
     $userId = $_SESSION['user_id'];
-    $database = Database::getInstance();
+    $database = getApiDatabase();
 
-    // Get stats
-    $opportunitiesCount = $database->fetchOne("SELECT COUNT(*) as count FROM (SELECT id FROM events WHERE status = 'active' UNION SELECT id FROM jobs WHERE status = 'active') as combined")['count'] ?? 0;
-
-    $notesCount = $database->fetchOne("SELECT COUNT(*) as count FROM notes WHERE shared_with = 'all' OR student_id = ?", [$userId])['count'] ?? 0;
-
-    $aiSessionsCount = $database->fetchOne("SELECT COUNT(*) as count FROM ai_responses WHERE student_id = ?", [$userId])['count'] ?? 0;
+    // Get stats with fallbacks for missing tables
+    $opportunitiesCount = 0;
+    $notesCount = 0;
+    $aiSessionsCount = 0;
+    
+    try {
+        $result = $database->fetchOne("SELECT COUNT(*) as count FROM events WHERE status = 'active'");
+        $eventsCount = $result['count'] ?? 0;
+        
+        $result = $database->fetchOne("SELECT COUNT(*) as count FROM jobs WHERE status = 'active'");
+        $jobsCount = $result['count'] ?? 0;
+        
+        $opportunitiesCount = $eventsCount + $jobsCount;
+    } catch (Exception $e) {
+        error_log("Events/Jobs query error: " . $e->getMessage());
+    }
+    
+    try {
+        $result = $database->fetchOne("SELECT COUNT(*) as count FROM notes WHERE shared_with = 'all' OR student_id = ?", [$userId]);
+        $notesCount = $result['count'] ?? 0;
+    } catch (Exception $e) {
+        error_log("Notes query error: " . $e->getMessage());
+    }
+    
+    try {
+        $result = $database->fetchOne("SELECT COUNT(*) as count FROM ai_responses WHERE student_id = ?", [$userId]);
+        $aiSessionsCount = $result['count'] ?? 0;
+    } catch (Exception $e) {
+        error_log("AI responses query error: " . $e->getMessage());
+    }
 
     jsonResponse([
         'success' => true,
