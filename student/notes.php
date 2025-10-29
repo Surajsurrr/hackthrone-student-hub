@@ -68,7 +68,7 @@ require_once 'includes/student_auth.php';
 
         <!-- Main Content -->
         <div class="notes-main-content">
-            <!-- Upload Section -->
+            <!-- Upload Section (Left Column) -->
             <div class="upload-section">
                 <div class="upload-card">
                     <div class="upload-header">
@@ -151,67 +151,102 @@ require_once 'includes/student_auth.php';
                 </div>
             </div>
 
-            <!-- Browse Section -->
-            <div class="browse-section">
-                <div class="browse-header">
-                    <h3>🔍 Discover Notes</h3>
-                    <div class="browse-controls">
-                        <div class="search-box">
-                            <input type="text" id="search-notes" placeholder="Search notes, topics, or tags...">
-                            <span class="search-icon">🔍</span>
-                        </div>
-                        <select id="filter-subject" class="filter-select">
-                            <option value="">All Subjects</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Physics">Physics</option>
-                            <option value="Chemistry">Chemistry</option>
-                            <option value="Biology">Biology</option>
-                            <option value="English">English</option>
-                            <option value="History">History</option>
-                            <option value="Other">Other</option>
-                        </select>
-                        <select id="filter-topic" class="filter-select">
-                            <option value="">All Topics</option>
-                            <!-- Topics will be loaded dynamically -->
-                        </select>
-                        <select id="filter-difficulty" class="filter-select">
-                            <option value="">All Levels</option>
-                            <option value="Beginner">🟢 Beginner</option>
-                            <option value="Intermediate">🟡 Intermediate</option>
-                            <option value="Advanced">🔴 Advanced</option>
-                        </select>
-                        <select id="sort-notes" class="filter-select">
-                            <option value="newest">Newest First</option>
-                            <option value="oldest">Oldest First</option>
-                            <option value="popular">Most Popular</option>
-                            <option value="title">Title A-Z</option>
-                            <option value="subject">By Subject</option>
-                        </select>
+            <!-- Community Sidebar (Right Column, on top) -->
+            <div class="community-sidebar">
+                <!-- Create Community Card -->
+                <div class="community-card create-community-card">
+                    <div class="card-header">
+                        <h3>👥 Create Community</h3>
+                        <p>Build a study group around your interests</p>
+                    </div>
+                    <button class="btn-create-community" id="openCommunityModal">
+                        <span class="btn-icon">✨</span>
+                        Start New Community
+                    </button>
+                </div>
+
+                <!-- Trending Communities -->
+                <div class="community-card trending-communities">
+                    <div class="card-header">
+                        <h3>🔥 Trending Communities</h3>
+                    </div>
+                    <div class="communities-list" id="trending-communities">
+                        <!-- Communities will be loaded here -->
                     </div>
                 </div>
-                
-                <!-- Active Filters -->
-                <div class="active-filters" id="active-filters" style="display: none;">
-                    <span class="filters-label">Active Filters:</span>
-                    <div class="filters-list" id="filters-list">
-                        <!-- Active filters will appear here -->
+
+                <!-- My Communities -->
+                <div class="community-card my-communities">
+                    <div class="card-header">
+                        <h3>📌 My Communities</h3>
                     </div>
-                    <button class="clear-filters" id="clear-filters">Clear All</button>
-                </div>
-                
-                <!-- Notes Grid -->
-                <div class="notes-grid" id="notes-grid">
-                    <!-- Notes will be loaded here dynamically -->
-                    <div class="no-notes-message">
-                        <div class="empty-state">
-                            <div class="empty-icon">📚</div>
-                            <h3>No notes found</h3>
-                            <p>Be the first to share your study materials!</p>
-                        </div>
+                    <div class="communities-list" id="my-communities">
+                        <p class="empty-state-text">You haven't joined any communities yet.</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Browse Section (Right Column, below community) -->
+        </div>
+    </div>
+
+    <!-- Create Community Modal -->
+    <div class="modal" id="createCommunityModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content community-modal">
+            <div class="modal-header">
+                <h2>✨ Create New Community</h2>
+                <button class="close-modal" id="closeCommunityModal">×</button>
+            </div>
+            <form id="createCommunityForm">
+                <div class="form-group">
+                    <label for="community-name">Community Name *</label>
+                    <input type="text" id="community-name" name="community_name" placeholder="e.g., Data Structures Study Group" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="community-subject">Related Subject *</label>
+                    <select id="community-subject" name="community_subject" required>
+                        <option value="">Choose Subject</option>
+                        <option value="Computer Science">💻 Computer Science</option>
+                        <option value="Mathematics">📐 Mathematics</option>
+                        <option value="Physics">⚛️ Physics</option>
+                        <option value="Chemistry">🧪 Chemistry</option>
+                        <option value="Biology">🧬 Biology</option>
+                        <option value="English">📖 English</option>
+                        <option value="History">🏛️ History</option>
+                        <option value="Other">📚 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="community-description">Description *</label>
+                    <textarea id="community-description" name="community_description" rows="4" placeholder="Describe the purpose and goals of this community..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="community-type">Community Type *</label>
+                    <select id="community-type" name="community_type" required>
+                        <option value="">Choose Type</option>
+                        <option value="public">🌍 Public - Anyone can join</option>
+                        <option value="private">🔒 Private - Invite only</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="community-tags">Tags (comma separated)</label>
+                    <input type="text" id="community-tags" name="community_tags" placeholder="e.g., algorithms, coding, dsa">
+                    <small>Add up to 5 tags to help others discover your community</small>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelCommunityBtn">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-icon">🚀</span>
+                        Create Community
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -224,5 +259,6 @@ require_once 'includes/student_auth.php';
     <script src="../assets/js/dashboard.js"></script>
     <script src="../assets/js/enhanced-dashboard.js"></script>
     <script src="../assets/js/notes-organization.js"></script>
+    <script src="../assets/js/communities.js"></script>
 </body>
 </html>
