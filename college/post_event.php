@@ -51,5 +51,52 @@ require_once 'includes/college_auth.php';
 
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/dashboard.js"></script>
+    <script>
+        document.getElementById('post-event-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                date: document.getElementById('date').value,
+                type: document.getElementById('type').value,
+                location: document.getElementById('location').value,
+                max_participants: document.getElementById('max_participants').value
+            };
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Posting...';
+            
+            try {
+                const response = await fetch('../api/college/createEvent.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success || result.event_id) {
+                    alert('✓ Event posted successfully! Students can now see it in their dashboard.');
+                    this.reset();
+                    // Redirect to manage events page
+                    setTimeout(() => {
+                        window.location.href = 'manage_events.php';
+                    }, 1500);
+                } else {
+                    alert('❌ Error: ' + (result.error || 'Failed to post event'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ An error occurred while posting the event');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post Event';
+            }
+        });
+    </script>
 </body>
 </html>

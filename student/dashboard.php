@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Start output buffering
 require_once 'includes/student_auth.php';
 $user = getCurrentUser();
 $student = getStudentProfile($user['id']);

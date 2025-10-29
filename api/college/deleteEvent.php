@@ -7,7 +7,7 @@ if (!isLoggedIn() || !hasRole('college')) {
     jsonResponse(['error' => 'Unauthorized'], 401);
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+if ($_SERVER['REQUEST_METHOD'] !== 'DELETE' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(['error' => 'Method not allowed'], 405);
 }
 
