@@ -1,0 +1,591 @@
+// Enhanced Dashboard JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard
+    initDashboard();
+    loadDashboardData();
+    setupEventListeners();
+});
+
+function initDashboard() {
+    // Handle navigation
+    const navLinks = document.querySelectorAll('.nav-link, .nav-trigger');
+    const sections = document.querySelectorAll('.dashboard-section');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetSection = this.getAttribute('data-section') || this.getAttribute('href').substring(1);
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+            if (this.classList.contains('nav-link')) {
+                this.classList.add('active');
+            } else {
+                // Find corresponding nav link and activate it
+                const correspondingNav = document.querySelector(`.nav-link[data-section="${targetSection}"]`);
+                if (correspondingNav) {
+                    correspondingNav.classList.add('active');
+                }
+            }
+            
+            // Show target section
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === targetSection) {
+                    section.classList.add('active');
+                }
+            });
+        });
+    });
+
+    // Add smooth scrolling animations
+    // sections.forEach(section => {
+    //     section.style.transition = 'opacity 0.3s ease-in-out';
+    // });
+}
+
+function setupEventListeners() {
+    // Profile form submission
+    const profileForm = document.getElementById('profile-form');
+    if (profileForm) {
+        profileForm.addEventListener('submit', handleProfileUpdate);
+    }
+
+    // Notes upload form
+    const uploadForm = document.getElementById('upload-form');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', handleNotesUpload);
+    }
+
+    // Profile picture upload
+    const profilePicInput = document.getElementById('profile-pic-input');
+    if (profilePicInput) {
+        profilePicInput.addEventListener('change', handleProfilePicUpload);
+    }
+
+    // AI Chat enhancement
+    setupAIChat();
+}
+
+function loadDashboardData() {
+    // Load opportunities count
+    fetch('../api/student/getDashboard.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateDashboardStats(data.stats);
+                loadOpportunitiesPreview();
+                loadNotesPreview();
+            }
+        })
+        .catch(error => console.error('Error loading dashboard data:', error));
+}
+
+function updateDashboardStats(stats) {
+    const elements = {
+        'opportunities-count': stats.opportunities || '0',
+        'notes-count': stats.notes || '0',
+        'ai-sessions-count': stats.ai_sessions || '0'
+    };
+
+    Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            // Set text directly - animation handled by dashboard-ui.js
+            element.textContent = value;
+        }
+    });
+}
+
+// Animation function removed - handled by dashboard-ui.js to prevent conflicts
+
+function handleProfileUpdate(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('name', document.getElementById('name').value);
+    formData.append('college', document.getElementById('college').value);
+    formData.append('year', document.getElementById('year').value);
+    formData.append('branch', document.getElementById('branch').value);
+    formData.append('skills', document.getElementById('skills').value);
+    formData.append('bio', document.getElementById('bio').value);
+
+    showLoading('Updating profile...');
+
+    fetch('../api/student/createProfile.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            showNotification('Profile updated successfully!', 'success');
+        } else {
+            showNotification('Error updating profile: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Error:', error);
+        showNotification('Error updating profile', 'error');
+    });
+}
+
+function handleNotesUpload(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('title', document.getElementById('note-title').value);
+    formData.append('subject', document.getElementById('note-subject').value);
+    formData.append('description', document.getElementById('note-description').value);
+    formData.append('file', document.getElementById('note-file').files[0]);
+
+    showLoading('Uploading notes...');
+
+    fetch('../api/student/uploadNotes.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.success) {
+            showNotification('Notes uploaded successfully!', 'success');
+            document.getElementById('upload-form').reset();
+            loadNotesPreview();
+        } else {
+            showNotification('Error uploading notes: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Error:', error);
+        showNotification('Error uploading notes', 'error');
+    });
+}
+
+function handleProfilePicUpload(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('profile_pic', file);
+
+        showLoading('Uploading profile picture...');
+
+        fetch('../api/student/uploadProfilePic.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                document.getElementById('profile-image').src = data.image_url;
+                showNotification('Profile picture updated!', 'success');
+            } else {
+                showNotification('Error uploading picture: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Error:', error);
+            showNotification('Error uploading picture', 'error');
+        });
+    }
+}
+
+function loadOpportunitiesPreview() {
+    fetch('../api/student/getOpportunities.php?limit=3')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateOpportunitiesPreview(data.opportunities);
+            }
+        })
+        .catch(error => console.error('Error loading opportunities:', error));
+}
+
+function updateOpportunitiesPreview(opportunities) {
+    const hackathonsContainer = document.getElementById('hackathons-preview');
+    const internshipsContainer = document.getElementById('internships-preview');
+
+    if (hackathonsContainer && opportunities.hackathons) {
+        hackathonsContainer.innerHTML = opportunities.hackathons.map(h => `
+            <div class="opportunity-item">
+                <h4>${h.title}</h4>
+                <p>${h.description}</p>
+                <span class="date">Due: ${new Date(h.deadline).toLocaleDateString()}</span>
+            </div>
+        `).join('');
+    }
+
+    if (internshipsContainer && opportunities.internships) {
+        internshipsContainer.innerHTML = opportunities.internships.map(i => `
+            <div class="opportunity-item">
+                <h4>${i.title}</h4>
+                <p>${i.company}</p>
+                <span class="location">${i.location}</span>
+            </div>
+        `).join('');
+    }
+}
+
+function loadNotesPreview() {
+    fetch('../api/student/fetchNotes.php?limit=5')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateNotesPreview(data.notes);
+            }
+        })
+        .catch(error => console.error('Error loading notes:', error));
+}
+
+function updateNotesPreview(notes) {
+    const myNotesContainer = document.getElementById('my-notes-list');
+    const popularNotesContainer = document.getElementById('popular-notes-list');
+
+    if (myNotesContainer) {
+        myNotesContainer.innerHTML = notes.my_notes.map(note => `
+            <div class="note-item">
+                <h4>${note.title}</h4>
+                <p>${note.subject}</p>
+                <small>Uploaded: ${new Date(note.created_at).toLocaleDateString()}</small>
+            </div>
+        `).join('') || '<p>No notes uploaded yet.</p>';
+    }
+
+    if (popularNotesContainer) {
+        popularNotesContainer.innerHTML = notes.popular_notes.map(note => `
+            <div class="note-item">
+                <h4>${note.title}</h4>
+                <p>${note.subject}</p>
+                <small>By: ${note.uploader}</small>
+            </div>
+        `).join('') || '<p>No popular notes available.</p>';
+    }
+}
+
+function setupAIChat() {
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    if (chatInput && sendBtn) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+    }
+}
+
+function sendMessage() {
+    const chatInput = document.getElementById('chat-input');
+    const message = chatInput.value.trim();
+    
+    if (message) {
+        addMessageToChat('user', message);
+        chatInput.value = '';
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        // Send to AI
+        fetch('../api/student/getAIResponse.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideTypingIndicator();
+            if (data.success) {
+                addMessageToChat('bot', data.response);
+            } else {
+                addMessageToChat('bot', 'Sorry, I encountered an error. Please try again.');
+            }
+        })
+        .catch(error => {
+            hideTypingIndicator();
+            console.error('Error:', error);
+            addMessageToChat('bot', 'Sorry, I encountered an error. Please try again.');
+        });
+    }
+}
+
+function sendSuggestion(suggestion) {
+    const chatInput = document.getElementById('chat-input');
+    chatInput.value = suggestion;
+    sendMessage();
+}
+
+function addMessageToChat(type, message) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}-message`;
+    
+    if (type === 'user') {
+        messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+    } else {
+        messageDiv.innerHTML = `<strong>AI Coach:</strong> ${message}`;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const chatMessages = document.getElementById('chat-messages');
+    const typingDiv = document.createElement('div');
+    typingDiv.id = 'typing-indicator';
+    typingDiv.className = 'message bot-message';
+    typingDiv.innerHTML = '<strong>AI Coach:</strong> <em>Typing...</em>';
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typing-indicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+function generateRecommendations() {
+    const container = document.getElementById('job-recommendations');
+    container.innerHTML = 'Generating personalized recommendations...';
+    
+    fetch('../api/student/getJobRecommendations.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                container.innerHTML = data.recommendations.map(rec => `
+                    <div class="recommendation-item">
+                        <h4>${rec.title}</h4>
+                        <p>${rec.company}</p>
+                        <span class="match-score">Match: ${rec.match_score}%</span>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = 'Unable to generate recommendations at this time.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = 'Error generating recommendations.';
+        });
+}
+
+function addReminder() {
+    const reminderText = prompt('Enter a new reminder:');
+    if (reminderText) {
+        const remindersList = document.getElementById('reminders-list');
+        const reminderDiv = document.createElement('div');
+        reminderDiv.className = 'reminder-item';
+        reminderDiv.innerHTML = `<input type="checkbox"> ${reminderText}`;
+        remindersList.appendChild(reminderDiv);
+    }
+}
+
+// Utility functions
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        max-width: 400px;
+    `;
+    
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    } else if (type === 'error') {
+        notification.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+    } else {
+        notification.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+    }
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}
+
+function showLoading(message = 'Loading...') {
+    const loading = document.createElement('div');
+    loading.id = 'loading-overlay';
+    loading.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10001;
+        backdrop-filter: blur(5px);
+    `;
+    loading.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <p style="margin: 0; color: #333; font-weight: 500;">${message}</p>
+        </div>
+    `;
+    document.body.appendChild(loading);
+}
+
+function hideLoading() {
+    const loading = document.getElementById('loading-overlay');
+    if (loading) {
+        loading.remove();
+    }
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .opportunity-item, .note-item, .recommendation-item {
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .opportunity-item:hover, .note-item:hover, .recommendation-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+    }
+    
+    .badge-item {
+        text-align: center;
+        padding: 20px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .badge-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    .progress-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .progress-bar {
+        flex: 1;
+        height: 10px;
+        background: #e2e8f0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+    }
+    
+    .event-item {
+        display: flex;
+        gap: 15px;
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        margin-bottom: 15px;
+        background: #f8fafc;
+        border-radius: 10px;
+    }
+    
+    .event-date {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-align: center;
+        min-width: 60px;
+    }
+    
+    .reminder-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+    }
+    
+    .reminder-item:hover {
+        background: #f1f5f9;
+    }
+    
+    .suggestion-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .suggestion-btn {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border: 1px solid #667eea;
+        color: #667eea;
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .suggestion-btn:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        transform: translateY(-2px);
+    }
+`;
+document.head.appendChild(style);
