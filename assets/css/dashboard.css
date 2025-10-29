@@ -969,13 +969,13 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
     flex: 1;
 }
 .event-item-content h4 {
-    color: #e2e8f0;
+    color: #f1f5f9;
     margin-bottom: 0.25rem;
     font-size: 1rem;
     font-weight: 600;
 }
 .event-item-content p {
-    color: #94a3b8;
+    color: #cbd5e1;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
 }
@@ -6911,3 +6911,249 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
         justify-content: center;
     }
 }
+
+/* ========================================
+   CALENDAR TEXT VISIBILITY FIXES
+   ======================================== */
+/* Fix calendar event text visibility */
+.event-item-content h4,
+#upcoming-events .event-details h4,
+.event-details h4 {
+    color: #f1f5f9 !important;
+}
+
+.event-item-content p,
+#upcoming-events .event-details p,
+.event-details p {
+    color: #cbd5e1 !important;
+}
+
+/* Fix reminder text visibility */
+.reminder-text {
+    color: #f1f5f9 !important;
+}
+
+.reminder-item.completed .reminder-text {
+    color: #94a3b8 !important;
+}
+
+.card-header h3 {
+    color: #f1f5f9 !important;
+}
+
+/* Fix event date text in calendar */
+.event-date,
+#upcoming-events .event-date {
+    color: #1e293b !important;
+    background: rgba(255,255,255,0.95) !important;
+    font-weight: 600 !important;
+}
+
+/* ========================================
+   REMINDER MODAL STYLES
+   ======================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal-container {
+    position: relative;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+    z-index: 10001;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #f1f5f9;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.reminder-form {
+    padding: 1.5rem;
+}
+
+.reminder-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.reminder-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #cbd5e1;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.reminder-form input[type="text"],
+.reminder-form input[type="datetime-local"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.reminder-form input[type="text"]:focus,
+.reminder-form input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.reminder-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.modal-actions .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-actions .btn-secondary {
+    background: rgba(71, 85, 105, 0.3);
+    color: #cbd5e1;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+}
+
+.modal-actions .btn-secondary:hover {
+    background: rgba(71, 85, 105, 0.5);
+}
+
+.modal-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.modal-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+/* Reminder item overdue state */
+.reminder-due.overdue {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.15);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+    .modal-container {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

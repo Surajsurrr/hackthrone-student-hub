@@ -70,4 +70,5 @@ class Database {
 
 // Get database instance
 $db = Database::getInstance()->getConnection();
+$pdo = $db; // Alias for compatibility
 ?>

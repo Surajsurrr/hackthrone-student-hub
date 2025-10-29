@@ -1891,6 +1891,44 @@ $student = getStudentProfile($user['id']);
                 </div>
             </section>
         </main>
+
+        <!-- Add Reminder Modal -->
+        <div id="reminderModal" class="modal" style="display: none;">
+            <div class="modal-overlay" onclick="closeReminderModal()"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3>📅 Add New Reminder</h3>
+                    <button class="modal-close" onclick="closeReminderModal()">&times;</button>
+                </div>
+                <form id="reminderForm" class="reminder-form">
+                    <div class="form-group">
+                        <label for="reminderText">Reminder *</label>
+                        <input 
+                            type="text" 
+                            id="reminderText" 
+                            placeholder="e.g., Complete project proposal" 
+                            required
+                            maxlength="500"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="reminderDate">Due Date (Optional)</label>
+                        <input 
+                            type="datetime-local" 
+                            id="reminderDate"
+                            min="<?php echo date('Y-m-d\TH:i'); ?>"
+                        >
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeReminderModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-icon">✓</span>
+                            <span>Add Reminder</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <?php include 'includes/footer.php'; ?>
@@ -1899,6 +1937,212 @@ $student = getStudentProfile($user['id']);
     <script src="../assets/js/ai_chat.js"></script>
     
     <script>
+        // Reminder Management Functions
+        function openAddReminderModal() {
+            document.getElementById('reminderModal').style.display = 'flex';
+            document.getElementById('reminderText').focus();
+        }
+
+        function closeReminderModal() {
+            document.getElementById('reminderModal').style.display = 'none';
+            document.getElementById('reminderForm').reset();
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeReminderModal();
+            }
+        });
+
+        // Handle reminder form submission
+        document.getElementById('reminderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const text = document.getElementById('reminderText').value.trim();
+            const dueDate = document.getElementById('reminderDate').value;
+            
+            if (!text) {
+                showNotification('Please enter a reminder text', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('../api/student/addReminder.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        due_at: dueDate || null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('✓ Reminder added successfully!', 'success');
+                    closeReminderModal();
+                    loadReminders(); // Refresh the reminders list
+                    
+                    // Request notification permission if due date is set
+                    if (dueDate && 'Notification' in window) {
+                        Notification.requestPermission();
+                    }
+                } else {
+                    showNotification(result.error || 'Failed to add reminder', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding reminder:', error);
+                showNotification('Failed to add reminder. Please try again.', 'error');
+            }
+        });
+
+        // Load reminders from server
+        async function loadReminders() {
+            try {
+                const response = await fetch('../api/student/getReminders.php');
+                const result = await response.json();
+
+                if (result.success) {
+                    displayReminders(result.reminders);
+                    checkUpcomingReminders(result.reminders);
+                }
+            } catch (error) {
+                console.error('Error loading reminders:', error);
+            }
+        }
+
+        // Display reminders in the list
+        function displayReminders(reminders) {
+            const remindersList = document.getElementById('reminders-list');
+            
+            if (!reminders || reminders.length === 0) {
+                remindersList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No reminders yet. Click "+ Add Reminder" to create one.</p>';
+                return;
+            }
+
+            remindersList.innerHTML = reminders.map(reminder => `
+                <div class="reminder-item ${reminder.done ? 'completed' : ''}" data-id="${reminder.id}">
+                    <div class="reminder-content">
+                        <input 
+                            type="checkbox" 
+                            class="reminder-checkbox" 
+                            ${reminder.done ? 'checked' : ''}
+                            onchange="toggleReminder(${reminder.id}, this.checked)"
+                        >
+                        <span class="reminder-text">${escapeHtml(reminder.text)}</span>
+                    </div>
+                    <div class="reminder-meta">
+                        ${reminder.due_at ? `
+                            <span class="reminder-due ${reminder.done ? 'completed' : (reminder.is_overdue ? 'overdue' : '')}">
+                                ${reminder.done ? 'Completed' : formatDueDate(reminder.due_at)}
+                            </span>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle reminder completion
+        async function toggleReminder(id, done) {
+            try {
+                const response = await fetch('../api/student/updateReminder.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        done: done
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    loadReminders(); // Refresh the list
+                } else {
+                    showNotification(result.error || 'Failed to update reminder', 'error');
+                    loadReminders(); // Reload to reset checkbox state
+                }
+            } catch (error) {
+                console.error('Error updating reminder:', error);
+                loadReminders(); // Reload to reset checkbox state
+            }
+        }
+
+        // Format due date for display
+        function formatDueDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const reminderDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            
+            const diffDays = Math.floor((reminderDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return 'Overdue';
+            } else if (diffDays === 0) {
+                return 'Due Today';
+            } else if (diffDays === 1) {
+                return 'Due Tomorrow';
+            } else {
+                return `Due: ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+        }
+
+        // Check for upcoming reminders and send notifications
+        function checkUpcomingReminders(reminders) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') {
+                return;
+            }
+
+            const now = new Date();
+            const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+            reminders.forEach(reminder => {
+                if (!reminder.done && reminder.due_at) {
+                    const dueDate = new Date(reminder.due_at);
+                    
+                    // Notify if due within 24 hours
+                    if (dueDate <= oneDayFromNow && dueDate > now) {
+                        const hours = Math.floor((dueDate - now) / (1000 * 60 * 60));
+                        
+                        if (hours <= 1) {
+                            new Notification('Reminder Due Soon!', {
+                                body: reminder.text,
+                                icon: '../assets/icons/reminder.png',
+                                tag: `reminder-${reminder.id}`
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        // Request notification permission on page load
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // Load reminders on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReminders();
+            
+            // Refresh reminders every 5 minutes
+            setInterval(loadReminders, 5 * 60 * 1000);
+        });
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         // Endorsement Form Functionality
         let selectedStudentId = null;
         
