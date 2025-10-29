@@ -13,6 +13,32 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(['success' => false, 'message' => 'Method not allowed'], 405);
 }
 
+// Update student profile function
+function updateStudentProfile($userId, $data) {
+    if (empty($data) || !is_array($data)) return false;
+
+    try {
+        $database = Database::getInstance();
+        $setParts = [];
+        $params = [];
+        
+        foreach ($data as $key => $value) {
+            $setParts[] = "$key = :$key";
+            $params[$key] = $value;
+        }
+        
+        $params['user_id'] = $userId;
+        $setSql = implode(', ', $setParts);
+        $sql = "UPDATE students SET $setSql WHERE user_id = :user_id";
+        
+        $database->query($sql, $params);
+        return true;
+    } catch (Exception $e) {
+        error_log("Error updating student profile: " . $e->getMessage());
+        throw $e;
+    }
+}
+
 // Support both JSON payloads and form-data (FormData)
 $userId = $_SESSION['user_id'];
 $input = [];

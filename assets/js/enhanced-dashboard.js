@@ -137,7 +137,13 @@ function loadDashboardData() {
         })
         .then(data => {
             if (data.success) {
-                updateDashboardStats(data.stats);
+                // Map API response keys to expected format
+                const stats = {
+                    opportunities: data.opportunities_count || 0,
+                    notes: data.notes_count || 0,
+                    ai_sessions: data.ai_sessions_count || 0
+                };
+                updateDashboardStats(stats);
                 loadOpportunitiesPreview();
                 loadNotesPreview();
                 loadApplications();
