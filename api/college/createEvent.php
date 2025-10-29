@@ -1,45 +1,67 @@
 <?php
-require_once '../../includes/functions.php';
+require_once '../../includes/session.php';
+require_once '../../includes/db_connect.php';
 
 header('Content-Type: application/json');
 
-if (!isLoggedIn() || !hasRole('college')) {
-    jsonResponse(['error' => 'Unauthorized'], 401);
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    jsonResponse(['error' => 'Method not allowed'], 405);
+// Check if user is logged in and is a college
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'college') {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-$userId = $_SESSION['user_id'];
-
-global $db;
-$college = $db->fetchOne("SELECT id FROM colleges WHERE user_id = ?", [$userId]);
-
-if (!$college) {
-    jsonResponse(['error' => 'College profile not found'], 404);
-}
-
-$data = [
-    'college_id' => $college['id'],
-    'title' => sanitize($input['title'] ?? ''),
-    'description' => sanitize($input['description'] ?? ''),
-    'date' => $input['date'] ?? '',
-    'type' => sanitize($input['type'] ?? ''),
-    'location' => sanitize($input['location'] ?? ''),
-    'max_participants' => (int)($input['max_participants'] ?? 0),
-    'status' => 'active'
-];
-
-if (empty($data['title']) || empty($data['description']) || empty($data['date'])) {
-    jsonResponse(['error' => 'Title, description, and date are required'], 400);
-}
+$user_id = $_SESSION['user_id'];
 
 try {
-    $eventId = $db->insert('events', $data);
-    jsonResponse(['success' => true, 'event_id' => $eventId], 201);
-} catch (Exception $e) {
-    jsonResponse(['error' => 'Failed to create event'], 500);
+    // Get college ID
+    $stmt = $pdo->prepare("SELECT id FROM colleges WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $college = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$college) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'College profile not found']);
+        exit;
+    }
+    
+    $college_id = $college['id'];
+    $title = trim($input['title'] ?? '');
+    $description = trim($input['description'] ?? '');
+    $date = $input['date'] ?? '';
+    $type = $input['type'] ?? 'other';
+    $location = trim($input['location'] ?? '');
+    $max_participants = (int)($input['max_participants'] ?? 0);
+    
+    // Validate required fields
+    if (empty($title) || empty($description) || empty($date)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Title, description, and date are required']);
+        exit;
+    }
+    
+    // Insert event
+    $stmt = $pdo->prepare("
+        INSERT INTO events (college_id, title, description, date, type, location, max_participants, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW(), NOW())
+    ");
+    $stmt->execute([$college_id, $title, $description, $date, $type, $location, $max_participants]);
+    
+    $event_id = $pdo->lastInsertId();
+    
+    echo json_encode([
+        'success' => true,
+        'event_id' => $event_id,
+        'message' => 'Event created successfully'
+    ]);
+    
+} catch (PDOException $e) {
+    error_log("Create event error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error occurred'
+    ]);
 }
 ?>

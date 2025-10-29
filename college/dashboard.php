@@ -970,6 +970,11 @@ $college = getCollegeProfile($user['id']);
                     e.preventDefault();
                     const sectionId = this.getAttribute('href').substring(1);
                     showSection(sectionId);
+                    
+                    // Load events when events section is shown
+                    if (sectionId === 'events') {
+                        loadEvents();
+                    }
                 });
             });
             
@@ -1086,6 +1091,177 @@ $college = getCollegeProfile($user['id']);
                         passwordForm.reset();
                     }, 1000);
                 });
+            }
+            
+            // Event Management
+            const eventForm = document.getElementById('create-event-form');
+            if (eventForm) {
+                eventForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = eventForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Creating...';
+                    
+                    const eventData = {
+                        title: document.getElementById('event-title').value.trim(),
+                        description: document.getElementById('event-description').value.trim(),
+                        date: document.getElementById('event-date').value,
+                        type: document.getElementById('event-type').value
+                    };
+                    
+                    try {
+                        const response = await fetch('../api/college/createEvent.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(eventData)
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showNotification('✅ Event created successfully!', 'success');
+                            eventForm.reset();
+                            loadEvents();
+                        } else {
+                            showNotification('❌ ' + (data.error || 'Failed to create event'), 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error creating event:', error);
+                        showNotification('❌ An error occurred. Please try again.', 'error');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                });
+            }
+            
+            // Load events
+            async function loadEvents() {
+                try {
+                    const response = await fetch('../api/college/getEvents.php');
+                    const data = await response.json();
+                    
+                    if (data.events && data.events.length > 0) {
+                        displayEvents(data.events);
+                    } else {
+                        document.getElementById('events-list').innerHTML = `
+                            <div style="text-align: center; padding: 3rem; color: #64748b;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
+                                <p>No events yet. Create your first event above!</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error loading events:', error);
+                }
+            }
+            
+            // Display events
+            function displayEvents(events) {
+                const container = document.getElementById('events-list');
+                container.innerHTML = events.map(event => {
+                    const eventDate = new Date(event.date);
+                    const formattedDate = eventDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const typeIcons = {
+                        'hackathon': '💻',
+                        'symposium': '🎓',
+                        'project-expo': '🔬',
+                        'workshop': '🛠️',
+                        'other': '📋'
+                    };
+                    
+                    const typeColors = {
+                        'hackathon': '#3b82f6',
+                        'symposium': '#8b5cf6',
+                        'project-expo': '#10b981',
+                        'workshop': '#f59e0b',
+                        'other': '#6b7280'
+                    };
+                    
+                    return `
+                        <div class="event-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 1rem; border-left: 4px solid ${typeColors[event.type] || typeColors['other']};">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 1.5rem;">${typeIcons[event.type] || typeIcons['other']}</span>
+                                        <span style="background: ${typeColors[event.type] || typeColors['other']}20; color: ${typeColors[event.type] || typeColors['other']}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                            ${event.type}
+                                        </span>
+                                        <span style="background: ${event.status === 'active' ? '#10b98120' : '#6b728020'}; color: ${event.status === 'active' ? '#10b981' : '#6b7280'}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                                            ${event.status}
+                                        </span>
+                                    </div>
+                                    <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.25rem;">${escapeHtml(event.title)}</h3>
+                                    <p style="color: #64748b; margin: 0 0 0.75rem 0; line-height: 1.6;">${escapeHtml(event.description)}</p>
+                                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.9rem; color: #64748b;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span>📅</span>
+                                            <span>${formattedDate}</span>
+                                        </div>
+                                        ${event.location ? `
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <span>📍</span>
+                                                <span>${escapeHtml(event.location)}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${event.max_participants ? `
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <span>👥</span>
+                                                <span>Max: ${event.max_participants}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                <button onclick="deleteEvent(${event.id})" style="padding: 0.5rem 1rem; background: #fee2e2; color: #dc2626; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Delete event
+            window.deleteEvent = async function(eventId) {
+                if (!confirm('Are you sure you want to delete this event?')) return;
+                
+                try {
+                    const response = await fetch('../api/college/deleteEvent.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ event_id: eventId })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('✅ Event deleted successfully!', 'success');
+                        loadEvents();
+                    } else {
+                        showNotification('❌ ' + (data.error || 'Failed to delete event'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    showNotification('❌ An error occurred. Please try again.', 'error');
+                }
+            };
+            
+            // Load events when events section is shown
+            if (window.location.hash === '#events') {
+                loadEvents();
             }
         });
     </script>
