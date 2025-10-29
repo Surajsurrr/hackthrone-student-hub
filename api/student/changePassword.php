@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once '../../includes/session.php';
 require_once '../../includes/db_connect.php';
 
 header('Content-Type: application/json');
