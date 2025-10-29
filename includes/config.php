@@ -6,7 +6,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // Application configuration
-define('APP_NAME', 'StudentHub');
+define('APP_NAME', 'LearnX');
 define('APP_URL', 'http://localhost/studenthub');
 
 // File upload configuration

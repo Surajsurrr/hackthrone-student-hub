@@ -1,4 +1,4 @@
-# StudentHub - Career Development Platform
+# LearnX - Career Development Platform
 
 A comprehensive web platform that combines features from LinkedIn, Unstop, Naukri, LeetCode, HackerRank, and other career development tools into a single, unified system for students, colleges, and companies.
 
@@ -45,8 +45,8 @@ A comprehensive web platform that combines features from LinkedIn, Unstop, Naukr
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/studenthub.git
-   cd studenthub
+   git clone https://github.com/yourusername/learnx.git
+   cd learnx
    ```
 
 2. **Database Setup**
@@ -111,7 +111,7 @@ The application uses the following main tables:
 ## File Structure
 
 ```
-studenthub/
+learnx/
 ├── index.php                 # Main landing page
 ├── login.php                 # Login page
 ├── register.php              # Registration page

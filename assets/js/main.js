@@ -1,4 +1,4 @@
-// Main JavaScript for StudentHub
+// Main JavaScript for LearnX
 
 document.addEventListener('DOMContentLoaded', function() {
     // Navigation highlighting

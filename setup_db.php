@@ -2,7 +2,7 @@
 // Database setup and table creation
 require_once 'includes/config.php';
 
-echo "<h2>StudentHub Database Setup</h2>";
+echo "<h2>LearnX Database Setup</h2>";
 
 try {
     // Connect to MySQL (without database)

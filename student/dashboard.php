@@ -32,21 +32,21 @@ $student = getStudentProfile($user['id']);
             </div>
             <nav>
                 <ul>
-                    <li><a href="#overview" class="nav-link active" data-section="overview">📊 Overview</a></li>
-                    <li><a href="#profile" class="nav-link" data-section="profile">👤 Profile</a></li>
-                    <li><a href="#opportunities" class="nav-link" data-section="opportunities">🎯 Opportunities</a></li>
-                    <li><a href="#applications" class="nav-link" data-section="applications">🧾 Applications</a></li>
-                    <li><a href="#skills" class="nav-link" data-section="skills">💪 Skills</a></li>
-                    <li><a href="#endorsements" class="nav-link" data-section="endorsements">� Endorsements</a></li>
-                    <li><a href="#notes" class="nav-link" data-section="notes">�📚 Notes</a></li>
-                    <li><a href="#upload-notes" class="nav-link" data-section="upload-notes">⬆️ Upload</a></li>
-                    <li><a href="#ai-coach" class="nav-link" data-section="ai-coach">🤖 AI Coach</a></li>
-                    <li><a href="#achievements" class="nav-link" data-section="achievements">🏆 Achievements</a></li>
-                    <li><a href="#calendar" class="nav-link" data-section="calendar">📅 Calendar</a></li>
-                    <li><a href="#reminders" class="nav-link" data-section="reminders">⏰ Reminders</a></li>
-                    <li><a href="#messages" class="nav-link" data-section="messages">✉️ Messages</a></li>
-                    <li><a href="#settings" class="nav-link" data-section="settings">⚙️ Settings</a></li>
-                    <li><a href="#help" class="nav-link" data-section="help">❓ Help</a></li>
+                    <li><a href="#overview" class="nav-link active" data-section="overview"> Overview</a></li>
+                    <li><a href="#profile" class="nav-link" data-section="profile"> Profile</a></li>
+                    <li><a href="#opportunities" class="nav-link" data-section="opportunities"> Opportunities</a></li>
+                    <li><a href="#applications" class="nav-link" data-section="applications"> Applications</a></li>
+                    <li><a href="#skills" class="nav-link" data-section="skills"> Skills</a></li>
+                    <li><a href="#endorsements" class="nav-link" data-section="endorsements"> Endorsements</a></li>
+                    <li><a href="#notes" class="nav-link" data-section="notes"> Notes</a></li>
+                    <li><a href="#upload-notes" class="nav-link" data-section="upload-notes">⬆ Upload</a></li>
+                    <li><a href="#ai-coach" class="nav-link" data-section="ai-coach"> AI Coach</a></li>
+                    <li><a href="#achievements" class="nav-link" data-section="achievements"> Achievements</a></li>
+                    <li><a href="#calendar" class="nav-link" data-section="calendar"> Calendar</a></li>
+                    <li><a href="#reminders" class="nav-link" data-section="reminders"> Reminders</a></li>
+                    <li><a href="#messages" class="nav-link" data-section="messages"> Messages</a></li>
+                    <li><a href="#settings" class="nav-link" data-section="settings"> Settings</a></li>
+                    <li><a href="#help" class="nav-link" data-section="help"> Help</a></li>
                 </ul>
             </nav>
         </aside>
@@ -438,7 +438,7 @@ $student = getStudentProfile($user['id']);
                 <div class="content-grid">
                     <div class="content-card">
                         <h3>Quick Help</h3>
-                        <p>Find guides, FAQs and support contacts for StudentHub.</p>
+                        <p>Find guides, FAQs and support contacts for LearnX.</p>
                     </div>
                 </div>
             </section>

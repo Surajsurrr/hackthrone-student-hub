@@ -2,7 +2,7 @@
 // Database setup script
 require_once 'includes/config.php';
 
-echo "<h2>StudentHub Database Setup</h2>";
+echo "<h2>LearnX Database Setup</h2>";
 
 try {
     // Connect to MySQL (without database)
@@ -22,7 +22,7 @@ try {
     echo "<p>✅ Database tables created successfully.</p>";
     
     echo "<p><strong>Setup Complete!</strong> You can now use the website.</p>";
-    echo "<p><a href='index.php'>Go to StudentHub</a></p>";
+    echo "<p><a href='index.php'>Go to LearnX</a></p>";
     
 } catch (PDOException $e) {
     echo "<p>❌ Error: " . $e->getMessage() . "</p>";

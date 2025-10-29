@@ -1,8 +1,6 @@
--- StudentHub Database Schema
--- Run this script to set up the database tables
+-- LearnX Database Schema
 
--- Users table
-CREATE TABLE IF NOT EXISTS users (
+-- INSERT INTO users (username, email, password, role) VALUES ('admin', 'admin@learnx.com', '$2y$10$example.hash.here', 'admin');
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
