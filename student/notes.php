@@ -260,72 +260,7 @@ require_once 'includes/student_auth.php';
                     <button class="clear-filters" id="clear-filters">Clear All</button>
                 </div>
                 
-                <!-- Topic Quick Filters -->
-                <div class="topic-filters">
-                    <h4>🏷️ Quick Topic Filters</h4>
-                    <div class="topic-chips" id="topic-chips">
-                        <!-- Topic chips will be loaded here -->
-                    </div>
-                </div>
                 
-                <!-- Featured Notes -->
-                <div class="featured-notes">
-                    <h4>⭐ Featured Notes</h4>
-                    <div class="featured-grid">
-                        <div class="featured-card">
-                            <div class="featured-badge">🏆 Top Rated</div>
-                            <div class="featured-topics">
-                                <span class="topic-chip">Algorithms</span>
-                                <span class="topic-chip">Advanced</span>
-                            </div>
-                            <h5>Advanced Algorithms & Complexity</h5>
-                            <p>Comprehensive guide to complex algorithms, time complexity analysis, and optimization techniques</p>
-                            <div class="featured-stats">
-                                <span>👤 Dr. Smith</span>
-                                <span>⭐ 4.9</span>
-                                <span>📥 342</span>
-                                <span>🏷️ Computer Science</span>
-                            </div>
-                        </div>
-                        <div class="featured-card">
-                            <div class="featured-badge">🔥 Trending</div>
-                            <div class="featured-topics">
-                                <span class="topic-chip">Machine Learning</span>
-                                <span class="topic-chip">Beginner</span>
-                            </div>
-                            <h5>Machine Learning Fundamentals</h5>
-                            <p>Perfect introduction to ML concepts, supervised learning, and practical examples with Python</p>
-                            <div class="featured-stats">
-                                <span>👤 Sarah Wilson</span>
-                                <span>⭐ 4.8</span>
-                                <span>📥 289</span>
-                                <span>🏷️ Computer Science</span>
-                            </div>
-                        </div>
-                        <div class="featured-card">
-                            <div class="featured-badge">🆕 Latest</div>
-                            <div class="featured-topics">
-                                <span class="topic-chip">Calculus</span>
-                                <span class="topic-chip">Intermediate</span>
-                            </div>
-                            <h5>Integral Calculus Mastery</h5>
-                            <p>Comprehensive notes on integration techniques, applications, and problem-solving strategies</p>
-                            <div class="featured-stats">
-                                <span>👤 Prof. Johnson</span>
-                                <span>⭐ 4.7</span>
-                                <span>📥 156</span>
-                                <span>🏷️ Mathematics</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notes Grid -->
-                <div class="notes-grid-container">
-                    <div id="notes-list" class="modern-notes-grid">
-                        <!-- Notes will be loaded here -->
-                    </div>
-                </div>
             </div>
         </div>
     </div>

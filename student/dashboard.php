@@ -34,7 +34,6 @@ $student = getStudentProfile($user['id']);
                 <ul>
                     <li><a href="#overview" class="nav-link active" data-section="overview"> Overview</a></li>
                     <li><a href="#profile" class="nav-link" data-section="profile"> Profile</a></li>
-                    <li><a href="#opportunities" class="nav-link" data-section="opportunities"> Opportunities</a></li>
                     <li><a href="#applications" class="nav-link" data-section="applications"> Applications</a></li>
                     <li><a href="#events" class="nav-link" data-section="events"> Events</a></li>
                     <li><a href="#endorsements" class="nav-link" data-section="endorsements"> Endorsements</a></li>
@@ -59,10 +58,6 @@ $student = getStudentProfile($user['id']);
                 </div>
 
                 <div class="stats-grid">
-                    <a href="applications.php" class="stat-card clickable">
-                        <h3>Opportunities Applied</h3>
-                        <p id="opportunities-count">12</p>
-                    </a>
                     <a href="notes.php" class="stat-card clickable">
                         <h3>Notes Shared</h3>
                         <p id="notes-count">8</p>
@@ -80,11 +75,6 @@ $student = getStudentProfile($user['id']);
                 <div class="quick-actions">
                     <h3>Quick Actions</h3>
                     <div class="actions-grid">
-                        <div class="action-card">
-                            <h4>Find Internships</h4>
-                            <p>Discover new internship opportunities</p>
-                            <a href="#opportunities" class="btn nav-trigger" data-section="opportunities">Explore</a>
-                        </div>
                         <div class="action-card">
                             <h4>Join Hackathons</h4>
                             <p>Participate in coding competitions</p>
@@ -149,31 +139,6 @@ $student = getStudentProfile($user['id']);
                             </div>
                             <button type="submit" class="btn">Update Profile</button>
                         </form>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Opportunities Section -->
-            <section id="opportunities" class="dashboard-section">
-                <h2>Career Opportunities</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>Award-Winning Hackathons</h3>
-                        <p>Participate in coding competitions and showcase your skills</p>
-                        <div id="hackathons-preview">Loading latest hackathons...</div>
-                        <a href="hackathons.php" class="btn">View All Hackathons</a>
-                    </div>
-                    <div class="content-card">
-                        <h3>Career Internships</h3>
-                        <p>Find internships that match your skills and interests</p>
-                        <div id="internships-preview">Loading latest internships...</div>
-                        <a href="internships.php" class="btn">View All Internships</a>
-                    </div>
-                    <div class="content-card">
-                        <h3>Targeted Job Matches</h3>
-                        <p>AI-powered job suggestions based on your profile</p>
-                        <div id="job-recommendations">Loading recommendations...</div>
-                        <button class="btn" onclick="generateRecommendations()">Get New Recommendations</button>
                     </div>
                 </div>
             </section>

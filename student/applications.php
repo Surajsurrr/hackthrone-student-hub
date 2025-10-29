@@ -257,14 +257,67 @@ $student = getStudentProfile($user['id']);
         .filter-tab.active:hover {
             color: white;
         }
-        
+
+        /* Full-width layout without sidebar */
+        .full-width-container {
+            max-width: 100vw;
+            width: 100%;
+            margin: 0;
+            padding: 1rem;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .applications-hero {
+            background: linear-gradient(135deg, var(--accent1), var(--accent2));
+            border-radius: var(--card-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .applications-container {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            color: #1f2937;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         @media (max-width: 768px) {
+            .full-width-container {
+                padding: 0.5rem;
+            }
+            
+            .applications-hero {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
             .applications-hero h1 {
                 font-size: 2rem;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .applications-container {
+                padding: 1rem;
             }
             
             .applications-table {
@@ -285,88 +338,43 @@ $student = getStudentProfile($user['id']);
 <body>
     <?php include 'includes/header.php'; ?>
 
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-profile">
-                <div class="sidebar-avatar">
-                    <img src="<?php echo htmlspecialchars(!empty($student['profile_pic']) ? $student['profile_pic'] : '../assets/images/profile_pics/default.svg'); ?>" alt="Profile">
-                </div>
-                <div class="sidebar-name">
-                    <a href="profile.php"><?php echo htmlspecialchars($student['name'] ?? $user['username']); ?></a>
-                </div>
+    <div class="full-width-container">
+        <div class="applications-hero">
+            <h1>📋 My Applications</h1>
+            <p>Track all your opportunity applications in one place</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalApplications">-</div>
+                <div class="stat-label">Total Applied</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pendingApplications">-</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="shortlistedApplications">-</div>
+                <div class="stat-label">Shortlisted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="acceptedApplications">-</div>
+                <div class="stat-label">Accepted</div>
+            </div>
+        </div>
+
+        <div class="applications-container">
+            <div class="applications-header">
+                <h2>Application History</h2>
             </div>
 
-            <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <a href="applications.php" class="nav-item active">
-                    <span class="nav-icon">📋</span>
-                    <span class="nav-text">Applications</span>
-                </a>
-                <a href="notes.php" class="nav-item">
-                    <span class="nav-icon">📚</span>
-                    <span class="nav-text">Notes</span>
-                </a>
-                <a href="ai_coach.php" class="nav-item">
-                    <span class="nav-icon">🤖</span>
-                    <span class="nav-text">AI Coach</span>
-                </a>
-                <a href="profile.php" class="nav-item">
-                    <span class="nav-icon">👤</span>
-                    <span class="nav-text">Profile</span>
-                </a>
-            </nav>
-        </aside>
-
-        <main class="main-content">
-            <div class="applications-hero">
-                <h1>📋 My Applications</h1>
-                <p>Track all your opportunity applications in one place</p>
-            </div>
-
-            <div class="stats-grid" id="statsGrid">
-                <div class="stat-card">
-                    <div class="stat-number" id="totalApplications">-</div>
-                    <div class="stat-label">Total Applied</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="pendingApplications">-</div>
-                    <div class="stat-label">Pending</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="shortlistedApplications">-</div>
-                    <div class="stat-label">Shortlisted</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="acceptedApplications">-</div>
-                    <div class="stat-label">Accepted</div>
+            <div id="applicationsContent">
+                <div class="loading-state">
+                    <div style="font-size: 2rem;">⏳</div>
+                    <p>Loading your applications...</p>
                 </div>
             </div>
-
-            <div class="applications-container">
-                <div class="applications-header">
-                    <h2>Application History</h2>
-                </div>
-
-                <div class="filter-tabs">
-                    <div class="filter-tab active" data-filter="all">All</div>
-                    <div class="filter-tab" data-filter="applied">Applied</div>
-                    <div class="filter-tab" data-filter="under_review">Under Review</div>
-                    <div class="filter-tab" data-filter="shortlisted">Shortlisted</div>
-                    <div class="filter-tab" data-filter="accepted">Accepted</div>
-                    <div class="filter-tab" data-filter="rejected">Rejected</div>
-                </div>
-
-                <div id="applicationsContent">
-                    <div class="loading-state">
-                        <div style="font-size: 2rem;">⏳</div>
-                        <p>Loading your applications...</p>
-                    </div>
-                </div>
-            </div>
-        </main>
+        </div>
     </div>
 
     <script>
