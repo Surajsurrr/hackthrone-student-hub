@@ -205,15 +205,30 @@ $college = getCollegeProfile($user['id']);
             </section>
 
             <section id="applicants" class="dashboard-section">
-                <h2>👥 Applicants</h2>
+                <h2>👥 Event Applications</h2>
                 <div class="applicants-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <h3 style="color: #1e293b; margin-top: 0;">Event Registrations</h3>
-                    <p style="color: #64748b; margin-bottom: 2rem;">View and manage students who have registered for your events</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h3 style="color: #1e293b; margin: 0;">Event Registrations</h3>
+                            <p style="color: #64748b; margin: 0.5rem 0 0 0;">View and manage students who have applied to your events</p>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <select id="filter-event" style="padding: 0.5rem 1rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem;">
+                                <option value="all">All Events</option>
+                            </select>
+                            <select id="filter-status" style="padding: 0.5rem 1rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem;">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
                     
-                    <div id="applicants-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div id="applicants-list">
                         <div style="text-align: center; padding: 3rem; color: #64748b;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
-                            <p>No applicants yet. When students register for your events, they will appear here.</p>
+                            <div style="font-size: 2rem;">⏳</div>
+                            <p>Loading applications...</p>
                         </div>
                     </div>
                 </div>
@@ -980,6 +995,11 @@ $college = getCollegeProfile($user['id']);
                     if (sectionId === 'profile') {
                         loadProfileData();
                     }
+                    
+                    // Load applications when applicants section is shown
+                    if (sectionId === 'applicants') {
+                        loadApplications();
+                    }
                 });
             });
             
@@ -1316,6 +1336,222 @@ $college = getCollegeProfile($user['id']);
             if (window.location.hash === '#events') {
                 loadEvents();
             }
+            
+            // Applications Management
+            let allApplications = [];
+            let collegeEvents = [];
+            
+            async function loadApplications() {
+                try {
+                    const response = await fetch('../api/college/getApplications.php', {
+                        credentials: 'same-origin'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        allApplications = data.applications || [];
+                        collegeEvents = data.events || [];
+                        
+                        // Populate event filter dropdown
+                        const eventFilter = document.getElementById('filter-event');
+                        eventFilter.innerHTML = '<option value="all">All Events</option>';
+                        collegeEvents.forEach(event => {
+                            eventFilter.innerHTML += `<option value="${event.id}">${event.title}</option>`;
+                        });
+                        
+                        displayApplications(allApplications);
+                    } else {
+                        document.getElementById('applicants-list').innerHTML = `
+                            <div style="text-align: center; padding: 3rem; color: #dc2626;">
+                                <div style="font-size: 2rem;">❌</div>
+                                <p>${data.error || 'Failed to load applications'}</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error loading applications:', error);
+                    document.getElementById('applicants-list').innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: #dc2626;">
+                            <div style="font-size: 2rem;">❌</div>
+                            <p>Error loading applications. Please try again.</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            function displayApplications(applications) {
+                const container = document.getElementById('applicants-list');
+                
+                if (!applications || applications.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: #64748b;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                            <p>No applications yet. When students register for your events, they will appear here.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const statusColors = {
+                    'pending': { bg: '#fef3c7', color: '#92400e', icon: '⏳' },
+                    'approved': { bg: '#d1fae5', color: '#065f46', icon: '✅' },
+                    'rejected': { bg: '#fee2e2', color: '#dc2626', icon: '❌' }
+                };
+                
+                container.innerHTML = applications.map(app => {
+                    const status = statusColors[app.status] || statusColors['pending'];
+                    const appliedDate = new Date(app.applied_at).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    return `
+                        <div class="application-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                                        <h3 style="margin: 0; color: #1e293b; font-size: 1.1rem;">${escapeHtml(app.full_name)}</h3>
+                                        <span style="background: ${status.bg}; color: ${status.color}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                                            ${status.icon} ${app.status.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                        <strong>Event:</strong> ${escapeHtml(app.event_title)} | Applied: ${appliedDate}
+                                    </div>
+                                </div>
+                                ${app.status === 'pending' ? `
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <button onclick="updateApplicationStatus(${app.id}, 'approved')" style="padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                            ✅ Approve
+                                        </button>
+                                        <button onclick="updateApplicationStatus(${app.id}, 'rejected')" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                            ❌ Reject
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; margin-bottom: 1rem;">
+                                <div>
+                                    <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">Email</div>
+                                    <div style="color: #1e293b; font-size: 0.9rem;">${escapeHtml(app.email)}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">Phone</div>
+                                    <div style="color: #1e293b; font-size: 0.9rem;">${escapeHtml(app.phone)}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">College</div>
+                                    <div style="color: #1e293b; font-size: 0.9rem;">${escapeHtml(app.college)}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">Year</div>
+                                    <div style="color: #1e293b; font-size: 0.9rem;">${escapeHtml(app.year_of_study)}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">Branch</div>
+                                    <div style="color: #1e293b; font-size: 0.9rem;">${escapeHtml(app.branch)}</div>
+                                </div>
+                                ${app.team_name ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">Team</div>
+                                        <div style="color: #1e293b; font-size: 0.9rem;">${escapeHtml(app.team_name)} (${app.team_size} members)</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <details style="margin-top: 1rem;">
+                                <summary style="cursor: pointer; color: #7c3aed; font-weight: 600; font-size: 0.9rem; padding: 0.5rem 0;">
+                                    View Full Application
+                                </summary>
+                                <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                                    <div style="margin-bottom: 1rem;">
+                                        <div style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Motivation:</div>
+                                        <div style="color: #64748b; line-height: 1.6;">${escapeHtml(app.motivation)}</div>
+                                    </div>
+                                    ${app.experience ? `
+                                        <div style="margin-bottom: 1rem;">
+                                            <div style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Experience:</div>
+                                            <div style="color: #64748b; line-height: 1.6;">${escapeHtml(app.experience)}</div>
+                                        </div>
+                                    ` : ''}
+                                    ${app.skills ? `
+                                        <div style="margin-bottom: 1rem;">
+                                            <div style="font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Skills:</div>
+                                            <div style="color: #64748b;">${escapeHtml(app.skills)}</div>
+                                        </div>
+                                    ` : ''}
+                                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                        ${app.github ? `
+                                            <a href="${escapeHtml(app.github)}" target="_blank" style="color: #7c3aed; text-decoration: none; font-size: 0.9rem;">
+                                                🔗 GitHub Profile
+                                            </a>
+                                        ` : ''}
+                                        ${app.linkedin ? `
+                                            <a href="${escapeHtml(app.linkedin)}" target="_blank" style="color: #7c3aed; text-decoration: none; font-size: 0.9rem;">
+                                                🔗 LinkedIn Profile
+                                            </a>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Filter applications
+            document.getElementById('filter-event')?.addEventListener('change', filterApplications);
+            document.getElementById('filter-status')?.addEventListener('change', filterApplications);
+            
+            function filterApplications() {
+                const eventFilter = document.getElementById('filter-event').value;
+                const statusFilter = document.getElementById('filter-status').value;
+                
+                let filtered = allApplications;
+                
+                if (eventFilter !== 'all') {
+                    filtered = filtered.filter(app => app.event_id == eventFilter);
+                }
+                
+                if (statusFilter !== 'all') {
+                    filtered = filtered.filter(app => app.status === statusFilter);
+                }
+                
+                displayApplications(filtered);
+            }
+            
+            // Update application status
+            window.updateApplicationStatus = async function(applicationId, newStatus) {
+                if (!confirm(`Are you sure you want to ${newStatus} this application?`)) return;
+                
+                try {
+                    const response = await fetch('../api/college/updateApplicationStatus.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            application_id: applicationId, 
+                            status: newStatus 
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification(`✅ Application ${newStatus} successfully!`, 'success');
+                        loadApplications();
+                    } else {
+                        showNotification('❌ ' + (data.error || 'Failed to update status'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating application:', error);
+                    showNotification('❌ An error occurred. Please try again.', 'error');
+                }
+            };
         });
     </script>
 </body>

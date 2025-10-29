@@ -1,0 +1,25 @@
+-- Event Applications Table
+CREATE TABLE IF NOT EXISTS event_applications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    event_id INT NOT NULL,
+    student_id INT NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    college VARCHAR(200) NOT NULL,
+    year_of_study VARCHAR(50) NOT NULL,
+    branch VARCHAR(100) NOT NULL,
+    team_name VARCHAR(100),
+    team_size INT DEFAULT 1,
+    motivation TEXT NOT NULL,
+    experience TEXT,
+    skills TEXT,
+    github VARCHAR(255),
+    linkedin VARCHAR(255),
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_application (event_id, student_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

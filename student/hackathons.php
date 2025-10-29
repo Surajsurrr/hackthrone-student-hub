@@ -315,9 +315,9 @@ $student = getStudentProfile($user['id']);
             `;
         }
 
-        function joinHackathon(hackathonId) {
-            // In a real implementation, this would register the student for the hackathon
-            alert('Registration functionality coming soon! Hackathon ID: ' + hackathonId);
+        function joinHackathon(eventId) {
+            // Redirect to event application form
+            window.location.href = 'event_application.php?event_id=' + eventId;
         }
 
         function showError(message) {
