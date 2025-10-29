@@ -310,9 +310,9 @@ $college = getCollegeProfile($user['id']);
                                 id="profile-logo" 
                                 value="<?php echo htmlspecialchars($college['logo'] ?? ''); ?>"
                                 placeholder="https://www.college.edu/logo.png"
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #0f172a; background: #ffffff;"
                             >
-                            <small style="color: #64748b; font-size: 0.85rem;">This logo will appear in your posts and profile</small>
+                            <small style="color: #475569; font-size: 0.875rem; font-weight: 500;">This logo will appear in your posts and profile</small>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 1.5rem;">
@@ -323,7 +323,7 @@ $college = getCollegeProfile($user['id']);
                                 id="profile-description" 
                                 rows="5"
                                 placeholder="Tell students about your college, courses, achievements, and what makes you unique..."
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; resize: vertical;"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; resize: vertical; color: #0f172a; background: #ffffff;"
                             ><?php echo htmlspecialchars($college['description'] ?? ''); ?></textarea>
                         </div>
 
