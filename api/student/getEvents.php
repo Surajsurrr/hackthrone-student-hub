@@ -1,20 +1,27 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/db_connect.php';
+require_once '../../includes/session.php';
+require_once '../../includes/db_connect.php';
 
 header('Content-Type: application/json');
 
+// Check if user is logged in and is a student
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
 try {
-    $db = Database::getInstance()->getConnection();
-    
     // Get event type filter from request
     $eventType = isset($_GET['type']) ? $_GET['type'] : 'all';
     
-    // Build SQL query based on filter
-    $whereClause = "WHERE e.status = 'active' AND e.date >= NOW()";
+    // Build SQL query based on filter - remove date filter to show all events
+    $whereClause = "WHERE e.status = 'active'";
+    $params = [];
     
     if ($eventType !== 'all') {
-        $whereClause .= " AND e.type = :event_type";
+        $whereClause .= " AND e.type = ?";
+        $params[] = $eventType;
     }
     
     $sql = "SELECT 
@@ -28,21 +35,15 @@ try {
         e.status,
         e.created_at,
         c.name as college_name,
-        c.location as college_location,
-        u.username as college_username
+        c.logo as college_logo,
+        c.location as college_location
     FROM events e
     INNER JOIN colleges c ON e.college_id = c.id
-    INNER JOIN users u ON c.user_id = u.id
     $whereClause
     ORDER BY e.date ASC";
     
-    $stmt = $db->prepare($sql);
-    
-    if ($eventType !== 'all') {
-        $stmt->bindParam(':event_type', $eventType);
-    }
-    
-    $stmt->execute();
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Format the data for frontend
@@ -82,16 +83,16 @@ try {
         ];
     }
     
-    // Get event counts by type
+    // Get event counts by type - remove date filter to show all events
     $countSql = "SELECT 
         e.type,
         COUNT(*) as count
     FROM events e
     INNER JOIN colleges c ON e.college_id = c.id
-    WHERE e.status = 'active' AND e.date >= NOW()
+    WHERE e.status = 'active'
     GROUP BY e.type";
     
-    $countStmt = $db->prepare($countSql);
+    $countStmt = $pdo->prepare($countSql);
     $countStmt->execute();
     $counts = $countStmt->fetchAll(PDO::FETCH_KEY_PAIR);
     
@@ -107,7 +108,7 @@ try {
     error_log("Error in getEvents.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'error' => 'Failed to fetch events'
+        'error' => 'Failed to fetch events: ' . $e->getMessage()
     ]);
 }
 ?>

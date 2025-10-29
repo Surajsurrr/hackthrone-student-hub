@@ -214,10 +214,10 @@ $student = getStudentProfile($user['id']);
 
         <div class="filter-tabs">
             <div class="filter-tab active" data-filter="all">All Events</div>
-            <div class="filter-tab" data-filter="hackathons">Hackathons</div>
-            <div class="filter-tab" data-filter="workshops">Workshops</div>
-            <div class="filter-tab" data-filter="symposiums">Symposiums</div>
-            <div class="filter-tab" data-filter="project-expos">Project Expos</div>
+            <div class="filter-tab" data-filter="hackathon">Hackathons</div>
+            <div class="filter-tab" data-filter="workshop">Workshops</div>
+            <div class="filter-tab" data-filter="symposium">Symposiums</div>
+            <div class="filter-tab" data-filter="project-expo">Project Expos</div>
         </div>
 
         <div id="hackathonsContent">
@@ -229,26 +229,32 @@ $student = getStudentProfile($user['id']);
     </div>
 
     <script>
-        let allHackathons = [];
-        let currentFilter = 'hackathons';
+        let allEvents = [];
+        let currentFilter = 'all';
 
-        // Load hackathons data
+        // Load events data
         async function loadHackathons() {
             try {
-                const response = await fetch('../api/student/getHackathons.php', {
+                // Build URL with filter parameter
+                let url = '../api/student/getEvents.php';
+                if (currentFilter !== 'all') {
+                    url += '?type=' + currentFilter;
+                }
+                
+                const response = await fetch(url, {
                     credentials: 'same-origin'
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    allHackathons = data.hackathons;
-                    displayHackathons(allHackathons);
+                    allEvents = data.events || [];
+                    displayHackathons(allEvents);
                 } else {
-                    showError('Failed to load hackathons: ' + (data.error || 'Unknown error'));
+                    showError('Failed to load events: ' + (data.error || 'Unknown error'));
                 }
             } catch (error) {
-                showError('Error loading hackathons: ' + error.message);
+                showError('Error loading events: ' + error.message);
             }
         }
 
@@ -256,11 +262,12 @@ $student = getStudentProfile($user['id']);
             const container = document.getElementById('hackathonsContent');
             
             if (!hackathons || hackathons.length === 0) {
+                let filterName = currentFilter === 'all' ? 'events' : currentFilter.replace('-', ' ');
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🎯</div>
-                        <h3>No Hackathons Available</h3>
-                        <p>Check back later for exciting hackathon events posted by colleges!</p>
+                        <div class="empty-state-icon">📅</div>
+                        <h3>No Events Found</h3>
+                        <p>No ${filterName} available at the moment.</p>
                     </div>
                 `;
                 return;
@@ -331,14 +338,19 @@ $student = getStudentProfile($user['id']);
                 document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
                 e.target.classList.add('active');
                 
-                // Filter hackathons (for now just showing hackathons, but this can be extended)
+                // Update current filter and reload
                 currentFilter = e.target.dataset.filter;
-                if (currentFilter === 'hackathons' || currentFilter === 'all') {
-                    displayHackathons(allHackathons);
-                } else {
-                    // Show empty state for other filters for now
-                    showEmpty('No ' + currentFilter.replace('-', ' ') + ' available at the moment.');
-                }
+                
+                // Show loading state
+                document.getElementById('hackathonsContent').innerHTML = `
+                    <div class="loading-state">
+                        <div style="font-size: 2rem;">⏳</div>
+                        <p>Loading events...</p>
+                    </div>
+                `;
+                
+                // Load events with new filter
+                loadHackathons();
             });
         });
 

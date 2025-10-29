@@ -1,13 +1,18 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/db_connect.php';
+require_once '../../includes/session.php';
+require_once '../../includes/db_connect.php';
 
 header('Content-Type: application/json');
 
+// Check if user is logged in and is a student
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
 try {
-    $db = Database::getInstance()->getConnection();
-    
-    // Get hackathon events posted by colleges
+    // Get hackathon events posted by colleges - remove date filter to show all events
     $sql = "SELECT 
         e.id,
         e.title,
@@ -18,17 +23,15 @@ try {
         e.status,
         e.created_at,
         c.name as college_name,
-        c.location as college_location,
-        u.username as college_username
+        c.logo as college_logo,
+        c.location as college_location
     FROM events e
     INNER JOIN colleges c ON e.college_id = c.id
-    INNER JOIN users u ON c.user_id = u.id
     WHERE e.type = 'hackathon' 
     AND e.status = 'active'
-    AND e.date >= NOW()
     ORDER BY e.date ASC";
     
-    $stmt = $db->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $hackathons = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -68,7 +71,9 @@ try {
     error_log("Error in getHackathons.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'error' => 'Failed to fetch hackathon events'
+        'error' => 'Failed to fetch hackathon events: ' . $e->getMessage()
+    ]);
+}
     ]);
 }
 ?>
