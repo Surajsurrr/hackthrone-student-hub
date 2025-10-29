@@ -120,14 +120,34 @@ function getCompanyJobs($companyId) {
 // Get notes for student
 function getStudentNotes($studentId) {
     global $db;
+    
+    // Add subject and likes columns if they don't exist
+    try {
+        $db->exec("ALTER TABLE notes ADD COLUMN subject VARCHAR(100) DEFAULT 'General' AFTER description");
+    } catch (PDOException $e) {
+        // Column probably already exists, continue
+    }
+    
+    try {
+        $db->exec("ALTER TABLE notes ADD COLUMN likes INT DEFAULT 0 AFTER downloads");
+    } catch (PDOException $e) {
+        // Column probably already exists, continue
+    }
+    
     $stmt = $db->prepare("
-        SELECT n.*, u.username as uploader_name
+        SELECT n.*, 
+               CONCAT(COALESCE(s.name, ''), COALESCE(u.username, '')) as uploader_name,
+               s.name as student_name,
+               u.username
         FROM notes n
-        JOIN users u ON n.student_id = u.id
-        WHERE n.shared_with = 'all' OR n.student_id = ?
-        ORDER BY n.uploaded_at DESC
+        LEFT JOIN students s ON n.student_id = s.id
+        LEFT JOIN users u ON s.user_id = u.id
+        WHERE n.shared_with = 'all' OR n.student_id = (
+            SELECT id FROM students WHERE user_id = ?
+        )
+        ORDER BY n.created_at DESC
     ");
     $stmt->execute([$studentId]);
-    return $stmt->fetchAll();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
