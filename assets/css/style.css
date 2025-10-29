@@ -77,6 +77,29 @@ nav ul li a {
 
 nav ul li a:hover { background-color: rgba(255,255,255,0.03); color: white; }
 
+/* Navigation Button Styling - Match Get Started Button */
+nav ul li a[href="index.php"],
+nav ul li a[href="login.php"],
+nav ul li a[href="register.php"] {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+
+nav ul li a[href="index.php"]:hover,
+nav ul li a[href="login.php"]:hover,
+nav ul li a[href="register.php"]:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
 /* Forms */
 .form-group {
     margin-bottom: 15px;

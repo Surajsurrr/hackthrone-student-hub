@@ -39,7 +39,7 @@ $student = getStudentProfile($user['id']);
                     <li><a href="#skills" class="nav-link" data-section="skills"> Skills</a></li>
                     <li><a href="#endorsements" class="nav-link" data-section="endorsements"> Endorsements</a></li>
                     <li><a href="#notes" class="nav-link" data-section="notes"> Notes</a></li>
-                    <li><a href="#upload-notes" class="nav-link" data-section="upload-notes">⬆ Upload</a></li>
+                    <li><a href="#upload-notes" class="nav-link" data-section="upload-notes"> Upload</a></li>
                     <li><a href="#ai-coach" class="nav-link" data-section="ai-coach"> AI Coach</a></li>
                     <li><a href="#achievements" class="nav-link" data-section="achievements"> Achievements</a></li>
                     <li><a href="#calendar" class="nav-link" data-section="calendar"> Calendar</a></li>
@@ -61,22 +61,18 @@ $student = getStudentProfile($user['id']);
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">🎯</div>
                         <h3>Opportunities Applied</h3>
                         <p id="opportunities-count">12</p>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">📚</div>
                         <h3>Notes Shared</h3>
                         <p id="notes-count">8</p>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">🤖</div>
                         <h3>AI Sessions</h3>
                         <p id="ai-sessions-count">15</p>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">⭐</div>
                         <h3>Profile Score</h3>
                         <p>85%</p>
                     </div>
@@ -86,25 +82,21 @@ $student = getStudentProfile($user['id']);
                     <h3>Quick Actions</h3>
                     <div class="actions-grid">
                         <div class="action-card">
-                            <div class="icon">💼</div>
                             <h4>Find Internships</h4>
                             <p>Discover new internship opportunities</p>
                             <a href="#opportunities" class="btn nav-trigger" data-section="opportunities">Explore</a>
                         </div>
                         <div class="action-card">
-                            <div class="icon">🏆</div>
                             <h4>Join Hackathons</h4>
                             <p>Participate in coding competitions</p>
                             <a href="hackathons.php" class="btn">Browse</a>
                         </div>
                         <div class="action-card">
-                            <div class="icon">📝</div>
                             <h4>Share Notes</h4>
                             <p>Upload and share study materials</p>
                             <a href="#notes" class="btn nav-trigger" data-section="notes">Upload</a>
                         </div>
                         <div class="action-card">
-                            <div class="icon">🎓</div>
                             <h4>AI Mentoring</h4>
                             <p>Get personalized career guidance</p>
                             <a href="#ai-coach" class="btn nav-trigger" data-section="ai-coach">Start Chat</a>
@@ -167,19 +159,19 @@ $student = getStudentProfile($user['id']);
                 <h2>Career Opportunities</h2>
                 <div class="content-grid">
                     <div class="content-card">
-                        <h3>🏆 Hackathons</h3>
+                        <h3>Award-Winning Hackathons</h3>
                         <p>Participate in coding competitions and showcase your skills</p>
                         <div id="hackathons-preview">Loading latest hackathons...</div>
                         <a href="hackathons.php" class="btn">View All Hackathons</a>
                     </div>
                     <div class="content-card">
-                        <h3>💼 Internships</h3>
+                        <h3>Career Internships</h3>
                         <p>Find internships that match your skills and interests</p>
                         <div id="internships-preview">Loading latest internships...</div>
                         <a href="internships.php" class="btn">View All Internships</a>
                     </div>
                     <div class="content-card">
-                        <h3>🎯 Job Recommendations</h3>
+                        <h3>Targeted Job Matches</h3>
                         <p>AI-powered job suggestions based on your profile</p>
                         <div id="job-recommendations">Loading recommendations...</div>
                         <button class="btn" onclick="generateRecommendations()">Get New Recommendations</button>
@@ -214,11 +206,11 @@ $student = getStudentProfile($user['id']);
                         </form>
                     </div>
                     <div class="content-card">
-                        <h3>📚 My Notes</h3>
+                        <h3>Personal Study Notes</h3>
                         <div id="my-notes-list">Loading your notes...</div>
                     </div>
                     <div class="content-card">
-                        <h3>🌟 Popular Notes</h3>
+                        <h3>Featured Notes</h3>
                         <div id="popular-notes-list">Loading popular notes...</div>
                     </div>
                 </div>
@@ -226,7 +218,7 @@ $student = getStudentProfile($user['id']);
 
             <!-- AI Coach Section -->
             <section id="ai-coach" class="dashboard-section">
-                <h2>🤖 AI Career Coach</h2>
+                <h2>AI Career Coach</h2>
                 <div class="ai-chat-container">
                     <div class="chat-messages" id="chat-messages">
                         <div class="message bot-message">
@@ -241,37 +233,37 @@ $student = getStudentProfile($user['id']);
                 <div class="ai-suggestions">
                     <h4>Quick Questions:</h4>
                     <div class="suggestion-buttons">
-                        <button class="suggestion-btn" onclick="sendSuggestion('How can I improve my resume?')">📝 Resume Tips</button>
-                        <button class="suggestion-btn" onclick="sendSuggestion('What skills should I learn for my field?')">🎯 Skill Development</button>
-                        <button class="suggestion-btn" onclick="sendSuggestion('How to prepare for technical interviews?')">💼 Interview Prep</button>
-                        <button class="suggestion-btn" onclick="sendSuggestion('What career paths are suitable for me?')">🛤️ Career Paths</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('How can I improve my resume?')">Resume Tips</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('What skills should I learn for my field?')">Skill Development</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('How to prepare for technical interviews?')">Interview Prep</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('What career paths are suitable for me?')">Career Paths</button>
                     </div>
                 </div>
             </section>
 
             <!-- Achievements Section -->
             <section id="achievements" class="dashboard-section">
-                <h2>🏆 Achievements & Progress</h2>
+                <h2>Achievements & Progress</h2>
                 <div class="content-grid">
                     <div class="content-card">
-                        <h3>🎖️ Badges Earned</h3>
+                        <h3>Earned Badges</h3>
                         <div class="badges-grid">
                             <div class="badge-item">
-                                <div class="badge-icon">📚</div>
+                                <div class="badge-icon">Study</div>
                                 <span>Knowledge Sharer</span>
                             </div>
                             <div class="badge-item">
-                                <div class="badge-icon">💬</div>
+                                <div class="badge-icon">Chat</div>
                                 <span>AI Chat Pro</span>
                             </div>
                             <div class="badge-item">
-                                <div class="badge-icon">🎯</div>
+                                <div class="badge-icon">Goals</div>
                                 <span>Goal Achiever</span>
                             </div>
                         </div>
                     </div>
                     <div class="content-card">
-                        <h3>📈 Progress Tracking</h3>
+                        <h3>Progress Tracking</h3>
                         <div class="progress-item">
                             <span>Profile Completion</span>
                             <div class="progress-bar">
@@ -292,10 +284,10 @@ $student = getStudentProfile($user['id']);
 
             <!-- Calendar Section -->
             <section id="calendar" class="dashboard-section">
-                <h2>📅 My Calendar</h2>
+                <h2>My Calendar</h2>
                 <div class="content-grid">
                     <div class="content-card">
-                        <h3>📋 Upcoming Events</h3>
+                        <h3>Upcoming Events</h3>
                         <div id="upcoming-events">
                             <div class="event-item">
                                 <div class="event-date">Dec 15</div>
@@ -423,7 +415,7 @@ $student = getStudentProfile($user['id']);
 
             <!-- Settings -->
             <section id="settings" class="dashboard-section">
-                <h2>⚙️ Settings</h2>
+                <h2>Settings</h2>
                 <div class="content-grid">
                     <div class="content-card">
                         <h3>Account Settings</h3>
@@ -434,7 +426,7 @@ $student = getStudentProfile($user['id']);
 
             <!-- Help -->
             <section id="help" class="dashboard-section">
-                <h2>❓ Help & FAQs</h2>
+                <h2>Help & FAQs</h2>
                 <div class="content-grid">
                     <div class="content-card">
                         <h3>Quick Help</h3>
