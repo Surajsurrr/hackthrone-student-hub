@@ -425,15 +425,173 @@ $student = getStudentProfile($user['id']);
 
             <!-- Events -->
             <section id="events" class="dashboard-section">
-                <h2>Events</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>Upcoming Events</h3>
-                        <div id="upcoming-events">Loading events...</div>
+                <div class="events-header">
+                    <h2>Campus Events</h2>
+                    <p class="section-subtitle">Discover and participate in exciting events happening around you</p>
+                </div>
+                
+                <!-- Event Categories Filter -->
+                <div class="event-filters">
+                    <button class="filter-btn active" data-filter="all">All Events</button>
+                    <button class="filter-btn" data-filter="hackathon">Hackathons</button>
+                    <button class="filter-btn" data-filter="workshop">Workshops</button>
+                    <button class="filter-btn" data-filter="symposium">Symposiums</button>
+                    <button class="filter-btn" data-filter="project-expo">Project Expos</button>
+                </div>
+
+                <div class="events-container">
+                    <!-- Featured Events -->
+                    <div class="featured-events">
+                        <h3>Featured Events</h3>
+                        <div class="featured-events-grid">
+                            <div class="featured-event-card">
+                                <div class="event-image">
+                                    <div class="event-category hackathon">Hackathon</div>
+                                    <div class="event-date">
+                                        <span class="day">15</span>
+                                        <span class="month">Nov</span>
+                                    </div>
+                                </div>
+                                <div class="event-content">
+                                    <h4>CodeCraft 2025</h4>
+                                    <p class="event-desc">48-hour coding marathon with exciting prizes and networking opportunities</p>
+                                    <div class="event-meta">
+                                        <span class="event-location">Tech Hub, Bangalore</span>
+                                        <span class="event-participants">250+ participants</span>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="btn btn-primary">Register Now</button>
+                                        <button class="btn btn-outline">Learn More</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="featured-event-card">
+                                <div class="event-image">
+                                    <div class="event-category workshop">Workshop</div>
+                                    <div class="event-date">
+                                        <span class="day">22</span>
+                                        <span class="month">Nov</span>
+                                    </div>
+                                </div>
+                                <div class="event-content">
+                                    <h4>AI & Machine Learning Summit</h4>
+                                    <p class="event-desc">Learn from industry experts about the latest trends in AI and ML</p>
+                                    <div class="event-meta">
+                                        <span class="event-location">Virtual Event</span>
+                                        <span class="event-participants">500+ attendees</span>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="btn btn-primary">Register Now</button>
+                                        <button class="btn btn-outline">Learn More</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="content-card">
-                        <h3>Registered Events</h3>
-                        <div id="registered-events">Loading registered events...</div>
+
+                    <!-- Events Lists -->
+                    <div class="events-lists">
+                        <div class="content-card events-list-card">
+                            <div class="card-header">
+                                <h3>Upcoming Events</h3>
+                                <div class="view-toggle">
+                                    <button class="toggle-btn active" data-view="list">List</button>
+                                    <button class="toggle-btn" data-view="grid">Grid</button>
+                                </div>
+                            </div>
+                            <div id="upcoming-events" class="events-list">
+                                <div class="event-item">
+                                    <div class="event-item-date">
+                                        <span class="date-day">28</span>
+                                        <span class="date-month">Oct</span>
+                                    </div>
+                                    <div class="event-item-content">
+                                        <h4>Web Development Bootcamp</h4>
+                                        <p>Full-stack development intensive course</p>
+                                        <div class="event-tags">
+                                            <span class="tag workshop">Workshop</span>
+                                            <span class="tag-location">Room 401, CS Block</span>
+                                        </div>
+                                    </div>
+                                    <div class="event-item-actions">
+                                        <button class="btn-small btn-primary">Join</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="event-item">
+                                    <div class="event-item-date">
+                                        <span class="date-day">30</span>
+                                        <span class="date-month">Oct</span>
+                                    </div>
+                                    <div class="event-item-content">
+                                        <h4>Startup Pitch Competition</h4>
+                                        <p>Present your innovative ideas to investors</p>
+                                        <div class="event-tags">
+                                            <span class="tag competition">Competition</span>
+                                            <span class="tag-location">Auditorium</span>
+                                        </div>
+                                    </div>
+                                    <div class="event-item-actions">
+                                        <button class="btn-small btn-primary">Join</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="event-item">
+                                    <div class="event-item-date">
+                                        <span class="date-day">05</span>
+                                        <span class="date-month">Nov</span>
+                                    </div>
+                                    <div class="event-item-content">
+                                        <h4>Tech Talk: Future of Computing</h4>
+                                        <p>Industry leaders discuss emerging technologies</p>
+                                        <div class="event-tags">
+                                            <span class="tag symposium">Symposium</span>
+                                            <span class="tag-location">Main Hall</span>
+                                        </div>
+                                    </div>
+                                    <div class="event-item-actions">
+                                        <button class="btn-small btn-primary">Join</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary load-more">Load More Events</button>
+                        </div>
+                        
+                        <div class="content-card registered-events-card">
+                            <div class="card-header">
+                                <h3>My Registered Events</h3>
+                                <span class="event-count">3 events</span>
+                            </div>
+                            <div id="registered-events" class="registered-events-list">
+                                <div class="registered-event-item">
+                                    <div class="event-status confirmed">Confirmed</div>
+                                    <h4>CodeCraft 2025</h4>
+                                    <p>Nov 15, 2025 • Tech Hub, Bangalore</p>
+                                    <div class="event-countdown">
+                                        <span class="countdown-label">Starts in:</span>
+                                        <span class="countdown-time">17 days</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="registered-event-item">
+                                    <div class="event-status pending">Pending</div>
+                                    <h4>AI & ML Summit</h4>
+                                    <p>Nov 22, 2025 • Virtual Event</p>
+                                    <div class="event-countdown">
+                                        <span class="countdown-label">Starts in:</span>
+                                        <span class="countdown-time">24 days</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="registered-event-item">
+                                    <div class="event-status completed">Completed</div>
+                                    <h4>React.js Workshop</h4>
+                                    <p>Oct 20, 2025 • CS Lab 2</p>
+                                    <button class="btn-small btn-outline">View Certificate</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -70,6 +70,27 @@ function setupEventListeners() {
         applicationForm.addEventListener('submit', handleApplicationSubmit);
     }
 
+    // Event filters
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            filterEvents(this.dataset.filter);
+        });
+    });
+
+    // View toggles for events
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const parent = this.closest('.view-toggle');
+            parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            toggleEventsView(this.dataset.view);
+        });
+    });
+
     // AI Chat enhancement
     setupAIChat();
 }
@@ -501,6 +522,64 @@ function updateApplicationsList(applications) {
             <small class="app-date">Applied: ${new Date(app.applied_at).toLocaleDateString()}</small>
         </div>
     `).join('');
+}
+
+function filterEvents(filter) {
+    const eventItems = document.querySelectorAll('.event-item');
+    const featuredCards = document.querySelectorAll('.featured-event-card');
+    
+    // Filter regular event items
+    eventItems.forEach(item => {
+        const eventType = item.querySelector('.tag').textContent.toLowerCase();
+        if (filter === 'all' || eventType.includes(filter)) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Filter featured cards
+    featuredCards.forEach(card => {
+        const category = card.querySelector('.event-category').textContent.toLowerCase();
+        if (filter === 'all' || category.includes(filter)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function toggleEventsView(view) {
+    const eventsList = document.querySelector('.events-list');
+    if (!eventsList) return;
+    
+    if (view === 'grid') {
+        eventsList.style.display = 'grid';
+        eventsList.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+        eventsList.style.gap = '1rem';
+    } else {
+        eventsList.style.display = 'flex';
+        eventsList.style.flexDirection = 'column';
+        eventsList.style.gap = '1rem';
+        eventsList.style.gridTemplateColumns = 'unset';
+    }
+}
+
+function loadEvents() {
+    // Placeholder function for loading events from API
+    // This would typically fetch from ../api/student/getEvents.php
+    console.log('Loading events...');
+}
+
+function registerForEvent(eventId) {
+    // Placeholder function for event registration
+    showLoading('Registering for event...');
+    
+    // Simulate API call
+    setTimeout(() => {
+        hideLoading();
+        showNotification('Successfully registered for event!', 'success');
+    }, 1000);
 }
 
 function generateRecommendations() {
