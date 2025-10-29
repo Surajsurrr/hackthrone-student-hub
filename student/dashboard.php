@@ -1358,7 +1358,7 @@ $student = getStudentProfile($user['id']);
                                     <div class="toggle-container">
                                         <label class="toggle-label">Profile Visibility</label>
                                         <label class="toggle">
-                                            <input type="checkbox" checked>
+                                            <input type="checkbox" id="profileVisibilityToggle" checked onchange="togglePrivacySetting('profile_visibility', this.checked)">
                                             <span class="toggle-slider"></span>
                                         </label>
                                     </div>
@@ -1372,7 +1372,7 @@ $student = getStudentProfile($user['id']);
                                     <div class="toggle-container">
                                         <label class="toggle-label">Enable 2FA</label>
                                         <label class="toggle">
-                                            <input type="checkbox">
+                                            <input type="checkbox" id="twoFactorToggle" onchange="toggleTwoFactor(this.checked)">
                                             <span class="toggle-slider"></span>
                                         </label>
                                     </div>
@@ -2117,6 +2117,134 @@ $student = getStudentProfile($user['id']);
             div.textContent = text;
             return div.innerHTML;
         }
+
+        // Privacy Settings Toggle Function
+        async function togglePrivacySetting(settingName, isEnabled) {
+            const toggle = document.getElementById('profileVisibilityToggle');
+            
+            try {
+                const response = await fetch('../api/student/updatePrivacySettings.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        setting_name: settingName,
+                        value: isEnabled
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success notification
+                    showNotification(
+                        isEnabled ? '✓ Profile visibility enabled' : '✓ Profile visibility disabled',
+                        'success'
+                    );
+                } else {
+                    // Revert toggle on error
+                    toggle.checked = !isEnabled;
+                    showNotification('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating privacy setting:', error);
+                // Revert toggle on error
+                toggle.checked = !isEnabled;
+                showNotification('❌ Failed to update privacy setting', 'error');
+            }
+        }
+
+        // Two-Factor Authentication Toggle Function
+        async function toggleTwoFactor(isEnabled) {
+            const toggle = document.getElementById('twoFactorToggle');
+            
+            try {
+                const response = await fetch('../api/student/updateTwoFactor.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        enabled: isEnabled
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success notification
+                    showNotification('✓ ' + data.message, 'success');
+                } else {
+                    // Revert toggle on error
+                    toggle.checked = !isEnabled;
+                    showNotification('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating 2FA:', error);
+                // Revert toggle on error
+                toggle.checked = !isEnabled;
+                showNotification('❌ Failed to update Two-Factor Authentication', 'error');
+            }
+        }
+
+        // Show notification helper function
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #059669 0%, #047857 100%)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Load current settings on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Fetch current privacy settings
+                const privacyResponse = await fetch('../api/student/getPrivacySettings.php');
+                if (privacyResponse.ok) {
+                    const privacyData = await privacyResponse.json();
+                    if (privacyData.success) {
+                        document.getElementById('profileVisibilityToggle').checked = privacyData.profile_visibility;
+                    }
+                }
+                
+                // Fetch current 2FA status
+                const twoFactorResponse = await fetch('../api/student/getTwoFactorStatus.php');
+                if (twoFactorResponse.ok) {
+                    const twoFactorData = await twoFactorResponse.json();
+                    if (twoFactorData.success) {
+                        document.getElementById('twoFactorToggle').checked = twoFactorData.enabled;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        });
 
         // Endorsement Form Functionality
         let selectedStudentId = null;
