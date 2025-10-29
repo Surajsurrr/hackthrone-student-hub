@@ -59,22 +59,22 @@ $student = getStudentProfile($user['id']);
                 </div>
 
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <a href="applications.php" class="stat-card clickable">
                         <h3>Opportunities Applied</h3>
                         <p id="opportunities-count">12</p>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="notes.php" class="stat-card clickable">
                         <h3>Notes Shared</h3>
                         <p id="notes-count">8</p>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="ai_coach.php" class="stat-card clickable">
                         <h3>AI Sessions</h3>
                         <p id="ai-sessions-count">15</p>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="profile.php" class="stat-card clickable">
                         <h3>Profile Score</h3>
                         <p>85%</p>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="quick-actions">
