@@ -332,40 +332,298 @@ $student = getStudentProfile($user['id']);
 
             <!-- Achievements Section -->
             <section id="achievements" class="dashboard-section">
-                <h2>Achievements & Progress</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>Earned Badges</h3>
-                        <div class="badges-grid">
-                            <div class="badge-item">
-                                <div class="badge-icon">Study</div>
-                                <span>Knowledge Sharer</span>
-                            </div>
-                            <div class="badge-item">
-                                <div class="badge-icon">Chat</div>
-                                <span>AI Chat Pro</span>
-                            </div>
-                            <div class="badge-item">
-                                <div class="badge-icon">Goals</div>
-                                <span>Goal Achiever</span>
+                <!-- Achievement Hero Section -->
+                <div class="achievement-hero">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <h2>🏆 Your Journey to Excellence</h2>
+                            <p>Level up your skills and unlock amazing achievements!</p>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-circle">
+                                <div class="circle-progress" data-percentage="75">
+                                    <span class="percentage">75%</span>
+                                </div>
+                                <span class="stat-label">Overall Progress</span>
                             </div>
                         </div>
                     </div>
-                    <div class="content-card">
-                        <h3>Progress Tracking</h3>
-                        <div class="progress-item">
-                            <span>Profile Completion</span>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%"></div>
-                            </div>
-                            <span>85%</span>
+                    <div class="hero-background">
+                        <div class="floating-icons">
+                            <span class="float-icon">🌟</span>
+                            <span class="float-icon">🎯</span>
+                            <span class="float-icon">🚀</span>
+                            <span class="float-icon">💎</span>
+                            <span class="float-icon">⚡</span>
                         </div>
-                        <div class="progress-item">
-                            <span>Skill Development</span>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 70%"></div>
+                    </div>
+                </div>
+
+                <!-- Level & XP Section -->
+                <div class="level-section">
+                    <div class="level-card">
+                        <div class="level-info">
+                            <div class="current-level">
+                                <span class="level-badge">Level 5</span>
+                                <span class="level-title">Knowledge Explorer</span>
                             </div>
-                            <span>70%</span>
+                            <div class="xp-bar">
+                                <div class="xp-progress" style="width: 65%"></div>
+                                <div class="xp-text">
+                                    <span>1,250 XP</span>
+                                    <span>/ 2,000 XP</span>
+                                </div>
+                            </div>
+                            <div class="next-level">
+                                <span>🎯 750 XP to Level 6 - "Skill Master"</span>
+                            </div>
+                        </div>
+                        <div class="level-rewards">
+                            <h4>🎁 Next Level Rewards</h4>
+                            <div class="reward-items">
+                                <span class="reward-item">🏅 Special Badge</span>
+                                <span class="reward-item">💰 500 Coins</span>
+                                <span class="reward-item">🔓 New Features</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Grid -->
+                <div class="achievements-grid">
+                    <!-- Recently Earned -->
+                    <div class="achievement-category">
+                        <h3>🌟 Recently Earned</h3>
+                        <div class="badges-container">
+                            <div class="badge-card earned pulse">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon">📚</div>
+                                    <div class="achievement-glow"></div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Knowledge Sharer</h4>
+                                    <p>Uploaded 5 study notes</p>
+                                    <span class="earned-date">Earned 2 days ago</span>
+                                </div>
+                                <div class="badge-points">+100 XP</div>
+                            </div>
+
+                            <div class="badge-card earned shine">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon">🤖</div>
+                                    <div class="achievement-glow"></div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>AI Chat Pro</h4>
+                                    <p>Had 20+ AI conversations</p>
+                                    <span class="earned-date">Earned 1 week ago</span>
+                                </div>
+                                <div class="badge-points">+150 XP</div>
+                            </div>
+
+                            <div class="badge-card earned">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon">🎯</div>
+                                    <div class="achievement-glow"></div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Goal Achiever</h4>
+                                    <p>Completed 3 learning goals</p>
+                                    <span class="earned-date">Earned 2 weeks ago</span>
+                                </div>
+                                <div class="badge-points">+200 XP</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- In Progress -->
+                    <div class="achievement-category">
+                        <h3>⏳ In Progress</h3>
+                        <div class="badges-container">
+                            <div class="badge-card in-progress">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon locked">🔒</div>
+                                    <div class="progress-ring">
+                                        <div class="progress-circle" style="--progress: 60"></div>
+                                    </div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Social Connector</h4>
+                                    <p>Connect with 10 students</p>
+                                    <div class="progress-bar-small">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                    <span class="progress-text">6/10 connections</span>
+                                </div>
+                                <div class="badge-points">+300 XP</div>
+                            </div>
+
+                            <div class="badge-card in-progress">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon locked">🔒</div>
+                                    <div class="progress-ring">
+                                        <div class="progress-circle" style="--progress: 40"></div>
+                                    </div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Event Enthusiast</h4>
+                                    <p>Attend 5 events</p>
+                                    <div class="progress-bar-small">
+                                        <div class="progress-fill" style="width: 40%"></div>
+                                    </div>
+                                    <span class="progress-text">2/5 events</span>
+                                </div>
+                                <div class="badge-points">+250 XP</div>
+                            </div>
+
+                            <div class="badge-card in-progress">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon locked">🔒</div>
+                                    <div class="progress-ring">
+                                        <div class="progress-circle" style="--progress: 80"></div>
+                                    </div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Skill Builder</h4>
+                                    <p>Add 10 skills to profile</p>
+                                    <div class="progress-bar-small">
+                                        <div class="progress-fill" style="width: 80%"></div>
+                                    </div>
+                                    <span class="progress-text">8/10 skills</span>
+                                </div>
+                                <div class="badge-points">+400 XP</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Locked Achievements -->
+                    <div class="achievement-category">
+                        <h3>🔐 Unlock Next</h3>
+                        <div class="badges-container">
+                            <div class="badge-card locked">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon mystery">❓</div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Community Leader</h4>
+                                    <p>Help 25 students with notes</p>
+                                    <span class="unlock-condition">🔓 Upload 10 more notes</span>
+                                </div>
+                                <div class="badge-points">+500 XP</div>
+                            </div>
+
+                            <div class="badge-card locked">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon mystery">❓</div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Tech Innovator</h4>
+                                    <p>Master 5 technical skills</p>
+                                    <span class="unlock-condition">🔓 Add 3 more tech skills</span>
+                                </div>
+                                <div class="badge-points">+750 XP</div>
+                            </div>
+
+                            <div class="badge-card locked legendary">
+                                <div class="badge-icon-wrapper">
+                                    <div class="badge-icon mystery">❓</div>
+                                    <div class="legendary-glow"></div>
+                                </div>
+                                <div class="badge-info">
+                                    <h4>Legend</h4>
+                                    <p>Reach the pinnacle of excellence</p>
+                                    <span class="unlock-condition">🔓 Reach Level 20</span>
+                                </div>
+                                <div class="badge-points legendary-points">+2000 XP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Tracking -->
+                <div class="progress-tracking">
+                    <h3>📊 Detailed Progress</h3>
+                    <div class="progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-header">
+                                <span class="progress-icon">👤</span>
+                                <span class="progress-title">Profile Completion</span>
+                                <span class="progress-percentage">85%</span>
+                            </div>
+                            <div class="animated-progress-bar">
+                                <div class="progress-fill animated" style="width: 85%"></div>
+                            </div>
+                            <div class="progress-details">
+                                <span>✅ Basic Info • ✅ Skills • ❌ Projects</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-card">
+                            <div class="progress-header">
+                                <span class="progress-icon">🧠</span>
+                                <span class="progress-title">Skill Development</span>
+                                <span class="progress-percentage">70%</span>
+                            </div>
+                            <div class="animated-progress-bar">
+                                <div class="progress-fill animated" style="width: 70%"></div>
+                            </div>
+                            <div class="progress-details">
+                                <span>7 skills mastered • 3 in progress</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-card">
+                            <div class="progress-header">
+                                <span class="progress-icon">🤝</span>
+                                <span class="progress-title">Community Engagement</span>
+                                <span class="progress-percentage">92%</span>
+                            </div>
+                            <div class="animated-progress-bar">
+                                <div class="progress-fill animated" style="width: 92%"></div>
+                            </div>
+                            <div class="progress-details">
+                                <span>Highly active • Top contributor</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-card">
+                            <div class="progress-header">
+                                <span class="progress-icon">🎯</span>
+                                <span class="progress-title">Learning Goals</span>
+                                <span class="progress-percentage">60%</span>
+                            </div>
+                            <div class="animated-progress-bar">
+                                <div class="progress-fill animated" style="width: 60%"></div>
+                            </div>
+                            <div class="progress-details">
+                                <span>3 completed • 2 in progress</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievement Stats -->
+                <div class="achievement-stats">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Achievements</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">⚡</div>
+                            <div class="stat-number">1,250</div>
+                            <div class="stat-label">Total XP</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-number">7</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-number">85%</div>
+                            <div class="stat-label">This Month</div>
                         </div>
                     </div>
                 </div>
@@ -1111,6 +1369,7 @@ $student = getStudentProfile($user['id']);
 
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/enhanced-dashboard.js"></script>
+    <script src="../assets/js/achievement-system.js"></script>
     <script src="../assets/js/ai_chat.js"></script>
 </body>
 </html>
