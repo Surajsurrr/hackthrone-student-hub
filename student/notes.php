@@ -17,8 +17,8 @@ require_once 'includes/student_auth.php';
         <!-- Header Section -->
         <div class="notes-header">
             <div class="header-content">
-                <h1>📚 Knowledge Hub</h1>
-                <p>Share and discover amazing study resources with your peers</p>
+                <h1>📚 Study Notes Hub</h1>
+                <p>Organize, share and discover study resources by topics and subjects</p>
             </div>
             <div class="stats-cards">
                 <div class="stat-card">
@@ -29,10 +29,17 @@ require_once 'includes/student_auth.php';
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">👥</div>
+                    <div class="stat-icon">🏷️</div>
                     <div class="stat-info">
-                        <span class="stat-number" id="contributors">89</span>
-                        <span class="stat-label">Contributors</span>
+                        <span class="stat-number" id="total-topics">24</span>
+                        <span class="stat-label">Topics</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="total-subjects">8</span>
+                        <span class="stat-label">Subjects</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -42,6 +49,20 @@ require_once 'includes/student_auth.php';
                         <span class="stat-label">My Notes</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Subject Categories Navigation -->
+        <div class="subject-categories">
+            <div class="categories-header">
+                <h3>📋 Browse by Subject</h3>
+                <div class="view-toggle">
+                    <button class="toggle-btn active" data-view="grid">Grid View</button>
+                    <button class="toggle-btn" data-view="list">List View</button>
+                </div>
+            </div>
+            <div class="categories-grid" id="categories-grid">
+                <!-- Categories will be loaded here -->
             </div>
         </div>
 
@@ -75,11 +96,40 @@ require_once 'includes/student_auth.php';
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="note-difficulty">📊 Difficulty Level</label>
+                                <select id="note-difficulty" required>
+                                    <option value="">Select Level</option>
+                                    <option value="Beginner">🟢 Beginner</option>
+                                    <option value="Intermediate">🟡 Intermediate</option>
+                                    <option value="Advanced">🔴 Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="note-topics">🏷️ Topics</label>
+                                <div class="topics-selector">
+                                    <select id="note-topics-select" multiple>
+                                        <!-- Topics will be loaded dynamically -->
+                                    </select>
+                                    <div class="selected-topics" id="selected-topics">
+                                        <!-- Selected topics will appear here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="note-tags">🔖 Tags</label>
+                            <input type="text" id="note-tags" placeholder="e.g., exam-prep, tutorial, examples (separate with commas)">
+                            <small class="form-hint">Add relevant tags to help others find your notes</small>
                         </div>
                         
                         <div class="form-group">
                             <label for="note-description">📋 Description</label>
-                            <textarea id="note-description" placeholder="Brief description of the content, topics covered, etc." rows="3"></textarea>
+                            <textarea id="note-description" placeholder="Brief description of the content, topics covered, key concepts, etc." rows="3"></textarea>
                         </div>
                         
                         <div class="file-upload-area">
@@ -107,7 +157,7 @@ require_once 'includes/student_auth.php';
                     <h3>🔍 Discover Notes</h3>
                     <div class="browse-controls">
                         <div class="search-box">
-                            <input type="text" id="search-notes" placeholder="Search notes...">
+                            <input type="text" id="search-notes" placeholder="Search notes, topics, or tags...">
                             <span class="search-icon">🔍</span>
                         </div>
                         <select id="filter-subject" class="filter-select">
@@ -121,12 +171,40 @@ require_once 'includes/student_auth.php';
                             <option value="History">History</option>
                             <option value="Other">Other</option>
                         </select>
+                        <select id="filter-topic" class="filter-select">
+                            <option value="">All Topics</option>
+                            <!-- Topics will be loaded dynamically -->
+                        </select>
+                        <select id="filter-difficulty" class="filter-select">
+                            <option value="">All Levels</option>
+                            <option value="Beginner">🟢 Beginner</option>
+                            <option value="Intermediate">🟡 Intermediate</option>
+                            <option value="Advanced">🔴 Advanced</option>
+                        </select>
                         <select id="sort-notes" class="filter-select">
                             <option value="newest">Newest First</option>
                             <option value="oldest">Oldest First</option>
                             <option value="popular">Most Popular</option>
                             <option value="title">Title A-Z</option>
+                            <option value="subject">By Subject</option>
                         </select>
+                    </div>
+                </div>
+                
+                <!-- Active Filters -->
+                <div class="active-filters" id="active-filters" style="display: none;">
+                    <span class="filters-label">Active Filters:</span>
+                    <div class="filters-list" id="filters-list">
+                        <!-- Active filters will appear here -->
+                    </div>
+                    <button class="clear-filters" id="clear-filters">Clear All</button>
+                </div>
+                
+                <!-- Topic Quick Filters -->
+                <div class="topic-filters">
+                    <h4>🏷️ Quick Topic Filters</h4>
+                    <div class="topic-chips" id="topic-chips">
+                        <!-- Topic chips will be loaded here -->
                     </div>
                 </div>
                 
@@ -136,32 +214,47 @@ require_once 'includes/student_auth.php';
                     <div class="featured-grid">
                         <div class="featured-card">
                             <div class="featured-badge">🏆 Top Rated</div>
-                            <h5>Advanced Algorithms</h5>
-                            <p>Comprehensive guide to complex algorithms</p>
+                            <div class="featured-topics">
+                                <span class="topic-chip">Algorithms</span>
+                                <span class="topic-chip">Advanced</span>
+                            </div>
+                            <h5>Advanced Algorithms & Complexity</h5>
+                            <p>Comprehensive guide to complex algorithms, time complexity analysis, and optimization techniques</p>
                             <div class="featured-stats">
                                 <span>👤 Dr. Smith</span>
                                 <span>⭐ 4.9</span>
                                 <span>📥 342</span>
+                                <span>🏷️ Computer Science</span>
                             </div>
                         </div>
                         <div class="featured-card">
                             <div class="featured-badge">🔥 Trending</div>
-                            <h5>Machine Learning Basics</h5>
-                            <p>Perfect introduction to ML concepts</p>
+                            <div class="featured-topics">
+                                <span class="topic-chip">Machine Learning</span>
+                                <span class="topic-chip">Beginner</span>
+                            </div>
+                            <h5>Machine Learning Fundamentals</h5>
+                            <p>Perfect introduction to ML concepts, supervised learning, and practical examples with Python</p>
                             <div class="featured-stats">
                                 <span>👤 Sarah Wilson</span>
                                 <span>⭐ 4.8</span>
                                 <span>📥 289</span>
+                                <span>🏷️ Computer Science</span>
                             </div>
                         </div>
                         <div class="featured-card">
                             <div class="featured-badge">🆕 Latest</div>
-                            <h5>React.js Complete Guide</h5>
-                            <p>From basics to advanced concepts</p>
+                            <div class="featured-topics">
+                                <span class="topic-chip">Calculus</span>
+                                <span class="topic-chip">Intermediate</span>
+                            </div>
+                            <h5>Integral Calculus Mastery</h5>
+                            <p>Comprehensive notes on integration techniques, applications, and problem-solving strategies</p>
                             <div class="featured-stats">
-                                <span>👤 Alex Chen</span>
+                                <span>👤 Prof. Johnson</span>
                                 <span>⭐ 4.7</span>
                                 <span>📥 156</span>
+                                <span>🏷️ Mathematics</span>
                             </div>
                         </div>
                     </div>
@@ -185,5 +278,6 @@ require_once 'includes/student_auth.php';
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/dashboard.js"></script>
     <script src="../assets/js/enhanced-dashboard.js"></script>
+    <script src="../assets/js/notes-organization.js"></script>
 </body>
 </html>

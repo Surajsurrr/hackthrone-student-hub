@@ -23,6 +23,9 @@ try {
     $title = trim($_POST['title'] ?? '');
     $subject = trim($_POST['subject'] ?? '');
     $description = trim($_POST['description'] ?? '');
+    $difficulty = trim($_POST['difficulty'] ?? 'Beginner');
+    $tags = trim($_POST['tags'] ?? '');
+    $topics = $_POST['topics'] ?? '[]';
 
     // Validate required fields
     if (empty($title)) {
@@ -101,8 +104,8 @@ try {
 
     // Insert note into database
     $stmt = $db->prepare("
-        INSERT INTO notes (student_id, title, description, subject, file_path, file_type, file_size, shared_with) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'all')
+        INSERT INTO notes (student_id, title, description, subject, topics, tags, difficulty_level, file_path, file_type, file_size, shared_with) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'all')
     ");
     
     $result = $stmt->execute([
@@ -110,16 +113,60 @@ try {
         $title, 
         $description, 
         $subject,
+        $topics,
+        $tags,
+        $difficulty,
         'notes/' . $fileName, 
         $fileExt, 
         $file['size']
     ]);
 
     if ($result) {
+        $noteId = $db->lastInsertId();
+        
+        // Process and save topics
+        $topicsArray = json_decode($topics, true);
+        if (is_array($topicsArray) && !empty($topicsArray)) {
+            $topicStmt = $db->prepare("INSERT INTO note_topics (note_id, topic_id) VALUES (?, ?)");
+            foreach ($topicsArray as $topic) {
+                if (isset($topic['id'])) {
+                    $topicStmt->execute([$noteId, $topic['id']]);
+                }
+            }
+        }
+        
+        // Process and save tags
+        if (!empty($tags)) {
+            $tagsArray = array_map('trim', explode(',', $tags));
+            $tagStmt = $db->prepare("INSERT IGNORE INTO tags (name) VALUES (?)");
+            $noteTagStmt = $db->prepare("INSERT INTO note_tags (note_id, tag_id) VALUES (?, ?)");
+            
+            foreach ($tagsArray as $tagName) {
+                if (!empty($tagName)) {
+                    // Insert tag if it doesn't exist
+                    $tagStmt->execute([$tagName]);
+                    
+                    // Get tag ID
+                    $getTagStmt = $db->prepare("SELECT id FROM tags WHERE name = ?");
+                    $getTagStmt->execute([$tagName]);
+                    $tag = $getTagStmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($tag) {
+                        // Link note to tag
+                        $noteTagStmt->execute([$noteId, $tag['id']]);
+                        
+                        // Update tag usage count
+                        $updateTagStmt = $db->prepare("UPDATE tags SET usage_count = usage_count + 1 WHERE id = ?");
+                        $updateTagStmt->execute([$tag['id']]);
+                    }
+                }
+            }
+        }
+        
         echo json_encode([
             'success' => true, 
-            'message' => 'Notes uploaded successfully!',
-            'note_id' => $db->lastInsertId()
+            'message' => 'Notes uploaded successfully with topics and tags!',
+            'note_id' => $noteId
         ]);
     } else {
         echo json_encode(['success' => false, 'error' => 'Failed to save note to database']);
