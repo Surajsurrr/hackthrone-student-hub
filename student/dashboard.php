@@ -1760,6 +1760,63 @@ $student = getStudentProfile($user['id']);
                 </form>
             </div>
         </div>
+
+        <!-- Change Password Modal -->
+        <div id="passwordModal" class="modal" style="display: none;">
+            <div class="modal-overlay" onclick="closePasswordModal()"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3>🔑 Change Password</h3>
+                    <button class="modal-close" onclick="closePasswordModal()">&times;</button>
+                </div>
+                <form id="passwordForm" class="reminder-form">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password *</label>
+                        <input 
+                            type="password" 
+                            id="currentPassword" 
+                            placeholder="Enter your current password" 
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password *</label>
+                        <input 
+                            type="password" 
+                            id="newPassword"
+                            placeholder="Enter new password (min. 6 characters)"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                        <small style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                            Password must be at least 6 characters long
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password *</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword"
+                            placeholder="Re-enter new password"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        >
+                    </div>
+                    <div id="passwordError" class="error-message" style="display: none; color: #dc2626; background: #fee2e2; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+                    <div id="passwordSuccess" class="success-message" style="display: none; color: #059669; background: #d1fae5; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+                            <span class="btn-icon">✓</span>
+                            <span>Change Password</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <?php include 'includes/footer.php'; ?>
@@ -1964,6 +2021,93 @@ $student = getStudentProfile($user['id']);
             
             // Refresh reminders every 5 minutes
             setInterval(loadReminders, 5 * 60 * 1000);
+        });
+
+        // Password Change Functions
+        function openPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passwordForm').reset();
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordSuccess').style.display = 'none';
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordForm').reset();
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordSuccess').style.display = 'none';
+        }
+
+        // Handle password change form submission
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            const successDiv = document.getElementById('passwordSuccess');
+            const submitBtn = document.getElementById('changePasswordBtn');
+            
+            // Hide previous messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            // Validate passwords match
+            if (newPassword !== confirmPassword) {
+                errorDiv.textContent = '❌ New passwords do not match';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Validate password length
+            if (newPassword.length < 6) {
+                errorDiv.textContent = '❌ Password must be at least 6 characters long';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Changing...</span>';
+            
+            try {
+                const response = await fetch('../api/student/changePassword.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successDiv.textContent = '✓ ' + data.message;
+                    successDiv.style.display = 'block';
+                    document.getElementById('passwordForm').reset();
+                    
+                    // Close modal after 2 seconds
+                    setTimeout(() => {
+                        closePasswordModal();
+                    }, 2000);
+                } else {
+                    errorDiv.textContent = '❌ ' + data.message;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                errorDiv.textContent = '❌ An error occurred. Please try again.';
+                errorDiv.style.display = 'block';
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span class="btn-icon">✓</span><span>Change Password</span>';
+            }
         });
 
         // Helper function to escape HTML
