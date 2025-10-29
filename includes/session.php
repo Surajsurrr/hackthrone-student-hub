@@ -17,7 +17,21 @@ ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_secure', 0); // Set to 1 for HTTPS
 ini_set('session.gc_maxlifetime', SESSION_LIFETIME);
 
-session_start();
+// Set session save path to a writable directory
+$session_save_path = sys_get_temp_dir();
+if (is_writable($session_save_path)) {
+    session_save_path($session_save_path);
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Debug session information
+if (defined('DEBUG') && DEBUG) {
+    error_log("Session started. Session ID: " . session_id());
+    error_log("Session data: " . print_r($_SESSION, true));
+}
 
 // Regenerate session ID periodically for security
 if (!isset($_SESSION['last_regeneration'])) {

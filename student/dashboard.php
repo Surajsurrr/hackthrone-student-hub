@@ -1,5 +1,4 @@
 <?php
-define('DEBUG', true);
 require_once 'includes/student_auth.php';
 $user = getCurrentUser();
 $student = getStudentProfile($user['id']);
@@ -1331,7 +1330,7 @@ $student = getStudentProfile($user['id']);
                         <div class="messages-list">
                             <div class="message-item unread">
                                 <div class="message-avatar">
-                                    <img src="../assets/images/logos/google.png" alt="Google">
+                                    <img src="../assets/images/logos/google.svg" alt="Google">
                                 </div>
                                 <div class="message-content">
                                     <div class="message-header">
@@ -1344,7 +1343,7 @@ $student = getStudentProfile($user['id']);
 
                             <div class="message-item">
                                 <div class="message-avatar">
-                                    <img src="../assets/images/logos/microsoft.png" alt="Microsoft">
+                                    <img src="../assets/images/logos/microsoft.svg" alt="Microsoft">
                                 </div>
                                 <div class="message-content">
                                     <div class="message-header">

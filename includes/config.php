@@ -9,6 +9,9 @@ define('DB_PASS', '');
 define('APP_NAME', 'LearnX');
 define('APP_URL', 'http://localhost/studenthub');
 
+// Debug configuration
+define('DEBUG', true);
+
 // File upload configuration
 define('UPLOAD_DIR', 'uploads/');
 define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB

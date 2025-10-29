@@ -24,21 +24,37 @@ function isLoggedIn() {
 // Get current user
 function getCurrentUser() {
     if (!isLoggedIn()) return null;
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    return $stmt->fetch();
+    
+    try {
+        $database = Database::getInstance();
+        $user = $database->fetchOne("SELECT * FROM users WHERE id = ?", [$_SESSION['user_id']]);
+        return $user;
+    } catch (Exception $e) {
+        error_log("Error getting current user: " . $e->getMessage());
+        return null;
+    }
 }
 
 // Check user role
 function hasRole($role) {
-    $user = getCurrentUser();
-    return $user && $user['role'] === $role;
+    try {
+        $user = getCurrentUser();
+        return $user && $user['role'] === $role;
+    } catch (Exception $e) {
+        error_log("Error checking user role: " . $e->getMessage());
+        return false;
+    }
 }
 
 // Redirect if not logged in
 function requireLogin() {
     if (!isLoggedIn()) {
+        // Debug information
+        if (defined('DEBUG') && DEBUG) {
+            error_log("User not logged in. Session data: " . print_r($_SESSION, true));
+        }
+        
+        // Simple relative redirect
         header('Location: ../login.php');
         exit;
     }
@@ -47,7 +63,15 @@ function requireLogin() {
 // Redirect if not authorized
 function requireRole($role) {
     requireLogin();
+    
     if (!hasRole($role)) {
+        // Debug information
+        if (defined('DEBUG') && DEBUG) {
+            $currentUser = getCurrentUser();
+            error_log("User role mismatch. Required: $role, Current user: " . print_r($currentUser, true));
+        }
+        
+        // Simple relative redirect
         header('Location: ../index.php');
         exit;
     }

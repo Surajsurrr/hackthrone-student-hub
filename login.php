@@ -21,33 +21,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $message = 'Please fill in all fields.';
     } else {
-        $database = Database::getInstance();
-        $user = $database->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
+        try {
+            $database = Database::getInstance();
+            $user = $database->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
 
-        if ($user && verifyPassword($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['role'] = $user['role'];
+            if ($user && verifyPassword($password, $user['password'])) {
+                // Set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['last_regeneration'] = time();
+                
+                // Debug information
+                if (defined('DEBUG')) {
+                    error_log("Login successful for user: " . $user['email'] . " with role: " . $user['role']);
+                    error_log("Session data after login: " . print_r($_SESSION, true));
+                }
 
-            // Redirect based on role
-            switch ($user['role']) {
-                case 'student':
-                    header('Location: student/dashboard.php');
-                    break;
-                case 'college':
-                    header('Location: college/dashboard.php');
-                    break;
-                case 'company':
-                    header('Location: company/dashboard.php');
-                    break;
-                case 'admin':
-                    header('Location: admin/dashboard.php');
-                    break;
-                default:
-                    header('Location: index.php');
+                // Redirect based on role
+                switch ($user['role']) {
+                    case 'student':
+                        header('Location: student/dashboard.php');
+                        break;
+                    case 'college':
+                        header('Location: college/dashboard.php');
+                        break;
+                    case 'company':
+                        header('Location: company/dashboard.php');
+                        break;
+                    case 'admin':
+                        header('Location: admin/dashboard.php');
+                        break;
+                    default:
+                        header('Location: index.php');
+                }
+                exit;
+            } else {
+                $message = 'Invalid email or password.';
+                if (defined('DEBUG')) {
+                    error_log("Login failed for email: " . $email);
+                }
             }
-            exit;
-        } else {
-            $message = 'Invalid email or password.';
+        } catch (Exception $e) {
+            $message = 'Login error. Please try again.';
+            error_log("Login error: " . $e->getMessage());
         }
     }
 }

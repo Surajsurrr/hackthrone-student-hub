@@ -5,21 +5,28 @@ header('Content-Type: application/json');
 
 if (!isLoggedIn() || !hasRole('student')) {
     jsonResponse(['error' => 'Unauthorized'], 401);
+    exit;
 }
 
-$userId = $_SESSION['user_id'];
-global $db;
+try {
+    $userId = $_SESSION['user_id'];
+    $database = Database::getInstance();
 
-// Get stats
-$opportunitiesCount = $db->fetchOne("SELECT COUNT(*) as count FROM (SELECT id FROM events WHERE status = 'active' UNION SELECT id FROM jobs WHERE status = 'active') as combined")['count'];
+    // Get stats
+    $opportunitiesCount = $database->fetchOne("SELECT COUNT(*) as count FROM (SELECT id FROM events WHERE status = 'active' UNION SELECT id FROM jobs WHERE status = 'active') as combined")['count'] ?? 0;
 
-$notesCount = $db->fetchOne("SELECT COUNT(*) as count FROM notes WHERE shared_with = 'all' OR student_id = ?", [$userId])['count'];
+    $notesCount = $database->fetchOne("SELECT COUNT(*) as count FROM notes WHERE shared_with = 'all' OR student_id = ?", [$userId])['count'] ?? 0;
 
-$aiSessionsCount = $db->fetchOne("SELECT COUNT(*) as count FROM ai_responses WHERE student_id = ?", [$userId])['count'];
+    $aiSessionsCount = $database->fetchOne("SELECT COUNT(*) as count FROM ai_responses WHERE student_id = ?", [$userId])['count'] ?? 0;
 
-jsonResponse([
-    'opportunities_count' => $opportunitiesCount,
-    'notes_count' => $notesCount,
-    'ai_sessions_count' => $aiSessionsCount
-]);
+    jsonResponse([
+        'success' => true,
+        'opportunities_count' => $opportunitiesCount,
+        'notes_count' => $notesCount,
+        'ai_sessions_count' => $aiSessionsCount
+    ]);
+} catch (Exception $e) {
+    error_log("Dashboard API error: " . $e->getMessage());
+    jsonResponse(['error' => 'Server error', 'success' => false], 500);
+}
 ?>
