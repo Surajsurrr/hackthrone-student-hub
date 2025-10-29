@@ -322,8 +322,16 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
 
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    /* Force a 2-column layout for the quick actions to create a balanced 2x2 appearance on desktop */
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
+}
+
+/* Responsive: collapse to single column on small screens */
+@media (max-width: 720px) {
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .action-card {
@@ -334,6 +342,11 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
     transition: all 0.22s ease;
     border: 1px solid rgba(255,255,255,0.03);
     text-align: center;
+    /* Make cards consistent height and layout: stack content and keep CTA aligned */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 160px;
 }
 
 .action-card:hover {
