@@ -238,7 +238,6 @@ $student = getStudentProfile($user['id']);
                     <li><a href="#events" class="nav-link" data-section="events"> Events</a></li>
                     <li><a href="#endorsements" class="nav-link" data-section="endorsements"> Endorsements</a></li>
                     <li><a href="#notes" class="nav-link" data-section="notes"> Notes</a></li>
-                    <li><a href="#upload-notes" class="nav-link" data-section="upload-notes"> Upload</a></li>
                     <li><a href="#ai-coach" class="nav-link" data-section="ai-coach"> AI Coach</a></li>
                     <li><a href="#achievements" class="nav-link" data-section="achievements"> Achievements</a></li>
                     <li><a href="#calendar" class="nav-link" data-section="calendar"> Calendar</a></li>
@@ -281,14 +280,14 @@ $student = getStudentProfile($user['id']);
                             <a href="hackathons.php" class="btn">Browse</a>
                         </div>
                         <div class="action-card">
-                            <h4>Share Notes</h4>
-                            <p>Upload and share study materials</p>
-                            <a href="#notes" class="btn nav-trigger" data-section="notes">Upload</a>
-                        </div>
-                        <div class="action-card">
                             <h4>AI Mentoring</h4>
                             <p>Get personalized career guidance</p>
                             <a href="#ai-coach" class="btn nav-trigger" data-section="ai-coach">Start Chat</a>
+                        </div>
+                        <div class="action-card">
+                            <h4>Browse Notes</h4>
+                            <p>Discover study materials</p>
+                            <a href="notes.php" class="btn">Explore</a>
                         </div>
                     </div>
                 </div>
@@ -351,89 +350,6 @@ $student = getStudentProfile($user['id']);
                 </div>
                 
                 <div class="notes-content-grid">
-                    <!-- Modern Upload Card -->
-                    <div class="upload-hero-card">
-                        <div class="upload-hero-header">
-                            <div class="upload-icon-circle">
-                                <span class="upload-icon">🚀</span>
-                            </div>
-                            <div class="upload-hero-text">
-                                <h3>Share Your Knowledge</h3>
-                                <p>Upload study materials and help your peers excel in their academic journey</p>
-                            </div>
-                        </div>
-                        
-                        <form id="upload-form" enctype="multipart/form-data" class="modern-upload-form">
-                            <div class="upload-form-grid">
-                                <div class="form-floating">
-                                    <input type="text" id="note-title" placeholder="e.g., Advanced Data Structures Notes" required>
-                                    <label for="note-title">📝 Note Title</label>
-                                    <div class="form-glow"></div>
-                                </div>
-                                
-                                <div class="form-floating">
-                                    <select id="note-subject" required>
-                                        <option value="">Choose Subject</option>
-                                        <option value="Computer Science">💻 Computer Science</option>
-                                        <option value="Mathematics">📐 Mathematics</option>
-                                        <option value="Physics">⚛️ Physics</option>
-                                        <option value="Chemistry">🧪 Chemistry</option>
-                                        <option value="Biology">🧬 Biology</option>
-                                        <option value="Engineering">⚙️ Engineering</option>
-                                        <option value="Business">💼 Business</option>
-                                        <option value="Other">📚 Other</option>
-                                    </select>
-                                    <label for="note-subject">🎯 Subject Category</label>
-                                    <div class="form-glow"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-floating full-width">
-                                <textarea id="note-description" placeholder="Describe what topics are covered, difficulty level, and any special insights..." rows="3"></textarea>
-                                <label for="note-description">📋 Description & Details</label>
-                                <div class="form-glow"></div>
-                            </div>
-                            
-                            <!-- Enhanced File Upload Zone -->
-                            <div class="file-drop-zone" id="file-drop-zone">
-                                <input type="file" id="note-file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" required hidden>
-                                <div class="drop-zone-content">
-                                    <div class="drop-zone-icon">
-                                        <span class="file-icon">📎</span>
-                                        <div class="upload-animation"></div>
-                                    </div>
-                                    <div class="drop-zone-text">
-                                        <h4>Drop your files here</h4>
-                                        <p>or <span class="browse-link">click to browse</span></p>
-                                        <small>Supports: PDF, DOC, DOCX, TXT, PPT • Max 10MB</small>
-                                    </div>
-                                </div>
-                                <div class="file-preview" id="file-preview" style="display: none;">
-                                    <div class="file-info">
-                                        <span class="file-name"></span>
-                                        <span class="file-size"></span>
-                                    </div>
-                                    <button type="button" class="remove-file" onclick="removeFile()">✕</button>
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="upload-submit-btn">
-                                <span class="btn-content">
-                                    <span class="btn-icon">🚀</span>
-                                    <span class="btn-text">Share with Community</span>
-                                </span>
-                                <div class="btn-shine"></div>
-                            </button>
-                        </form>
-                        
-                        <!-- Upload Progress -->
-                        <div class="upload-progress" id="upload-progress" style="display: none;">
-                            <div class="progress-bar">
-                                <div class="progress-fill"></div>
-                            </div>
-                            <span class="progress-text">Uploading... 0%</span>
-                        </div>
-                    </div>
                     
                     <!-- My Notes Section -->
                     <div class="notes-display-card">
@@ -564,8 +480,8 @@ $student = getStudentProfile($user['id']);
                                     <div class="achievement-glow"></div>
                                 </div>
                                 <div class="badge-info">
-                                    <h4>Knowledge Sharer</h4>
-                                    <p>Uploaded 5 study notes</p>
+                                    <h4>Knowledge Seeker</h4>
+                                    <p>Explored 10 study notes</p>
                                     <span class="earned-date">Earned 2 days ago</span>
                                 </div>
                                 <div class="badge-points">+100 XP</div>
@@ -670,7 +586,7 @@ $student = getStudentProfile($user['id']);
                                 <div class="badge-info">
                                     <h4>Community Leader</h4>
                                     <p>Help 25 students with notes</p>
-                                    <span class="unlock-condition">🔓 Upload 10 more notes</span>
+                                    <span class="unlock-condition">🔓 Engage with 15 more students</span>
                                 </div>
                                 <div class="badge-points">+500 XP</div>
                             </div>
@@ -1368,79 +1284,7 @@ $student = getStudentProfile($user['id']);
                 </div>
             </section>
 
-            <!-- Upload Notes (quick access) -->
-            <section id="upload-notes" class="dashboard-section">
-                <div class="quick-upload-hero">
-                    <div class="quick-upload-background">
-                        <div class="floating-shapes">
-                            <div class="shape shape-1"></div>
-                            <div class="shape shape-2"></div>
-                            <div class="shape shape-3"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="quick-upload-content">
-                        <div class="quick-upload-header">
-                            <h2>⚡ Quick Upload</h2>
-                            <p>Fast track to share your study materials with the community</p>
-                        </div>
-                        
-                        <div class="quick-upload-container">
-                            <form id="quick-upload-form" enctype="multipart/form-data" class="quick-form">
-                                <div class="quick-form-grid">
-                                    <div class="quick-input-group">
-                                        <div class="input-icon">📝</div>
-                                        <input type="text" id="quick-note-title" placeholder="Note title..." required>
-                                    </div>
-                                    
-                                    <div class="quick-input-group">
-                                        <div class="input-icon">🎯</div>
-                                        <select id="quick-note-subject" required>
-                                            <option value="">Subject</option>
-                                            <option value="Computer Science">💻 CS</option>
-                                            <option value="Mathematics">📐 Math</option>
-                                            <option value="Physics">⚛️ Physics</option>
-                                            <option value="Chemistry">🧪 Chemistry</option>
-                                            <option value="Biology">🧬 Biology</option>
-                                            <option value="Other">📚 Other</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="quick-file-upload">
-                                        <input type="file" id="quick-note-file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" required hidden>
-                                        <label for="quick-note-file" class="file-upload-btn">
-                                            <span class="upload-icon">📎</span>
-                                            <span class="upload-text">Choose File</span>
-                                        </label>
-                                        <span class="file-name-display" id="quick-file-name">No file selected</span>
-                                    </div>
-                                    
-                                    <button type="submit" class="quick-submit-btn">
-                                        <span class="quick-btn-icon">🚀</span>
-                                        <span>Upload Now</span>
-                                    </button>
-                                </div>
-                            </form>
-                            
-                            <!-- Quick Stats -->
-                            <div class="quick-stats">
-                                <div class="stat-item">
-                                    <span class="stat-number" id="total-uploads">0</span>
-                                    <span class="stat-label">Your Uploads</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-number" id="total-downloads">0</span>
-                                    <span class="stat-label">Downloads</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-number" id="community-rank">#-</span>
-                                    <span class="stat-label">Rank</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            
 
             <!-- Messages -->
             <section id="messages" class="dashboard-section">
@@ -1884,14 +1728,6 @@ $student = getStudentProfile($user['id']);
                             </div>
                             <div class="topic-arrow">→</div>
                         </div>
-                        <div class="topic-card" onclick="showTopic('notes-sharing')">
-                            <div class="topic-icon">📝</div>
-                            <div class="topic-content">
-                                <h4>Notes Sharing</h4>
-                                <p>Upload and share study materials</p>
-                            </div>
-                            <div class="topic-arrow">→</div>
-                        </div>
                         <div class="topic-card" onclick="showTopic('opportunities')">
                             <div class="topic-icon">💼</div>
                             <div class="topic-content">
@@ -1933,15 +1769,6 @@ $student = getStudentProfile($user['id']);
                     <div class="faq-container">
                         <div class="faq-item">
                             <div class="faq-question" onclick="toggleFAQ(this)">
-                                <span>How do I upload study notes?</span>
-                                <span class="faq-toggle">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>Go to the Notes section, click "Upload Notes", fill in the title, subject, and description, then select your file. You can also add tags to help others find your notes.</p>
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-question" onclick="toggleFAQ(this)">
                                 <span>How do I apply for internships?</span>
                                 <span class="faq-toggle">+</span>
                             </div>
@@ -1964,7 +1791,7 @@ $student = getStudentProfile($user['id']);
                                 <span class="faq-toggle">+</span>
                             </div>
                             <div class="faq-answer">
-                                <p>Achievements are earned by completing various activities like uploading notes, applying to opportunities, using the AI coach, and participating in events. Check your Achievements section to see your progress.</p>
+                                <p>Achievements are earned by completing various activities like engaging with notes, applying to opportunities, using the AI coach, and participating in events. Check your Achievements section to see your progress.</p>
                             </div>
                         </div>
                         <div class="faq-item">
