@@ -326,21 +326,98 @@ $student = getStudentProfile($user['id']);
 
             <!-- Applications (placeholder for Applications tracker) -->
             <section id="applications" class="dashboard-section">
-                <h2>🧾 Applications</h2>
-                <div class="content-grid">
-                    <div class="content-card">
+                <h2>Applications Tracker</h2>
+                <div class="applications-container">
+                    <div class="content-card applications-list-card">
                         <h3>My Applications</h3>
-                        <div id="my-applications">Loading your applications...</div>
-                        <p class="muted">Track job, internship and scholarship applications here.</p>
-                        <a href="#" class="btn" onclick="document.querySelector('.nav-link[data-section=applications]').click();return false;">Refresh</a>
+                        <div id="my-applications" class="applications-grid">
+                            <div class="application-item">
+                                <div class="app-header">
+                                    <h4>Software Engineer Intern</h4>
+                                    <span class="app-status status-applied">Applied</span>
+                                </div>
+                                <p class="app-company">Google Inc.</p>
+                                <p class="app-platform">Platform: LinkedIn</p>
+                                <small class="app-date">Applied: Oct 25, 2025</small>
+                            </div>
+                            <div class="application-item">
+                                <div class="app-header">
+                                    <h4>Data Science Intern</h4>
+                                    <span class="app-status status-in-process">In Process</span>
+                                </div>
+                                <p class="app-company">Microsoft</p>
+                                <p class="app-platform">Platform: Company Website</p>
+                                <small class="app-date">Applied: Oct 20, 2025</small>
+                            </div>
+                        </div>
+                        <p class="muted">Track your job, internship and scholarship applications</p>
+                        <button class="btn btn-secondary" onclick="loadApplications()">Refresh Applications</button>
                     </div>
-                    <div class="content-card">
-                        <h3>Add Application</h3>
-                        <form id="application-form">
-                            <div class="form-group"><label>Title</label><input id="app-title" required></div>
-                            <div class="form-group"><label>Type</label><select id="app-type"><option value="job">Job</option><option value="internship">Internship</option></select></div>
-                            <div class="form-group"><label>Company/Org</label><input id="app-org"></div>
-                            <button class="btn" type="submit">Add</button>
+                    
+                    <div class="content-card application-form-card">
+                        <h3>Add New Application</h3>
+                        <form id="application-form" class="enhanced-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="app-title">Position Title *</label>
+                                    <input type="text" id="app-title" placeholder="e.g., Software Engineer Intern" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="app-type">Application Type *</label>
+                                    <select id="app-type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="job">Full-time Job</option>
+                                        <option value="internship">Internship</option>
+                                        <option value="scholarship">Scholarship</option>
+                                        <option value="competition">Competition</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="app-org">Company/Organization *</label>
+                                    <input type="text" id="app-org" placeholder="e.g., Google Inc." required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="app-platform">Platform/Source *</label>
+                                    <select id="app-platform" required>
+                                        <option value="">Select Platform</option>
+                                        <option value="linkedin">LinkedIn</option>
+                                        <option value="indeed">Indeed</option>
+                                        <option value="glassdoor">Glassdoor</option>
+                                        <option value="company-website">Company Website</option>
+                                        <option value="naukri">Naukri.com</option>
+                                        <option value="internshala">Internshala</option>
+                                        <option value="referral">Employee Referral</option>
+                                        <option value="campus">Campus Placement</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="app-link">Application Link</label>
+                                <input type="url" id="app-link" placeholder="https://careers.company.com/job-id">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="app-location">Location</label>
+                                    <input type="text" id="app-location" placeholder="e.g., Bangalore, India">
+                                </div>
+                                <div class="form-group">
+                                    <label for="app-deadline">Application Deadline</label>
+                                    <input type="date" id="app-deadline">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="app-notes">Notes (Optional)</label>
+                                <textarea id="app-notes" placeholder="Add any additional notes about this application..." rows="3"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Add Application</button>
                         </form>
                     </div>
                 </div>

@@ -64,6 +64,12 @@ function setupEventListeners() {
         profilePicInput.addEventListener('change', handleProfilePicUpload);
     }
 
+    // Application form submission
+    const applicationForm = document.getElementById('application-form');
+    if (applicationForm) {
+        applicationForm.addEventListener('submit', handleApplicationSubmit);
+    }
+
     // AI Chat enhancement
     setupAIChat();
 }
@@ -83,6 +89,7 @@ function loadDashboardData() {
                 updateDashboardStats(data.stats);
                 loadOpportunitiesPreview();
                 loadNotesPreview();
+                loadApplications();
             }
         })
         .catch(error => console.error('Error loading dashboard data:', error));
@@ -405,6 +412,95 @@ function hideTypingIndicator() {
     if (typingIndicator) {
         typingIndicator.remove();
     }
+}
+
+function handleApplicationSubmit(e) {
+    e.preventDefault();
+    
+    const formData = {
+        title: document.getElementById('app-title').value,
+        type: document.getElementById('app-type').value,
+        company: document.getElementById('app-org').value,
+        platform: document.getElementById('app-platform').value,
+        link: document.getElementById('app-link').value,
+        location: document.getElementById('app-location').value,
+        deadline: document.getElementById('app-deadline').value,
+        notes: document.getElementById('app-notes').value
+    };
+
+    showLoading('Adding application...');
+
+    fetch('../api/student/addApplication.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        hideLoading();
+        if (response.status === 401) {
+            showNotification('Unauthorized - please login', 'error');
+            throw new Error('Unauthorized');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showNotification('Application added successfully!', 'success');
+            document.getElementById('application-form').reset();
+            loadApplications();
+        } else {
+            const msg = data.message || data.error || 'Unknown error';
+            showNotification('Error adding application: ' + msg, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Error:', error);
+        showNotification('Error adding application', 'error');
+    });
+}
+
+function loadApplications() {
+    fetch('../api/student/getApplications.php', { credentials: 'same-origin' })
+        .then(response => {
+            if (response.status === 401) {
+                console.warn('Unauthorized when loading applications');
+                return { success: false };
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                updateApplicationsList(data.applications);
+            }
+        })
+        .catch(error => console.error('Error loading applications:', error));
+}
+
+function updateApplicationsList(applications) {
+    const container = document.getElementById('my-applications');
+    if (!container) return;
+
+    if (!applications || applications.length === 0) {
+        container.innerHTML = '<p class="muted">No applications added yet. Start by adding your first application!</p>';
+        return;
+    }
+
+    container.innerHTML = applications.map(app => `
+        <div class="application-item">
+            <div class="app-header">
+                <h4>${app.title}</h4>
+                <span class="app-status status-${app.status}">${app.status.replace('_', ' ')}</span>
+            </div>
+            <p class="app-company">${app.company}</p>
+            <p class="app-platform">Platform: ${app.platform}</p>
+            ${app.location ? `<p class="app-platform">Location: ${app.location}</p>` : ''}
+            <small class="app-date">Applied: ${new Date(app.applied_at).toLocaleDateString()}</small>
+        </div>
+    `).join('');
 }
 
 function generateRecommendations() {
