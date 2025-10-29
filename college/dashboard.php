@@ -49,6 +49,14 @@ $college = getCollegeProfile($user['id']);
                         <h3>Active Events</h3>
                         <p id="active-events-count">Loading...</p>
                     </div>
+                    <div class="stat-card">
+                        <h3>Total Applications</h3>
+                        <p id="applications-count">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Applications</h3>
+                        <p id="pending-applications-count">Loading...</p>
+                    </div>
                 </div>
 
                 <!-- College Posts Section (LinkedIn-style) -->
@@ -249,7 +257,7 @@ $college = getCollegeProfile($user['id']);
                                     value="<?php echo htmlspecialchars($college['name'] ?? ''); ?>" 
                                     required
                                     placeholder="e.g., MIT College of Engineering"
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #0f172a; background: #ffffff;"
                                 >
                             </div>
                             <div class="form-group">
@@ -261,7 +269,7 @@ $college = getCollegeProfile($user['id']);
                                     id="profile-location" 
                                     value="<?php echo htmlspecialchars($college['location'] ?? ''); ?>"
                                     placeholder="e.g., Pune, Maharashtra"
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #0f172a; background: #ffffff;"
                                 >
                             </div>
                         </div>
@@ -276,7 +284,7 @@ $college = getCollegeProfile($user['id']);
                                     id="profile-website" 
                                     value="<?php echo htmlspecialchars($college['website'] ?? ''); ?>"
                                     placeholder="https://www.college.edu"
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #0f172a; background: #ffffff;"
                                 >
                             </div>
                             <div class="form-group">
@@ -288,7 +296,7 @@ $college = getCollegeProfile($user['id']);
                                     id="profile-email" 
                                     value="<?php echo htmlspecialchars($college['contact_email'] ?? ''); ?>"
                                     placeholder="info@college.edu"
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #0f172a; background: #ffffff;"
                                 >
                             </div>
                         </div>
@@ -944,10 +952,40 @@ $college = getCollegeProfile($user['id']);
             div.textContent = text;
             return div.innerHTML;
         }
+        
+        // Load statistics for overview
+        async function loadStatistics() {
+            try {
+                const response = await fetch('../api/college/getStatistics.php', {
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('events-count').textContent = data.total_events || 0;
+                    document.getElementById('active-events-count').textContent = data.active_events || 0;
+                    document.getElementById('applications-count').textContent = data.total_applications || 0;
+                    document.getElementById('pending-applications-count').textContent = data.pending_applications || 0;
+                } else {
+                    document.getElementById('events-count').textContent = '0';
+                    document.getElementById('active-events-count').textContent = '0';
+                    document.getElementById('applications-count').textContent = '0';
+                    document.getElementById('pending-applications-count').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+                document.getElementById('events-count').textContent = 'Error';
+                document.getElementById('active-events-count').textContent = 'Error';
+                document.getElementById('applications-count').textContent = 'Error';
+                document.getElementById('pending-applications-count').textContent = 'Error';
+            }
+        }
 
         // Load posts on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadPosts();
+            loadStatistics();
             
             // Section Navigation Handler
             const navLinks = document.querySelectorAll('.sidebar nav a');
@@ -985,6 +1023,11 @@ $college = getCollegeProfile($user['id']);
                     e.preventDefault();
                     const sectionId = this.getAttribute('href').substring(1);
                     showSection(sectionId);
+                    
+                    // Reload statistics when overview section is shown
+                    if (sectionId === 'overview') {
+                        loadStatistics();
+                    }
                     
                     // Load events when events section is shown
                     if (sectionId === 'events') {
