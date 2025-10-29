@@ -1567,11 +1567,225 @@ $student = getStudentProfile($user['id']);
 
             <!-- Help -->
             <section id="help" class="dashboard-section">
-                <h2>Help & FAQs</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>Quick Help</h3>
-                        <p>Find guides, FAQs and support contacts for LearnX.</p>
+                <!-- Help Hero -->
+                <div class="help-hero">
+                    <div class="hero-content">
+                        <h2>🆘 Help Center</h2>
+                        <p>Find answers, get support, and make the most of LearnX</p>
+                        <div class="help-search">
+                            <input type="text" id="help-search" placeholder="Search for help...">
+                            <button class="search-btn" onclick="searchHelp()">
+                                <span>🔍</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-label">Guides</div>
+                            <div class="stat-number">50+</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🎥</div>
+                            <div class="stat-label">Videos</div>
+                            <div class="stat-number">25+</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">💬</div>
+                            <div class="stat-label">Support</div>
+                            <div class="stat-number">24/7</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Topics -->
+                <div class="help-section">
+                    <h3>🔥 Popular Topics</h3>
+                    <div class="topics-grid">
+                        <div class="topic-card" onclick="showTopic('getting-started')">
+                            <div class="topic-icon">🚀</div>
+                            <div class="topic-content">
+                                <h4>Getting Started</h4>
+                                <p>New to LearnX? Start here</p>
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                        <div class="topic-card" onclick="showTopic('notes-sharing')">
+                            <div class="topic-icon">📝</div>
+                            <div class="topic-content">
+                                <h4>Notes Sharing</h4>
+                                <p>Upload and share study materials</p>
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                        <div class="topic-card" onclick="showTopic('opportunities')">
+                            <div class="topic-icon">💼</div>
+                            <div class="topic-content">
+                                <h4>Finding Opportunities</h4>
+                                <p>Discover internships and jobs</p>
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                        <div class="topic-card" onclick="showTopic('ai-coach')">
+                            <div class="topic-icon">🤖</div>
+                            <div class="topic-content">
+                                <h4>AI Career Coach</h4>
+                                <p>Get personalized career guidance</p>
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                        <div class="topic-card" onclick="showTopic('achievements')">
+                            <div class="topic-icon">🏆</div>
+                            <div class="topic-content">
+                                <h4>Achievements</h4>
+                                <p>Earn badges and track progress</p>
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                        <div class="topic-card" onclick="showTopic('profile')">
+                            <div class="topic-icon">👤</div>
+                            <div class="topic-content">
+                                <h4>Profile Setup</h4>
+                                <p>Complete your student profile</p>
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="help-section">
+                    <h3>❓ Frequently Asked Questions</h3>
+                    <div class="faq-container">
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I upload study notes?</span>
+                                <span class="faq-toggle">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Go to the Notes section, click "Upload Notes", fill in the title, subject, and description, then select your file. You can also add tags to help others find your notes.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I apply for internships?</span>
+                                <span class="faq-toggle">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Navigate to the Opportunities section, browse available internships, and click "Apply" on positions that interest you. Your applications will be tracked in the Applications section.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How does the AI Coach work?</span>
+                                <span class="faq-toggle">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>The AI Coach is your personal career advisor. Ask questions about resume building, interview preparation, skill development, or career planning. It's available 24/7 in the AI Coach section.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I earn achievements?</span>
+                                <span class="faq-toggle">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Achievements are earned by completing various activities like uploading notes, applying to opportunities, using the AI coach, and participating in events. Check your Achievements section to see your progress.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I update my profile?</span>
+                                <span class="faq-toggle">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Go to your Profile section or click on your name/avatar in the sidebar. You can update your personal information, upload a profile picture, and manage your preferences.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I join hackathons?</span>
+                                <span class="faq-toggle">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Visit the Hackathons page from the main navigation. Browse available hackathons, read the requirements, and register for events that match your skills and interests.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Resources -->
+                <div class="help-section">
+                    <h3>📖 Help Resources</h3>
+                    <div class="resources-grid">
+                        <div class="resource-card">
+                            <div class="resource-icon">📹</div>
+                            <div class="resource-content">
+                                <h4>Video Tutorials</h4>
+                                <p>Step-by-step video guides</p>
+                                <button class="btn btn-secondary" onclick="openVideoTutorials()">Watch Videos</button>
+                            </div>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">📋</div>
+                            <div class="resource-content">
+                                <h4>User Guides</h4>
+                                <p>Detailed written guides</p>
+                                <button class="btn btn-secondary" onclick="openUserGuides()">Read Guides</button>
+                            </div>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">💬</div>
+                            <div class="resource-content">
+                                <h4>Live Support</h4>
+                                <p>Get help from our team</p>
+                                <button class="btn btn-primary" onclick="openLiveSupport()">Contact Support</button>
+                            </div>
+                        </div>
+                        <div class="resource-card">
+                            <div class="resource-icon">📧</div>
+                            <div class="resource-content">
+                                <h4>Email Support</h4>
+                                <p>Send us an email</p>
+                                <button class="btn btn-outline" onclick="openEmailSupport()">Send Email</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="help-section contact-section">
+                    <div class="contact-card">
+                        <div class="contact-header">
+                            <h3>👋 Need More Help?</h3>
+                            <p>Our support team is here to assist you</p>
+                        </div>
+                        <div class="contact-options">
+                            <div class="contact-option">
+                                <div class="contact-icon">💬</div>
+                                <div class="contact-info">
+                                    <h4>Live Chat</h4>
+                                    <p>Available 24/7</p>
+                                    <button class="btn btn-primary" onclick="startLiveChat()">Start Chat</button>
+                                </div>
+                            </div>
+                            <div class="contact-option">
+                                <div class="contact-icon">📧</div>
+                                <div class="contact-info">
+                                    <h4>Email Support</h4>
+                                    <p>Response within 24 hours</p>
+                                    <button class="btn btn-secondary" onclick="sendSupportEmail()">Send Email</button>
+                                </div>
+                            </div>
+                            <div class="contact-option">
+                                <div class="contact-icon">📞</div>
+                                <div class="contact-info">
+                                    <h4>Phone Support</h4>
+                                    <p>Mon-Fri, 9AM-6PM</p>
+                                    <button class="btn btn-outline" onclick="callSupport()">Call Now</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
