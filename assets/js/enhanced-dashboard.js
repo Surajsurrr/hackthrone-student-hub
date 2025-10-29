@@ -70,8 +70,14 @@ function setupEventListeners() {
 
 function loadDashboardData() {
     // Load opportunities count
-    fetch('../api/student/getDashboard.php')
-        .then(response => response.json())
+    fetch('../api/student/getDashboard.php', { credentials: 'same-origin' })
+        .then(response => {
+            if (response.status === 401) {
+                showNotification('Unauthorized - please login', 'error');
+                throw new Error('Unauthorized');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 updateDashboardStats(data.stats);
@@ -115,11 +121,18 @@ function handleProfileUpdate(e) {
 
     fetch('../api/student/createProfile.php', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin'
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
         hideLoading();
+        if (response.status === 401) {
+            showNotification('Unauthorized - please login', 'error');
+            throw new Error('Unauthorized');
+        }
+        return response.json();
+    })
+    .then(data => {
         if (data.success) {
             showNotification('Profile updated successfully!', 'success');
         } else {
@@ -146,11 +159,18 @@ function handleNotesUpload(e) {
 
     fetch('../api/student/uploadNotes.php', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin'
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
         hideLoading();
+        if (response.status === 401) {
+            showNotification('Unauthorized - please login', 'error');
+            throw new Error('Unauthorized');
+        }
+        return response.json();
+    })
+    .then(data => {
         if (data.success) {
             showNotification('Notes uploaded successfully!', 'success');
             document.getElementById('upload-form').reset();
@@ -176,11 +196,18 @@ function handleProfilePicUpload(e) {
 
         fetch('../api/student/uploadProfilePic.php', {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'same-origin'
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
             hideLoading();
+            if (response.status === 401) {
+                showNotification('Unauthorized - please login', 'error');
+                throw new Error('Unauthorized');
+            }
+            return response.json();
+        })
+        .then(data => {
             if (data.success) {
                 document.getElementById('profile-image').src = data.image_url;
                 showNotification('Profile picture updated!', 'success');
@@ -197,8 +224,14 @@ function handleProfilePicUpload(e) {
 }
 
 function loadOpportunitiesPreview() {
-    fetch('../api/student/getOpportunities.php?limit=3')
-        .then(response => response.json())
+    fetch('../api/student/getOpportunities.php?limit=3', { credentials: 'same-origin' })
+        .then(response => {
+            if (response.status === 401) {
+                console.warn('Unauthorized when loading opportunities');
+                return { success: false };
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 updateOpportunitiesPreview(data.opportunities);
@@ -233,8 +266,14 @@ function updateOpportunitiesPreview(opportunities) {
 }
 
 function loadNotesPreview() {
-    fetch('../api/student/fetchNotes.php?limit=5')
-        .then(response => response.json())
+    fetch('../api/student/fetchNotes.php?limit=5', { credentials: 'same-origin' })
+        .then(response => {
+            if (response.status === 401) {
+                console.warn('Unauthorized when loading notes');
+                return { success: false };
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 updateNotesPreview(data.notes);
@@ -298,12 +337,20 @@ function sendMessage() {
         // Send to AI
         fetch('../api/student/getAIResponse.php', {
             method: 'POST',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ message: message })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401) {
+                hideTypingIndicator();
+                addMessageToChat('bot', 'Unauthorized - please login');
+                throw new Error('Unauthorized');
+            }
+            return response.json();
+        })
         .then(data => {
             hideTypingIndicator();
             if (data.success) {
@@ -362,8 +409,14 @@ function generateRecommendations() {
     const container = document.getElementById('job-recommendations');
     container.innerHTML = 'Generating personalized recommendations...';
     
-    fetch('../api/student/getJobRecommendations.php')
-        .then(response => response.json())
+    fetch('../api/student/getJobRecommendations.php', { credentials: 'same-origin' })
+        .then(response => {
+            if (response.status === 401) {
+                container.innerHTML = 'Please login to view recommendations.';
+                throw new Error('Unauthorized');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 container.innerHTML = data.recommendations.map(rec => `
