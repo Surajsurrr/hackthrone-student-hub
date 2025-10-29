@@ -2191,22 +2191,26 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
 .btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    color: white;
+    color: white !important;
+    font-weight: 600 !important;
 }
 .btn-secondary {
     background: white;
     border: 2px solid #667eea;
-    color: #667eea;
+    color: #667eea !important;
+    font-weight: 600 !important;
 }
 .btn-outline {
     background: transparent;
-    border: 2px solid #64748b;
-    color: #64748b;
+    border: 2px solid #334155;
+    color: #334155 !important;
+    font-weight: 600 !important;
 }
 .btn-danger {
     background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
     border: none;
-    color: white;
+    color: white !important;
+    font-weight: 600 !important;
 }
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -6939,6 +6943,37 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
 
 .reminder-item.completed .reminder-text {
     color: #94a3b8 !important;
+}
+
+/* ========================================
+   SETTINGS SECTION TEXT VISIBILITY FIXES
+   ======================================== */
+/* Fix settings card text */
+.settings-card .card-content h4 {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+}
+
+.settings-card .card-content p {
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+.settings-card .toggle-label {
+    color: #1e293b !important;
+    font-weight: 500 !important;
+}
+
+/* Fix all button text in settings */
+.settings-card .btn,
+.settings-section .btn {
+    font-weight: 600 !important;
+}
+
+.settings-card .btn-outline,
+.settings-section .btn-outline {
+    color: #1e293b !important;
+    border-color: #334155 !important;
 }
 
 .card-header h3 {
