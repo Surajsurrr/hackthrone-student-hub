@@ -590,6 +590,12 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
     margin-bottom: .75rem;
     font-weight: 700;
 }
+/* Force Career Opportunities to stack vertically (one card per row) */
+#opportunities .content-grid {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem;
+}
 .mini-item { padding: .5rem 0; border-bottom: 1px dashed rgba(255,255,255,0.02); color: #dbe7ff; }
 .skill-chip { display: inline-block; background: rgba(255,255,255,0.03); color: #dbe7ff; padding: .35rem .6rem; border-radius: 999px; margin: .25rem; font-weight:600; }
 .reminder-item { background: rgba(255,255,255,0.02); padding: .6rem; border-radius: 8px; margin-bottom: .5rem; }
