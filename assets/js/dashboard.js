@@ -727,3 +727,846 @@ function showAlert(message, type = 'success') {
         notification.classList.add('hidden');
     }, 4000);
 }
+
+// ============ NOTES SECTION FUNCTIONALITY ============
+
+// Initialize notes functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNotesUpload();
+    initializeViewToggle();
+    loadMyNotes();
+    loadPopularNotes();
+});
+
+// File upload functionality
+function initializeNotesUpload() {
+    const fileDropZone = document.getElementById('file-drop-zone');
+    const fileInput = document.getElementById('note-file');
+    const filePreview = document.getElementById('file-preview');
+    const uploadForm = document.getElementById('upload-form');
+
+    if (!fileDropZone || !fileInput) return;
+
+    // Click to browse files
+    fileDropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // Drag and drop functionality
+    fileDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileDropZone.classList.add('dragover');
+    });
+
+    fileDropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        fileDropZone.classList.remove('dragover');
+    });
+
+    fileDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileDropZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect(files[0]);
+        }
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+
+    // Form submission
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', handleFormSubmit);
+    }
+}
+
+// Handle file selection
+function handleFileSelect(file) {
+    const filePreview = document.getElementById('file-preview');
+    const fileDropZone = document.getElementById('file-drop-zone');
+    
+    if (!filePreview) return;
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+    
+    if (!allowedTypes.includes(file.type)) {
+        showNotification('Please select a valid file type (PDF, DOC, DOCX, TXT, PPT, PPTX)', 'error');
+        return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        showNotification('File size must be less than 10MB', 'error');
+        return;
+    }
+
+    // Show file preview
+    const fileName = file.name;
+    const fileSize = formatFileSize(file.size);
+    
+    filePreview.querySelector('.file-name').textContent = fileName;
+    filePreview.querySelector('.file-size').textContent = fileSize;
+    filePreview.style.display = 'flex';
+    
+    // Hide drop zone content
+    fileDropZone.querySelector('.drop-zone-content').style.display = 'none';
+}
+
+// Remove selected file
+function removeFile() {
+    const fileInput = document.getElementById('note-file');
+    const filePreview = document.getElementById('file-preview');
+    const fileDropZone = document.getElementById('file-drop-zone');
+    
+    if (fileInput) fileInput.value = '';
+    if (filePreview) filePreview.style.display = 'none';
+    if (fileDropZone) fileDropZone.querySelector('.drop-zone-content').style.display = 'flex';
+}
+
+// Handle form submission
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    const title = document.getElementById('note-title').value;
+    const subject = document.getElementById('note-subject').value;
+    const description = document.getElementById('note-description').value;
+    const file = document.getElementById('note-file').files[0];
+    
+    // Validation
+    if (!title || !subject || !file) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    formData.append('title', title);
+    formData.append('subject', subject);
+    formData.append('description', description);
+    formData.append('file', file);
+    
+    const progressElement = document.getElementById('upload-progress');
+    const progressFill = progressElement.querySelector('.progress-fill');
+    const progressText = progressElement.querySelector('.progress-text');
+    
+    try {
+        progressElement.style.display = 'block';
+        
+        const response = await fetch('api/student/uploadNotes.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 10;
+            progressFill.style.width = progress + '%';
+            progressText.textContent = Uploading... %;
+            
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+            }
+        }, 100);
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Note uploaded successfully!', 'success');
+            resetForm();
+            loadMyNotes(); // Reload notes
+        } else {
+            showNotification(result.message || 'Upload failed', 'error');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        showNotification('Upload failed. Please try again.', 'error');
+    } finally {
+        setTimeout(() => {
+            progressElement.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Uploading... 0%';
+        }, 1000);
+    }
+}
+
+// Reset form after successful upload
+function resetForm() {
+    document.getElementById('upload-form').reset();
+    removeFile();
+}
+
+// View toggle functionality
+function initializeViewToggle() {
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggleBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const view = btn.getAttribute('data-view');
+            toggleNotesView(view);
+        });
+    });
+}
+
+// Toggle between grid and list view
+function toggleNotesView(view) {
+    const notesContainers = document.querySelectorAll('.notes-container');
+    
+    notesContainers.forEach(container => {
+        if (view === 'list') {
+            container.classList.add('list-view');
+        } else {
+            container.classList.remove('list-view');
+        }
+    });
+}
+
+// Load user's notes
+async function loadMyNotes() {
+    const container = document.getElementById('my-notes-list');
+    if (!container) return;
+    
+    try {
+        const response = await fetch('api/student/fetchNotes.php');
+        const data = await response.json();
+        
+        if (data.success && data.notes) {
+            renderNotes(container, data.notes, true);
+        } else {
+            container.innerHTML = '<div class="empty-state"><p> No notes uploaded yet. Share your knowledge!</p></div>';
+        }
+    } catch (error) {
+        console.error('Error loading notes:', error);
+        container.innerHTML = '<div class="error-state"><p> Failed to load notes</p></div>';
+    }
+}
+
+// Load popular notes
+async function loadPopularNotes() {
+    const container = document.getElementById('popular-notes-list');
+    if (!container) return;
+    
+    try {
+        const response = await fetch('api/student/getPopularNotes.php');
+        const data = await response.json();
+        
+        if (data.success && data.notes) {
+            renderNotes(container, data.notes, false);
+        } else {
+            container.innerHTML = '<div class="empty-state"><p> No popular notes available</p></div>';
+        }
+    } catch (error) {
+        console.error('Error loading popular notes:', error);
+        container.innerHTML = '<div class="error-state"><p> Failed to load popular notes</p></div>';
+    }
+}
+
+// Render notes in container
+function renderNotes(container, notes, isOwner = false) {
+    container.innerHTML = '';
+    
+    notes.forEach(note => {
+        const noteCard = createNoteCard(note, isOwner);
+        container.appendChild(noteCard);
+    });
+}
+
+// Create note card element
+function createNoteCard(note, isOwner = false) {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    
+    const actions = isOwner ? 
+        <div class="note-actions">
+            <button class="note-action-btn" onclick="editNote()"> Edit</button>
+            <button class="note-action-btn" onclick="deleteNote()"> Delete</button>
+        </div> :
+        <div class="note-actions">
+            <button class="note-action-btn" onclick="downloadNote()"> Download</button>
+            <button class="note-action-btn" onclick="likeNote()"> Like</button>
+        </div>;
+    
+    card.innerHTML = 
+        <div class="note-header">
+            <h4 class="note-title"></h4>
+            <span class="note-subject"></span>
+        </div>
+        <p class="note-description"></p>
+        <div class="note-footer">
+            <div class="note-meta">
+                <span> </span>
+                <span> </span>
+                <span> </span>
+            </div>
+            
+        </div>
+    ;
+    
+    // Add click event to view note details
+    card.addEventListener('click', (e) => {
+        if (!e.target.closest('.note-actions')) {
+            viewNoteDetails(note);
+        }
+    });
+    
+    return card;
+}
+
+// Note actions
+function editNote(noteId) {
+    // Implement edit functionality
+    console.log('Edit note:', noteId);
+}
+
+function deleteNote(noteId) {
+    if (confirm('Are you sure you want to delete this note?')) {
+        // Implement delete functionality
+        console.log('Delete note:', noteId);
+    }
+}
+
+function downloadNote(noteId) {
+    window.open(pi/student/downloadNote.php?id=, '_blank');
+}
+
+function likeNote(noteId) {
+    // Implement like functionality
+    console.log('Like note:', noteId);
+}
+
+function viewNoteDetails(note) {
+    // Implement note details modal
+    console.log('View note details:', note);
+}
+
+// Utility functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 
+otification notification-;
+    notification.innerHTML = 
+        <span></span>
+        <button onclick="this.parentElement.remove()"></button>
+    ;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// ============ ENHANCED UPLOAD FUNCTIONALITY ============
+
+// Enhanced Quick Upload Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeQuickUpload();
+    loadUploadStats();
+});
+
+function initializeQuickUpload() {
+    const quickForm = document.getElementById('quick-upload-form');
+    const fileInput = document.getElementById('quick-note-file');
+    const fileNameDisplay = document.getElementById('quick-file-name');
+    const uploadBtn = document.querySelector('.file-upload-btn');
+    
+    if (!quickForm || !fileInput) return;
+
+    // Enhanced file selection with visual feedback
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            updateFileDisplay(file);
+            addFileValidation(file);
+        }
+    });
+
+    // Drag and drop functionality for file upload button
+    uploadBtn.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadBtn.classList.add('dragover');
+    });
+
+    uploadBtn.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadBtn.classList.remove('dragover');
+    });
+
+    uploadBtn.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadBtn.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            updateFileDisplay(files[0]);
+            addFileValidation(files[0]);
+        }
+    });
+
+    // Enhanced form submission
+    quickForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleQuickUpload();
+    });
+
+    // Real-time validation
+    addRealTimeValidation();
+}
+
+function updateFileDisplay(file) {
+    const fileNameDisplay = document.getElementById('quick-file-name');
+    const uploadText = document.querySelector('.upload-text');
+    
+    if (file) {
+        fileNameDisplay.textContent = file.name;
+        fileNameDisplay.classList.add('has-file');
+        uploadText.textContent = 'Change File';
+        
+        // Add file size and type info
+        const fileSize = formatFileSize(file.size);
+        const fileInfo = document.createElement('div');
+        fileInfo.className = 'file-info';
+        fileInfo.innerHTML = <small>   </small>;
+        
+        const existingInfo = fileNameDisplay.parentNode.querySelector('.file-info');
+        if (existingInfo) {
+            existingInfo.remove();
+        }
+        fileNameDisplay.parentNode.appendChild(fileInfo);
+    }
+}
+
+function addFileValidation(file) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    ];
+
+    let isValid = true;
+    let errorMessage = '';
+
+    if (file.size > maxSize) {
+        isValid = false;
+        errorMessage = 'File size must be less than 10MB';
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+        isValid = false;
+        errorMessage = 'File type not supported. Please use PDF, DOC, DOCX, TXT, PPT, or PPTX';
+    }
+
+    displayValidationFeedback(isValid, errorMessage);
+    return isValid;
+}
+
+function displayValidationFeedback(isValid, message) {
+    const fileUploadSection = document.querySelector('.quick-file-upload');
+    const existingFeedback = fileUploadSection.querySelector('.validation-feedback');
+    
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+
+    if (!isValid && message) {
+        const feedback = document.createElement('div');
+        feedback.className = 'validation-feedback error';
+        feedback.innerHTML = <span class="error-icon"></span> ;
+        fileUploadSection.appendChild(feedback);
+    } else if (isValid) {
+        const feedback = document.createElement('div');
+        feedback.className = 'validation-feedback success';
+        feedback.innerHTML = <span class="success-icon"></span> File ready to upload;
+        fileUploadSection.appendChild(feedback);
+    }
+}
+
+function addRealTimeValidation() {
+    const titleInput = document.getElementById('quick-note-title');
+    const subjectSelect = document.getElementById('quick-note-subject');
+
+    if (titleInput) {
+        titleInput.addEventListener('input', function() {
+            validateField(this, this.value.length >= 3, 'Title must be at least 3 characters');
+        });
+    }
+
+    if (subjectSelect) {
+        subjectSelect.addEventListener('change', function() {
+            validateField(this, this.value !== '', 'Please select a subject');
+        });
+    }
+}
+
+function validateField(field, isValid, errorMessage) {
+    const inputGroup = field.closest('.quick-input-group');
+    const existingError = inputGroup.querySelector('.field-error');
+    
+    if (existingError) {
+        existingError.remove();
+    }
+
+    if (isValid) {
+        inputGroup.classList.remove('error');
+        inputGroup.classList.add('success');
+    } else {
+        inputGroup.classList.remove('success');
+        inputGroup.classList.add('error');
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = errorMessage;
+        inputGroup.appendChild(errorDiv);
+    }
+}
+
+async function handleQuickUpload() {
+    const submitBtn = document.querySelector('.quick-submit-btn');
+    const titleInput = document.getElementById('quick-note-title');
+    const subjectSelect = document.getElementById('quick-note-subject');
+    const fileInput = document.getElementById('quick-note-file');
+
+    // Validate all fields
+    const title = titleInput.value.trim();
+    const subject = subjectSelect.value;
+    const file = fileInput.files[0];
+
+    if (!title || !subject || !file) {
+        showNotification('Please fill in all fields and select a file', 'error');
+        return;
+    }
+
+    // Show loading state
+    setUploadingState(submitBtn, true);
+
+    try {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('subject', subject);
+        formData.append('file', file);
+        formData.append('action', 'quick_upload');
+
+        const response = await fetch('../api/student/uploadNotes.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNotification('File uploaded successfully! ', 'success');
+            resetQuickUploadForm();
+            updateUploadStats();
+            
+            // Add success animation
+            submitBtn.classList.add('success-animation');
+            setTimeout(() => {
+                submitBtn.classList.remove('success-animation');
+            }, 2000);
+        } else {
+            throw new Error(result.message || 'Upload failed');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        showNotification(Upload failed: , 'error');
+    } finally {
+        setUploadingState(submitBtn, false);
+    }
+}
+
+function setUploadingState(button, isUploading) {
+    const iconSpan = button.querySelector('.quick-btn-icon');
+    const textSpan = button.querySelector('span:last-child');
+    
+    if (isUploading) {
+        button.disabled = true;
+        button.classList.add('uploading');
+        iconSpan.textContent = '';
+        textSpan.textContent = 'Uploading...';
+        
+        // Add progress animation
+        button.style.background = 'linear-gradient(90deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent1) 100%)';
+        button.style.backgroundSize = '200% 100%';
+        button.style.animation = 'uploadProgress 2s ease-in-out infinite';
+    } else {
+        button.disabled = false;
+        button.classList.remove('uploading');
+        iconSpan.textContent = '';
+        textSpan.textContent = 'Upload Now';
+        button.style.background = '';
+        button.style.animation = '';
+    }
+}
+
+function resetQuickUploadForm() {
+    const form = document.getElementById('quick-upload-form');
+    if (form) {
+        form.reset();
+        
+        const fileNameDisplay = document.getElementById('quick-file-name');
+        const uploadText = document.querySelector('.upload-text');
+        
+        if (fileNameDisplay) {
+            fileNameDisplay.textContent = 'No file selected';
+            fileNameDisplay.classList.remove('has-file');
+        }
+        
+        if (uploadText) {
+            uploadText.textContent = 'Choose File';
+        }
+        
+        // Clear validation feedback
+        document.querySelectorAll('.validation-feedback, .field-error').forEach(el => el.remove());
+        document.querySelectorAll('.quick-input-group').forEach(group => {
+            group.classList.remove('error', 'success');
+        });
+    }
+}
+
+async function loadUploadStats() {
+    try {
+        const response = await fetch('../api/student/getDashboard.php?section=upload_stats');
+        const data = await response.json();
+        
+        if (data.success && data.stats) {
+            updateStatsDisplay(data.stats);
+        }
+    } catch (error) {
+        console.error('Error loading upload stats:', error);
+    }
+}
+
+function updateUploadStats() {
+    // Increment local stats optimistically
+    const uploadsElement = document.getElementById('total-uploads');
+    if (uploadsElement) {
+        const currentCount = parseInt(uploadsElement.textContent) || 0;
+        animateNumber(uploadsElement, currentCount, currentCount + 1);
+    }
+    
+    // Reload actual stats from server
+    setTimeout(loadUploadStats, 1000);
+}
+
+function updateStatsDisplay(stats) {
+    if (stats.uploads !== undefined) {
+        const uploadsElement = document.getElementById('total-uploads');
+        if (uploadsElement) {
+            animateNumber(uploadsElement, parseInt(uploadsElement.textContent) || 0, stats.uploads);
+        }
+    }
+    
+    if (stats.downloads !== undefined) {
+        const downloadsElement = document.getElementById('total-downloads');
+        if (downloadsElement) {
+            animateNumber(downloadsElement, parseInt(downloadsElement.textContent) || 0, stats.downloads);
+        }
+    }
+    
+    if (stats.rank !== undefined) {
+        const rankElement = document.getElementById('community-rank');
+        if (rankElement) {
+            rankElement.textContent = #;
+        }
+    }
+}
+
+function animateNumber(element, start, end) {
+    const duration = 1000;
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const current = Math.floor(start + (end - start) * progress);
+        element.textContent = current;
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        }
+    }
+    
+    requestAnimationFrame(update);
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Enhanced notification system for uploads
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = upload-notification ;
+    
+    const icon = type === 'success' ? '' : type === 'error' ? '' : '?';
+    notification.innerHTML = 
+        <div class="notification-content">
+            <span class="notification-icon"></span>
+            <span class="notification-message"></span>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()"></button>
+    ;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+// CSS animations for upload progress
+const uploadStyles = 
+@keyframes uploadProgress {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.success-animation {
+    animation: successPulse 0.6s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.upload-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid var(--accent1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 10000;
+    max-width: 400px;
+}
+
+.upload-notification.show {
+    transform: translateX(0);
+}
+
+.upload-notification.success {
+    border-left-color: #10b981;
+}
+
+.upload-notification.error {
+    border-left-color: #ef4444;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.validation-feedback {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.validation-feedback.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.validation-feedback.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.field-error {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.quick-input-group.error {
+    border-color: #dc2626 !important;
+}
+
+.quick-input-group.success {
+    border-color: #16a34a !important;
+}
+
+.file-info {
+    margin-top: 0.5rem;
+    color: #6b7280;
+}
+;
+
+// Inject styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = uploadStyles;
+document.head.appendChild(styleSheet);

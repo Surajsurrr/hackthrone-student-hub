@@ -539,68 +539,6 @@ $student = getStudentProfile($user['id']);
                     </div>
                 </div>
 
-                <!-- Progress Tracking -->
-                <div class="progress-tracking">
-                    <h3>📊 Detailed Progress</h3>
-                    <div class="progress-grid">
-                        <div class="progress-card">
-                            <div class="progress-header">
-                                <span class="progress-icon">👤</span>
-                                <span class="progress-title">Profile Completion</span>
-                                <span class="progress-percentage">85%</span>
-                            </div>
-                            <div class="animated-progress-bar">
-                                <div class="progress-fill animated" style="width: 85%"></div>
-                            </div>
-                            <div class="progress-details">
-                                <span>✅ Basic Info • ✅ Skills • ❌ Projects</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-card">
-                            <div class="progress-header">
-                                <span class="progress-icon">🧠</span>
-                                <span class="progress-title">Skill Development</span>
-                                <span class="progress-percentage">70%</span>
-                            </div>
-                            <div class="animated-progress-bar">
-                                <div class="progress-fill animated" style="width: 70%"></div>
-                            </div>
-                            <div class="progress-details">
-                                <span>7 skills mastered • 3 in progress</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-card">
-                            <div class="progress-header">
-                                <span class="progress-icon">🤝</span>
-                                <span class="progress-title">Community Engagement</span>
-                                <span class="progress-percentage">92%</span>
-                            </div>
-                            <div class="animated-progress-bar">
-                                <div class="progress-fill animated" style="width: 92%"></div>
-                            </div>
-                            <div class="progress-details">
-                                <span>Highly active • Top contributor</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-card">
-                            <div class="progress-header">
-                                <span class="progress-icon">🎯</span>
-                                <span class="progress-title">Learning Goals</span>
-                                <span class="progress-percentage">60%</span>
-                            </div>
-                            <div class="animated-progress-bar">
-                                <div class="progress-fill animated" style="width: 60%"></div>
-                            </div>
-                            <div class="progress-details">
-                                <span>3 completed • 2 in progress</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Achievement Stats -->
                 <div class="achievement-stats">
                     <div class="stats-grid">
