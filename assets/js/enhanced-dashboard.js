@@ -977,3 +977,367 @@ function debounce(func, wait) {
         timeout = setTimeout(later, wait);
     };
 }
+
+// Enhanced Upload Features
+function setupEnhancedUploads() {
+    setupMainUploadForm();
+    setupQuickUploadForm();
+    setupDropZone();
+}
+
+function setupMainUploadForm() {
+    const mainForm = document.getElementById('upload-form');
+    if (!mainForm) return;
+
+    // Enhanced file input handling
+    const fileInput = document.getElementById('note-file');
+    const dropZone = document.getElementById('file-drop-zone');
+    
+    if (fileInput && dropZone) {
+        // Click to browse
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File selection
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                displayFilePreview(e.target.files[0]);
+            }
+        });
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                displayFilePreview(files[0]);
+            }
+        });
+    }
+
+    // Form submission with progress
+    mainForm.addEventListener('submit', handleMainUploadSubmit);
+}
+
+function setupQuickUploadForm() {
+    const quickForm = document.getElementById('quick-upload-form');
+    if (!quickForm) return;
+
+    // Quick file input
+    const quickFileInput = document.getElementById('quick-note-file');
+    const fileNameDisplay = document.getElementById('quick-file-name');
+    
+    if (quickFileInput && fileNameDisplay) {
+        quickFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                fileNameDisplay.textContent = fileName.length > 20 ? 
+                    fileName.substring(0, 20) + '...' : fileName;
+            } else {
+                fileNameDisplay.textContent = 'No file selected';
+            }
+        });
+    }
+
+    // Form submission
+    quickForm.addEventListener('submit', handleQuickUploadSubmit);
+}
+
+function setupDropZone() {
+    // Add floating animation to upload icon
+    const uploadIcons = document.querySelectorAll('.upload-icon');
+    uploadIcons.forEach(icon => {
+        icon.style.animation = 'float 3s ease-in-out infinite';
+    });
+}
+
+function displayFilePreview(file) {
+    const dropZone = document.getElementById('file-drop-zone');
+    const previewEl = document.getElementById('file-preview');
+    
+    if (!dropZone || !previewEl) return;
+
+    // Hide drop zone content and show preview
+    const dropZoneContent = dropZone.querySelector('.drop-zone-content');
+    if (dropZoneContent) {
+        dropZoneContent.style.display = 'none';
+    }
+
+    // Update preview info
+    const fileName = previewEl.querySelector('.file-name');
+    const fileSize = previewEl.querySelector('.file-size');
+    
+    if (fileName) fileName.textContent = file.name;
+    if (fileSize) fileSize.textContent = formatFileSize(file.size);
+    
+    previewEl.style.display = 'flex';
+}
+
+function removeFile() {
+    const fileInput = document.getElementById('note-file');
+    const dropZone = document.getElementById('file-drop-zone');
+    const previewEl = document.getElementById('file-preview');
+    
+    if (fileInput) fileInput.value = '';
+    
+    if (previewEl) previewEl.style.display = 'none';
+    
+    if (dropZone) {
+        const dropZoneContent = dropZone.querySelector('.drop-zone-content');
+        if (dropZoneContent) {
+            dropZoneContent.style.display = 'flex';
+        }
+    }
+}
+
+async function handleMainUploadSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('.upload-submit-btn');
+    const progressEl = document.getElementById('upload-progress');
+    
+    // Get form data
+    const title = document.getElementById('note-title').value.trim();
+    const subject = document.getElementById('note-subject').value;
+    const description = document.getElementById('note-description').value.trim();
+    const fileInput = document.getElementById('note-file');
+    
+    // Validation
+    if (!title || !subject || !fileInput.files[0]) {
+        if (typeof showAlert === 'function') {
+            showAlert('Please fill all required fields and select a file', 'error');
+        }
+        return;
+    }
+
+    // File size check
+    const file = fileInput.files[0];
+    if (file.size > 10 * 1024 * 1024) {
+        if (typeof showAlert === 'function') {
+            showAlert('File size must be less than 10MB', 'error');
+        }
+        return;
+    }
+
+    try {
+        // Show loading state
+        const originalContent = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <span class="btn-content">
+                <span class="btn-icon">⏳</span>
+                <span class="btn-text">Uploading...</span>
+            </span>
+        `;
+        submitBtn.disabled = true;
+
+        // Show progress bar
+        if (progressEl) {
+            progressEl.style.display = 'block';
+            animateProgress();
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('subject', subject);
+        formData.append('description', description);
+        formData.append('file', file);
+
+        // Upload with progress simulation
+        const response = await fetch('../api/student/uploadNotes.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            if (typeof showAlert === 'function') {
+                showAlert('🎉 Notes uploaded successfully!', 'success');
+            }
+            form.reset();
+            removeFile();
+            
+            // Update stats
+            updateUploadStats();
+            
+            // Refresh notes lists
+            if (typeof loadNotes === 'function') {
+                loadNotes();
+            }
+        } else {
+            if (typeof showAlert === 'function') {
+                showAlert(result.error || 'Upload failed', 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Upload failed. Please try again.', 'error');
+        }
+    } finally {
+        // Restore button
+        const originalContent = `
+            <span class="btn-content">
+                <span class="btn-icon">🚀</span>
+                <span class="btn-text">Share with Community</span>
+            </span>
+            <div class="btn-shine"></div>
+        `;
+        submitBtn.innerHTML = originalContent;
+        submitBtn.disabled = false;
+        
+        // Hide progress
+        if (progressEl) {
+            setTimeout(() => {
+                progressEl.style.display = 'none';
+            }, 1000);
+        }
+    }
+}
+
+async function handleQuickUploadSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('.quick-submit-btn');
+    
+    // Get form data
+    const title = document.getElementById('quick-note-title').value.trim();
+    const subject = document.getElementById('quick-note-subject').value;
+    const fileInput = document.getElementById('quick-note-file');
+    
+    // Validation
+    if (!title || !subject || !fileInput.files[0]) {
+        if (typeof showAlert === 'function') {
+            showAlert('Please fill all fields and select a file', 'warning');
+        }
+        return;
+    }
+
+    try {
+        // Show loading
+        const originalContent = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <span class="quick-btn-icon">⏳</span>
+            <span>Uploading...</span>
+        `;
+        submitBtn.disabled = true;
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('subject', subject);
+        formData.append('description', ''); // Quick upload doesn't have description
+        formData.append('file', fileInput.files[0]);
+
+        const response = await fetch('../api/student/uploadNotes.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            if (typeof showAlert === 'function') {
+                showAlert('⚡ Quick upload successful!', 'success');
+            }
+            form.reset();
+            document.getElementById('quick-file-name').textContent = 'No file selected';
+            
+            // Update stats
+            updateUploadStats();
+        } else {
+            if (typeof showAlert === 'function') {
+                showAlert(result.error || 'Upload failed', 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Quick upload error:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Upload failed. Please try again.', 'error');
+        }
+    } finally {
+        // Restore button
+        submitBtn.innerHTML = `
+            <span class="quick-btn-icon">🚀</span>
+            <span>Upload Now</span>
+        `;
+        submitBtn.disabled = false;
+    }
+}
+
+function animateProgress() {
+    const progressFill = document.querySelector('.progress-fill');
+    const progressText = document.querySelector('.progress-text');
+    
+    if (!progressFill || !progressText) return;
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 100) progress = 100;
+        
+        progressFill.style.width = progress + '%';
+        progressText.textContent = `Uploading... ${Math.round(progress)}%`;
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            progressText.textContent = 'Upload complete! ✅';
+        }
+    }, 200);
+}
+
+function updateUploadStats() {
+    // Update quick stats with random increments for demo
+    const totalUploads = document.getElementById('total-uploads');
+    const totalDownloads = document.getElementById('total-downloads');
+    const communityRank = document.getElementById('community-rank');
+    
+    if (totalUploads) {
+        const current = parseInt(totalUploads.textContent) || 0;
+        totalUploads.textContent = current + 1;
+    }
+    
+    if (totalDownloads) {
+        const current = parseInt(totalDownloads.textContent) || 0;
+        totalDownloads.textContent = current + Math.floor(Math.random() * 5);
+    }
+    
+    if (communityRank) {
+        const ranks = ['#1', '#2', '#3', '#5', '#8', '#12', '#20'];
+        communityRank.textContent = ranks[Math.floor(Math.random() * ranks.length)];
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Initialize enhanced uploads when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupEnhancedUploads);
+} else {
+    setupEnhancedUploads();
+}

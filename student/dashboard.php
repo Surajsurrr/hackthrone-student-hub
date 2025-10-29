@@ -182,37 +182,125 @@ $student = getStudentProfile($user['id']);
 
             <!-- Notes Section -->
             <section id="notes" class="dashboard-section">
-                <h2>Study Notes</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>📤 Upload Notes</h3>
-                        <form id="upload-form" enctype="multipart/form-data">
-                            <div class="form-group">
-                                <label for="note-title">Note Title</label>
-                                <input type="text" id="note-title" placeholder="Enter note title" required>
+                <div class="section-header">
+                    <h2>📚 Study Notes Hub</h2>
+                    <p>Share your knowledge and discover amazing study resources</p>
+                </div>
+                
+                <div class="notes-content-grid">
+                    <!-- Modern Upload Card -->
+                    <div class="upload-hero-card">
+                        <div class="upload-hero-header">
+                            <div class="upload-icon-circle">
+                                <span class="upload-icon">🚀</span>
                             </div>
-                            <div class="form-group">
-                                <label for="note-subject">Subject</label>
-                                <input type="text" id="note-subject" placeholder="e.g., Data Structures" required>
+                            <div class="upload-hero-text">
+                                <h3>Share Your Knowledge</h3>
+                                <p>Upload study materials and help your peers excel in their academic journey</p>
                             </div>
-                            <div class="form-group">
-                                <label for="note-description">Description</label>
-                                <textarea id="note-description" placeholder="Brief description of the notes"></textarea>
+                        </div>
+                        
+                        <form id="upload-form" enctype="multipart/form-data" class="modern-upload-form">
+                            <div class="upload-form-grid">
+                                <div class="form-floating">
+                                    <input type="text" id="note-title" placeholder="e.g., Advanced Data Structures Notes" required>
+                                    <label for="note-title">📝 Note Title</label>
+                                    <div class="form-glow"></div>
+                                </div>
+                                
+                                <div class="form-floating">
+                                    <select id="note-subject" required>
+                                        <option value="">Choose Subject</option>
+                                        <option value="Computer Science">💻 Computer Science</option>
+                                        <option value="Mathematics">📐 Mathematics</option>
+                                        <option value="Physics">⚛️ Physics</option>
+                                        <option value="Chemistry">🧪 Chemistry</option>
+                                        <option value="Biology">🧬 Biology</option>
+                                        <option value="Engineering">⚙️ Engineering</option>
+                                        <option value="Business">💼 Business</option>
+                                        <option value="Other">📚 Other</option>
+                                    </select>
+                                    <label for="note-subject">🎯 Subject Category</label>
+                                    <div class="form-glow"></div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="note-file">Upload File</label>
-                                <input type="file" id="note-file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" required>
+                            
+                            <div class="form-floating full-width">
+                                <textarea id="note-description" placeholder="Describe what topics are covered, difficulty level, and any special insights..." rows="3"></textarea>
+                                <label for="note-description">📋 Description & Details</label>
+                                <div class="form-glow"></div>
                             </div>
-                            <button type="submit" class="btn">Upload Notes</button>
+                            
+                            <!-- Enhanced File Upload Zone -->
+                            <div class="file-drop-zone" id="file-drop-zone">
+                                <input type="file" id="note-file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" required hidden>
+                                <div class="drop-zone-content">
+                                    <div class="drop-zone-icon">
+                                        <span class="file-icon">📎</span>
+                                        <div class="upload-animation"></div>
+                                    </div>
+                                    <div class="drop-zone-text">
+                                        <h4>Drop your files here</h4>
+                                        <p>or <span class="browse-link">click to browse</span></p>
+                                        <small>Supports: PDF, DOC, DOCX, TXT, PPT • Max 10MB</small>
+                                    </div>
+                                </div>
+                                <div class="file-preview" id="file-preview" style="display: none;">
+                                    <div class="file-info">
+                                        <span class="file-name"></span>
+                                        <span class="file-size"></span>
+                                    </div>
+                                    <button type="button" class="remove-file" onclick="removeFile()">✕</button>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="upload-submit-btn">
+                                <span class="btn-content">
+                                    <span class="btn-icon">🚀</span>
+                                    <span class="btn-text">Share with Community</span>
+                                </span>
+                                <div class="btn-shine"></div>
+                            </button>
                         </form>
+                        
+                        <!-- Upload Progress -->
+                        <div class="upload-progress" id="upload-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="progress-text">Uploading... 0%</span>
+                        </div>
                     </div>
-                    <div class="content-card">
-                        <h3>Personal Study Notes</h3>
-                        <div id="my-notes-list">Loading your notes...</div>
+                    
+                    <!-- My Notes Section -->
+                    <div class="notes-display-card">
+                        <div class="card-header">
+                            <h3>📖 My Study Materials</h3>
+                            <div class="view-toggle">
+                                <button class="toggle-btn active" data-view="grid">⊞</button>
+                                <button class="toggle-btn" data-view="list">☰</button>
+                            </div>
+                        </div>
+                        <div id="my-notes-list" class="notes-container">
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading your notes...</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="content-card">
-                        <h3>Featured Notes</h3>
-                        <div id="popular-notes-list">Loading popular notes...</div>
+                    
+                    <!-- Featured Notes Section -->
+                    <div class="notes-display-card featured-notes">
+                        <div class="card-header">
+                            <h3>⭐ Community Favorites</h3>
+                            <a href="notes.php" class="view-all-link">View All →</a>
+                        </div>
+                        <div id="popular-notes-list" class="notes-container">
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading popular notes...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -902,15 +990,74 @@ $student = getStudentProfile($user['id']);
 
             <!-- Upload Notes (quick access) -->
             <section id="upload-notes" class="dashboard-section">
-                <h2>⬆️ Upload Notes</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <form id="quick-upload-form" enctype="multipart/form-data">
-                            <div class="form-group"><label>Title</label><input id="quick-note-title"></div>
-                            <div class="form-group"><label>Subject</label><input id="quick-note-subject"></div>
-                            <div class="form-group"><label>File</label><input type="file" id="quick-note-file"></div>
-                            <button class="btn" type="submit">Upload</button>
-                        </form>
+                <div class="quick-upload-hero">
+                    <div class="quick-upload-background">
+                        <div class="floating-shapes">
+                            <div class="shape shape-1"></div>
+                            <div class="shape shape-2"></div>
+                            <div class="shape shape-3"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-upload-content">
+                        <div class="quick-upload-header">
+                            <h2>⚡ Quick Upload</h2>
+                            <p>Fast track to share your study materials with the community</p>
+                        </div>
+                        
+                        <div class="quick-upload-container">
+                            <form id="quick-upload-form" enctype="multipart/form-data" class="quick-form">
+                                <div class="quick-form-grid">
+                                    <div class="quick-input-group">
+                                        <div class="input-icon">📝</div>
+                                        <input type="text" id="quick-note-title" placeholder="Note title..." required>
+                                    </div>
+                                    
+                                    <div class="quick-input-group">
+                                        <div class="input-icon">🎯</div>
+                                        <select id="quick-note-subject" required>
+                                            <option value="">Subject</option>
+                                            <option value="Computer Science">💻 CS</option>
+                                            <option value="Mathematics">📐 Math</option>
+                                            <option value="Physics">⚛️ Physics</option>
+                                            <option value="Chemistry">🧪 Chemistry</option>
+                                            <option value="Biology">🧬 Biology</option>
+                                            <option value="Other">📚 Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="quick-file-upload">
+                                        <input type="file" id="quick-note-file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" required hidden>
+                                        <label for="quick-note-file" class="file-upload-btn">
+                                            <span class="upload-icon">📎</span>
+                                            <span class="upload-text">Choose File</span>
+                                        </label>
+                                        <span class="file-name-display" id="quick-file-name">No file selected</span>
+                                    </div>
+                                    
+                                    <button type="submit" class="quick-submit-btn">
+                                        <span class="quick-btn-icon">🚀</span>
+                                        <span>Upload Now</span>
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <!-- Quick Stats -->
+                            <div class="quick-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number" id="total-uploads">0</span>
+                                    <span class="stat-label">Your Uploads</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="total-downloads">0</span>
+                                    <span class="stat-label">Downloads</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="community-rank">#-</span>
+                                    <span class="stat-label">Rank</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
