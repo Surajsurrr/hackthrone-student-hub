@@ -20,6 +20,113 @@ $student = getStudentProfile($user['id']);
             --accent2: #3b82f6;
             --card-radius: 15px;
         }
+
+        /* Fix text visibility for all elements */
+        body, * {
+            color: inherit;
+        }
+
+        /* Override dark theme text colors for better visibility */
+        .applications-container,
+        .applications-container *,
+        .form-group,
+        .form-group *,
+        input,
+        select,
+        textarea,
+        label,
+        .filter-tab,
+        .applications-table,
+        .applications-table *,
+        .add-application-form,
+        .add-application-form *,
+        .form-section,
+        .form-section * {
+            color: #1f2937 !important;
+        }
+
+        /* Form elements styling - more comprehensive */
+        input[type="text"],
+        input[type="url"],
+        input[type="date"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        select,
+        textarea,
+        input,
+        .form-control {
+            background: white !important;
+            color: #1f2937 !important;
+            border: 2px solid #d1d5db !important;
+            padding: 0.75rem !important;
+            border-radius: 8px !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+        }
+
+        /* Ensure placeholder text is visible */
+        input::placeholder,
+        textarea::placeholder,
+        select::placeholder {
+            color: #9ca3af !important;
+            font-weight: 400 !important;
+        }
+
+        /* Form labels and text */
+        .form-label,
+        label,
+        .field-label,
+        h1, h2, h3, h4, h5, h6 {
+            color: #e6eef6 !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }
+
+        /* White background sections */
+        .add-application-form,
+        .form-section,
+        .white-section {
+            background: white !important;
+            padding: 1.5rem !important;
+            border-radius: 12px !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        .add-application-form *,
+        .form-section *,
+        .white-section * {
+            color: #1f2937 !important;
+        }
+
+        .add-application-form h1,
+        .add-application-form h2,
+        .add-application-form h3,
+        .form-section h1,
+        .form-section h2,
+        .form-section h3 {
+            color: #111827 !important;
+        }
+
+        /* Button styling */
+        .btn {
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .btn-primary {
+            background: var(--accent1) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9 !important;
+        }
         
         .applications-hero {
             background: linear-gradient(135deg, var(--accent1), var(--accent2));
@@ -112,12 +219,51 @@ $student = getStudentProfile($user['id']);
         }
         
         .applications-table th {
-            background: #f8fafc;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
+            background: #f8fafc !important;
+            padding: 1rem !important;
+            text-align: left !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            border-bottom: 2px solid #e5e7eb !important;
+        }
+
+        /* Ensure table column headers are visible */
+        .applications-table thead th,
+        .table-header,
+        .column-header {
+            color: #111827 !important;
+            font-weight: 700 !important;
+            background: #f9fafb !important;
+        }
+
+        /* Application cards or items */
+        .application-card,
+        .application-item {
+            background: white !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 8px !important;
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .application-card *,
+        .application-item * {
+            color: #1f2937 !important;
+        }
+
+        /* Any dropdown or select options */
+        option {
+            color: #1f2937 !important;
+            background: white !important;
+        }
+
+        /* Focus states for better visibility */
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid var(--accent1) !important;
+            border-color: var(--accent1) !important;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1) !important;
         }
         
         .applications-table td {
@@ -134,6 +280,60 @@ $student = getStudentProfile($user['id']);
         .applications-table td strong {
             color: #111827;
             font-weight: 600;
+        }
+
+        /* Ensure all card content is visible */
+        .stat-card,
+        .stat-card * {
+            color: #1f2937 !important;
+        }
+
+        .stat-number {
+            color: var(--accent1) !important;
+        }
+
+        .stat-label {
+            color: #6b7280 !important;
+        }
+
+        /* Application item styling */
+        .application-item,
+        .application-item * {
+            color: #1f2937 !important;
+        }
+
+        .application-title {
+            color: #111827 !important;
+            font-weight: 600 !important;
+        }
+
+        .application-company {
+            color: #374151 !important;
+        }
+
+        .application-platform,
+        .application-date {
+            color: #6b7280 !important;
+        }
+
+        /* Status badges - keep colored backgrounds with white text */
+        .status-badge {
+            color: white !important;
+        }
+
+        /* Form sections if they exist */
+        .form-section,
+        .add-application-form {
+            background: white !important;
+            padding: 1.5rem !important;
+            border-radius: 12px !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        .form-section h3,
+        .form-section h2 {
+            color: #111827 !important;
+            margin-bottom: 1rem !important;
         }
         
         .status-badge {

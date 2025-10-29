@@ -14,6 +14,90 @@ $student = getStudentProfile($user['id']);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Fix form text visibility in application form */
+        .application-form-card input[type="text"],
+        .application-form-card input[type="url"],
+        .application-form-card input[type="date"],
+        .application-form-card select,
+        .application-form-card textarea {
+            background: white !important;
+            color: #1f2937 !important;
+            border: 2px solid #d1d5db !important;
+            padding: 0.75rem !important;
+            border-radius: 8px !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+        }
+
+        .application-form-card input::placeholder,
+        .application-form-card textarea::placeholder {
+            color: #9ca3af !important;
+            font-weight: 400 !important;
+        }
+
+        .application-form-card label {
+            color: #e6eef6 !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }
+
+        .application-form-card option {
+            color: #1f2937 !important;
+            background: white !important;
+        }
+
+        .application-form-card select option {
+            color: #1f2937 !important;
+            background: white !important;
+        }
+
+        /* Focus states */
+        .application-form-card input:focus,
+        .application-form-card select:focus,
+        .application-form-card textarea:focus {
+            outline: 2px solid var(--accent1) !important;
+            border-color: var(--accent1) !important;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1) !important;
+        }
+
+        /* Ensure form title is visible */
+        .application-form-card h3 {
+            color: #e6eef6 !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        /* Enhanced form styling */
+        .enhanced-form .form-group {
+            margin-bottom: 1rem !important;
+        }
+
+        .enhanced-form .form-row {
+            display: flex !important;
+            gap: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .enhanced-form .form-row .form-group {
+            flex: 1 !important;
+        }
+
+        /* Button styling for form */
+        .application-form-card .btn {
+            background: var(--accent1) !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+        }
+
+        .application-form-card .btn:hover {
+            background: #6d28d9 !important;
+        }
+    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
