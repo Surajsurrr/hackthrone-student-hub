@@ -338,63 +338,90 @@ $college = getCollegeProfile($user['id']);
 
             <section id="settings" class="dashboard-section">
                 <h2>⚙️ Settings</h2>
-                <div class="settings-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <h3 style="margin-top: 0; color: #1e293b;">Account Settings</h3>
-                    <p style="color: #64748b; margin-bottom: 2rem;">Manage your account preferences and security settings</p>
-                    
-                    <div class="settings-section" style="padding: 1.5rem; background: #f8fafc; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="margin: 0 0 0.5rem 0; color: #1e293b;">Account Information</h4>
-                        <p style="color: #64748b; font-size: 0.9rem; margin: 0;">
-                            <strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?><br>
-                            <strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?><br>
-                            <strong>Role:</strong> College<br>
-                            <strong>Member Since:</strong> <?php echo date('F Y', strtotime($user['created_at'])); ?>
-                        </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Account Information Card -->
+                    <div class="settings-card" style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #7c3aed, #3b82f6); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                👤
+                            </div>
+                            <div>
+                                <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">Account Information</h3>
+                                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.875rem;">Your profile details</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="padding: 1rem; background: #f8fafc; border-radius: 10px; border-left: 4px solid #7c3aed;">
+                                <div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Username</div>
+                                <div style="color: #0f172a; font-weight: 600; font-size: 1rem;"><?php echo htmlspecialchars($user['username']); ?></div>
+                            </div>
+                            
+                            <div style="padding: 1rem; background: #f8fafc; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                                <div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Email</div>
+                                <div style="color: #0f172a; font-weight: 600; font-size: 1rem;"><?php echo htmlspecialchars($user['email']); ?></div>
+                            </div>
+                            
+                            <div style="padding: 1rem; background: #f8fafc; border-radius: 10px; border-left: 4px solid #10b981;">
+                                <div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Role</div>
+                                <div style="color: #0f172a; font-weight: 600; font-size: 1rem;">College</div>
+                            </div>
+                            
+                            <div style="padding: 1rem; background: #f8fafc; border-radius: 10px; border-left: 4px solid #f59e0b;">
+                                <div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Member Since</div>
+                                <div style="color: #0f172a; font-weight: 600; font-size: 1rem;"><?php echo date('F Y', strtotime($user['created_at'])); ?></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="settings-section" style="padding: 1.5rem; background: #f8fafc; border-radius: 8px;">
-                        <h4 style="margin: 0 0 1rem 0; color: #1e293b;">Change Password</h4>
-                        <form id="change-password-form">
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label for="current-password" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">
-                                    Current Password
-                                </label>
-                                <input 
-                                    type="password" 
-                                    id="current-password" 
-                                    required
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
-                                >
+                    <!-- Security Settings Card -->
+                    <div class="settings-card" style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                🔐
                             </div>
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label for="new-password" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">
-                                    New Password
-                                </label>
-                                <input 
-                                    type="password" 
-                                    id="new-password" 
-                                    required
-                                    minlength="6"
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
-                                >
+                            <div>
+                                <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">Security Settings</h3>
+                                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.875rem;">Manage your password and security</p>
                             </div>
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label for="confirm-password" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">
-                                    Confirm New Password
-                                </label>
-                                <input 
-                                    type="password" 
-                                    id="confirm-password" 
-                                    required
-                                    minlength="6"
-                                    style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
-                                >
+                        </div>
+                        
+                        <div style="padding: 1.5rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="font-size: 1.5rem;">⚠️</div>
+                                <div>
+                                    <div style="color: #92400e; font-weight: 600; margin-bottom: 0.25rem;">Security Recommendation</div>
+                                    <div style="color: #78350f; font-size: 0.875rem; line-height: 1.5;">Use a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.</div>
+                                </div>
                             </div>
-                            <div id="password-message" style="display: none; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;"></div>
-                            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
-                                🔒 Update Password
-                            </button>
-                        </form>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <a href="change_password.php" style="text-decoration: none; display: block; padding: 1.25rem; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-radius: 12px; text-align: center; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    🔒 Change Password
+                                </span>
+                            </a>
+                            
+                            <div style="padding: 1rem; background: #f1f5f9; border-radius: 10px; text-align: center;">
+                                <div style="color: #475569; font-size: 0.875rem;">
+                                    Last password change: 
+                                    <strong style="color: #0f172a;">Never</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; padding: 1.25rem; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                <div style="color: #64748b; font-size: 0.875rem; font-weight: 600;">🛡️ Security Tips</div>
+                            </div>
+                            <ul style="margin: 0; padding-left: 1.25rem; color: #64748b; font-size: 0.875rem; line-height: 1.8;">
+                                <li>Change your password regularly</li>
+                                <li>Never share your password with anyone</li>
+                                <li>Use unique passwords for different accounts</li>
+                                <li>Enable two-factor authentication when available</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
