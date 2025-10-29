@@ -2325,6 +2325,19 @@ $student = getStudentProfile($user['id']);
                         <h3>${post.title}</h3>
                         <p>${post.content}</p>
                         ${post.image_url ? `<img src="${post.image_url}" alt="Post image" class="post-image" onerror="this.style.display='none'">` : ''}
+                        
+                        ${post.document_url ? `
+                            <div class="post-document" style="padding: 1rem; background: #f1f5f9; border-radius: 8px; margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 2rem;">📄</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: #1e293b; margin-bottom: 0.25rem;">${post.document_name || 'Document'}</div>
+                                    <div style="font-size: 0.85rem; color: #64748b;">Click to download</div>
+                                </div>
+                                <a href="${post.document_url}" download style="padding: 0.5rem 1rem; background: #3b82f6; color: white; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">
+                                    ⬇️ Download
+                                </a>
+                            </div>
+                        ` : ''}
                     </div>
                     
                     <div class="post-time">

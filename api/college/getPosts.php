@@ -32,7 +32,9 @@ try {
             category, 
             title, 
             content, 
-            image_url, 
+            image_url,
+            document_url,
+            document_name,
             status, 
             created_at, 
             updated_at

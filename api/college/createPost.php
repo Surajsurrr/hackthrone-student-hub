@@ -26,6 +26,8 @@ $category = $input['category'];
 $title = trim($input['title']);
 $content = trim($input['content']);
 $image_url = isset($input['image_url']) && !empty($input['image_url']) ? trim($input['image_url']) : null;
+$document_url = isset($input['document_url']) && !empty($input['document_url']) ? trim($input['document_url']) : null;
+$document_name = isset($input['document_name']) && !empty($input['document_name']) ? trim($input['document_name']) : null;
 
 // Validate category
 $allowed_categories = ['research', 'achievement', 'event', 'placement', 'campus-life', 'announcement', 'facilities', 'collaboration'];
@@ -62,10 +64,10 @@ try {
     
     // Insert post
     $stmt = $pdo->prepare("
-        INSERT INTO college_posts (college_id, category, title, content, image_url, status, created_at, updated_at) 
-        VALUES (?, ?, ?, ?, ?, 'published', NOW(), NOW())
+        INSERT INTO college_posts (college_id, category, title, content, image_url, document_url, document_name, status, created_at, updated_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'published', NOW(), NOW())
     ");
-    $stmt->execute([$college['id'], $category, $title, $content, $image_url]);
+    $stmt->execute([$college['id'], $category, $title, $content, $image_url, $document_url, $document_name]);
     
     $post_id = $pdo->lastInsertId();
     

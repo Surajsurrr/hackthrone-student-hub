@@ -20,6 +20,8 @@ try {
             cp.title,
             cp.content,
             cp.image_url,
+            cp.document_url,
+            cp.document_name,
             cp.created_at,
             c.name as college_name,
             c.logo as college_logo,
