@@ -1,5 +1,7 @@
 <?php
-require_once '../../includes/functions.php';
+// Start session first so functions that rely on $_SESSION work correctly
+require_once __DIR__ . '/../../includes/session.php';
+require_once __DIR__ . '/../../includes/functions.php';
 
 header('Content-Type: application/json');
 
