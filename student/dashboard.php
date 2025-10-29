@@ -36,7 +36,7 @@ $student = getStudentProfile($user['id']);
                     <li><a href="#profile" class="nav-link" data-section="profile"> Profile</a></li>
                     <li><a href="#opportunities" class="nav-link" data-section="opportunities"> Opportunities</a></li>
                     <li><a href="#applications" class="nav-link" data-section="applications"> Applications</a></li>
-                    <li><a href="#skills" class="nav-link" data-section="skills"> Skills</a></li>
+                    <li><a href="#events" class="nav-link" data-section="events"> Events</a></li>
                     <li><a href="#endorsements" class="nav-link" data-section="endorsements"> Endorsements</a></li>
                     <li><a href="#notes" class="nav-link" data-section="notes"> Notes</a></li>
                     <li><a href="#upload-notes" class="nav-link" data-section="upload-notes"> Upload</a></li>
@@ -345,17 +345,17 @@ $student = getStudentProfile($user['id']);
                 </div>
             </section>
 
-            <!-- Skills -->
-            <section id="skills" class="dashboard-section">
-                <h2>💪 Skills</h2>
+            <!-- Events -->
+            <section id="events" class="dashboard-section">
+                <h2>Events</h2>
                 <div class="content-grid">
                     <div class="content-card">
-                        <h3>Your Skills</h3>
-                        <div id="user-skills">Loading skills...</div>
+                        <h3>Upcoming Events</h3>
+                        <div id="upcoming-events">Loading events...</div>
                     </div>
                     <div class="content-card">
-                        <h3>Add Skill</h3>
-                        <form id="skill-form"><div class="form-group"><label>Skill Name</label><input id="skill-name"></div><button class="btn" type="submit">Add Skill</button></form>
+                        <h3>Registered Events</h3>
+                        <div id="registered-events">Loading registered events...</div>
                     </div>
                 </div>
             </section>
