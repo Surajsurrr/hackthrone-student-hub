@@ -91,13 +91,16 @@ function setupEventListeners() {
         });
     });
 
-    // Endorsement form submission
+    // Endorsement form submission - DISABLED (now handled in dashboard.php)
+    /*
     const endorsementForm = document.getElementById('endorsement-form');
     if (endorsementForm) {
         endorsementForm.addEventListener('submit', handleEndorsementSubmit);
     }
+    */
 
-    // Character counter for endorsement message
+    // Character counter for endorsement message - DISABLED (now handled in dashboard.php)
+    /*
     const endorsementMessage = document.getElementById('endorsement-message');
     const charCount = document.getElementById('char-count');
     if (endorsementMessage && charCount) {
@@ -114,12 +117,15 @@ function setupEventListeners() {
             }
         });
     }
+    */
 
-    // Endorsee search functionality
+    // Endorsee search functionality - DISABLED (now handled in dashboard.php)
+    /*
     const endorseeSearch = document.getElementById('endorsee-search');
     if (endorseeSearch) {
         endorseeSearch.addEventListener('input', debounce(searchEndorsees, 300));
     }
+    */
 
     // AI Chat enhancement
     setupAIChat();
@@ -353,23 +359,31 @@ function updateNotesPreview(notes) {
     const popularNotesContainer = document.getElementById('popular-notes-list');
 
     if (myNotesContainer) {
-        myNotesContainer.innerHTML = notes.my_notes.map(note => `
-            <div class="note-item">
-                <h4>${note.title}</h4>
-                <p>${note.subject}</p>
-                <small>Uploaded: ${new Date(note.created_at).toLocaleDateString()}</small>
-            </div>
-        `).join('') || '<p>No notes uploaded yet.</p>';
+        if (notes && notes.my_notes && Array.isArray(notes.my_notes) && notes.my_notes.length > 0) {
+            myNotesContainer.innerHTML = notes.my_notes.map(note => `
+                <div class="note-item">
+                    <h4>${note.title || 'Untitled'}</h4>
+                    <p>${note.subject || 'No subject'}</p>
+                    <small>Uploaded: ${new Date(note.created_at).toLocaleDateString()}</small>
+                </div>
+            `).join('');
+        } else {
+            myNotesContainer.innerHTML = '<p>No notes uploaded yet.</p>';
+        }
     }
 
     if (popularNotesContainer) {
-        popularNotesContainer.innerHTML = notes.popular_notes.map(note => `
-            <div class="note-item">
-                <h4>${note.title}</h4>
-                <p>${note.subject}</p>
-                <small>By: ${note.uploader}</small>
-            </div>
-        `).join('') || '<p>No popular notes available.</p>';
+        if (notes && notes.popular_notes && Array.isArray(notes.popular_notes) && notes.popular_notes.length > 0) {
+            popularNotesContainer.innerHTML = notes.popular_notes.map(note => `
+                <div class="note-item">
+                    <h4>${note.title || 'Untitled'}</h4>
+                    <p>${note.subject || 'No subject'}</p>
+                    <small>By: ${note.uploader || 'Unknown'}</small>
+                </div>
+            `).join('');
+        } else {
+            popularNotesContainer.innerHTML = '<p>No popular notes available.</p>';
+        }
     }
 }
 
@@ -845,7 +859,12 @@ async function handleEndorsementSubmit(e) {
 
     try {
         // Show loading state
-        const submitBtn = e.target.querySelector('.submit-btn');
+        const submitBtn = e.target.querySelector('.submit-btn') || e.target.querySelector('button[type="submit"]');
+        if (!submitBtn) {
+            console.error('Submit button not found');
+            return;
+        }
+        
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Submitting...';
         submitBtn.disabled = true;
@@ -867,28 +886,36 @@ async function handleEndorsementSubmit(e) {
             
             // Reset form
             e.target.reset();
-            document.getElementById('char-count').textContent = '0';
+            const charCount = document.getElementById('char-count');
+            if (charCount) {
+                charCount.textContent = '0';
+            }
         } else {
             showNotification(result.message || 'Failed to submit endorsement', 'error');
         }
         
         // Restore button
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+        if (submitBtn) {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
         
     } catch (error) {
         console.error('Error submitting endorsement:', error);
         showNotification('Failed to submit endorsement. Please try again.', 'error');
         
         // Restore button on error
-        const submitBtn = e.target.querySelector('.submit-btn');
-        submitBtn.textContent = 'Submit Endorsement';
-        submitBtn.disabled = false;
+        const submitBtn = e.target.querySelector('.submit-btn') || e.target.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.textContent = 'Submit Endorsement';
+            submitBtn.disabled = false;
+        }
     }
 }
 
 async function searchEndorsees(query) {
-    if (query.length < 2) {
+    // Ensure query is a string
+    if (typeof query !== 'string' || query.length < 2) {
         clearSearchResults();
         return;
     }

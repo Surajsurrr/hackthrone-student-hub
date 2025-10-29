@@ -1102,7 +1102,7 @@ $student = getStudentProfile($user['id']);
                         <div class="content-card skills-endorsements-card">
                             <div class="card-header">
                                 <h3>My Skills & Endorsements</h3>
-                                <button class="btn btn-outline btn-small">Manage Skills</button>
+                                <a href="manage_skills.php" class="btn btn-outline btn-small">Manage Skills</a>
                             </div>
                             
                             <div class="skills-grid">
@@ -2070,5 +2070,290 @@ $student = getStudentProfile($user['id']);
     <script src="../assets/js/enhanced-dashboard.js"></script>
     <script src="../assets/js/achievement-system.js"></script>
     <script src="../assets/js/ai_chat.js"></script>
+    
+    <script>
+        // Endorsement Form Functionality
+        let selectedStudentId = null;
+        
+        // Character counter for endorsement message
+        const endorsementMessage = document.getElementById('endorsement-message');
+        const charCount = document.getElementById('char-count');
+        
+        if (endorsementMessage && charCount) {
+            endorsementMessage.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count;
+                
+                if (count > 500) {
+                    charCount.style.color = '#f44336';
+                } else {
+                    charCount.style.color = 'var(--text-secondary)';
+                }
+            });
+        }
+        
+        // Search students
+        const endorseeSearch = document.getElementById('endorsee-search');
+        const endorseeResults = document.getElementById('endorsee-results');
+        let searchTimeout;
+        
+        if (endorseeSearch) {
+            endorseeSearch.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchTerm = this.value.trim();
+                
+                if (searchTerm.length < 2) {
+                    endorseeResults.innerHTML = '';
+                    endorseeResults.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    searchStudents(searchTerm);
+                }, 300);
+            });
+        }
+        
+        async function searchStudents(searchTerm) {
+            try {
+                const response = await fetch(`../api/student/searchStudents.php?search=${encodeURIComponent(searchTerm)}`);
+                const result = await response.json();
+                
+                if (result.success && result.students.length > 0) {
+                    displaySearchResults(result.students);
+                } else {
+                    endorseeResults.innerHTML = '<div class="search-result-item" style="padding: 1rem; color: var(--text-secondary);">No students found</div>';
+                    endorseeResults.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error searching students:', error);
+            }
+        }
+        
+        function displaySearchResults(students) {
+            endorseeResults.innerHTML = students.map(student => `
+                <div class="search-result-item" onclick="selectStudent(${student.id}, '${escapeHtml(student.name)}')">
+                    <div class="student-info">
+                        <div class="student-name">${escapeHtml(student.name)}</div>
+                        <div class="student-details">${escapeHtml(student.college)} • ${escapeHtml(student.course)}</div>
+                    </div>
+                </div>
+            `).join('');
+            endorseeResults.style.display = 'block';
+        }
+        
+        async function selectStudent(studentId, studentName) {
+            selectedStudentId = studentId;
+            endorseeSearch.value = studentName;
+            endorseeResults.style.display = 'none';
+            
+            // Load student's skills
+            try {
+                const response = await fetch(`../api/student/getStudentSkills.php?student_id=${studentId}`);
+                const result = await response.json();
+                
+                if (result.success && result.skills.length > 0) {
+                    updateSkillDropdown(result.skills);
+                } else {
+                    updateSkillDropdown([]);
+                    showNotification('This student has no skills to endorse', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+            }
+        }
+        
+        function updateSkillDropdown(skills) {
+            const skillSelect = document.getElementById('skill-select');
+            
+            if (skills.length === 0) {
+                skillSelect.innerHTML = '<option value="">No skills available</option>';
+                skillSelect.disabled = true;
+                return;
+            }
+            
+            skillSelect.disabled = false;
+            skillSelect.innerHTML = '<option value="">Choose a skill...</option>' + 
+                skills.map(skill => `<option value="${escapeHtml(skill)}">${escapeHtml(skill)}</option>`).join('');
+        }
+        
+        // Submit endorsement
+        const endorsementForm = document.getElementById('endorsement-form');
+        
+        if (endorsementForm) {
+            endorsementForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!selectedStudentId) {
+                    showNotification('Please select a student', 'error');
+                    return;
+                }
+                
+                const skill = document.getElementById('skill-select').value;
+                const message = endorsementMessage.value.trim();
+                
+                if (!skill || !message) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                if (message.length > 500) {
+                    showNotification('Message is too long (max 500 characters)', 'error');
+                    return;
+                }
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('endorsed_id', selectedStudentId);
+                    formData.append('skill_name', skill);
+                    formData.append('message', message);
+                    
+                    const response = await fetch('../api/student/sendEndorsement.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Endorsement sent successfully! 🌟', 'success');
+                        endorsementForm.reset();
+                        selectedStudentId = null;
+                        charCount.textContent = '0';
+                        document.getElementById('skill-select').disabled = true;
+                        document.getElementById('skill-select').innerHTML = '<option value="">Choose a skill...</option>';
+                    } else {
+                        showNotification(result.message || 'Failed to send endorsement', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error sending endorsement:', error);
+                    showNotification('An error occurred', 'error');
+                }
+            });
+        }
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (endorseeSearch && endorseeResults && !endorseeSearch.contains(e.target) && !endorseeResults.contains(e.target)) {
+                endorseeResults.style.display = 'none';
+            }
+        });
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = '#4caf50';
+            } else if (type === 'error') {
+                notification.style.background = '#f44336';
+            }
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+    
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .search-input-container {
+            position: relative;
+        }
+        
+        .search-results {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .search-result-item {
+            padding: 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result-item:hover {
+            background: var(--card-hover);
+        }
+        
+        .student-name {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .student-details {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .character-count {
+            text-align: right;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+    </style>
 </body>
 </html>
