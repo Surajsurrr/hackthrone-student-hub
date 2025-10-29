@@ -241,7 +241,6 @@ $student = getStudentProfile($user['id']);
                     <li><a href="#ai-coach" class="nav-link" data-section="ai-coach"> AI Coach</a></li>
                     <li><a href="#achievements" class="nav-link" data-section="achievements"> Achievements</a></li>
                     <li><a href="#calendar" class="nav-link" data-section="calendar"> Calendar</a></li>
-                    <li><a href="#messages" class="nav-link" data-section="messages"> Messages</a></li>
                     <li><a href="#settings" class="nav-link" data-section="settings"> Settings</a></li>
                     <li><a href="#help" class="nav-link" data-section="help"> Help</a></li>
                 </ul>
@@ -1286,153 +1285,6 @@ $student = getStudentProfile($user['id']);
 
             
 
-            <!-- Messages -->
-            <section id="messages" class="dashboard-section">
-                <div class="messages-hero">
-                    <div class="hero-content">
-                        <h2>✉️ Messages & Communication</h2>
-                        <p>Stay connected with colleges, companies, and fellow students</p>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-icon">📨</div>
-                            <div class="stat-number">3</div>
-                            <div class="stat-label">Unread</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">💬</div>
-                            <div class="stat-number">12</div>
-                            <div class="stat-label">Conversations</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">⏰</div>
-                            <div class="stat-number">2h</div>
-                            <div class="stat-label">Avg Response</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="messages-grid">
-                    <!-- Inbox -->
-                    <div class="messages-sidebar">
-                        <div class="messages-nav">
-                            <button class="nav-btn active" onclick="showInbox()">
-                                <span class="nav-icon">📥</span>
-                                <span class="nav-text">Inbox</span>
-                                <span class="nav-badge">3</span>
-                            </button>
-                            <button class="nav-btn" onclick="showSent()">
-                                <span class="nav-icon">📤</span>
-                                <span class="nav-text">Sent</span>
-                            </button>
-                            <button class="nav-btn" onclick="showDrafts()">
-                                <span class="nav-icon">📝</span>
-                                <span class="nav-text">Drafts</span>
-                                <span class="nav-badge">1</span>
-                            </button>
-                            <button class="nav-btn" onclick="showArchived()">
-                                <span class="nav-icon">📦</span>
-                                <span class="nav-text">Archived</span>
-                            </button>
-                        </div>
-
-                        <div class="messages-list">
-                            <div class="message-item unread">
-                                <div class="message-avatar">
-                                    <img src="../assets/images/logos/google.svg" alt="Google">
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <span class="message-sender">Google Recruitment</span>
-                                        <span class="message-time">2h ago</span>
-                                    </div>
-                                    <div class="message-preview">Your application for Software Engineer Intern position...</div>
-                                </div>
-                            </div>
-
-                            <div class="message-item">
-                                <div class="message-avatar">
-                                    <img src="../assets/images/logos/microsoft.svg" alt="Microsoft">
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <span class="message-sender">Microsoft Careers</span>
-                                        <span class="message-time">1d ago</span>
-                                    </div>
-                                    <div class="message-preview">Thank you for your interest in our Data Science...</div>
-                                </div>
-                            </div>
-
-                            <div class="message-item unread">
-                                <div class="message-avatar">
-                                    <span class="avatar-text">CU</span>
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <span class="message-sender">Chandigarh University</span>
-                                        <span class="message-time">3h ago</span>
-                                    </div>
-                                    <div class="message-preview">Placement drive information for CSE students...</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Message View -->
-                    <div class="message-view">
-                        <div class="message-view-header">
-                            <div class="message-info">
-                                <h3>Google Recruitment</h3>
-                                <p>Software Engineer Intern Application Update</p>
-                            </div>
-                            <div class="message-actions">
-                                <button class="btn btn-secondary btn-sm">Reply</button>
-                                <button class="btn btn-secondary btn-sm">Forward</button>
-                                <button class="btn btn-secondary btn-sm">Archive</button>
-                            </div>
-                        </div>
-
-                        <div class="message-thread">
-                            <div class="message-bubble received">
-                                <div class="bubble-header">
-                                    <span class="bubble-sender">Google Recruitment</span>
-                                    <span class="bubble-time">Dec 10, 2025 2:30 PM</span>
-                                </div>
-                                <div class="bubble-content">
-                                    <p>Dear Candidate,</p>
-                                    <p>Thank you for your application to the Software Engineer Intern position at Google. We have reviewed your application and would like to invite you for a technical interview.</p>
-                                    <p>The interview is scheduled for December 20th, 2025 at 10:00 AM PST. Please confirm your availability by replying to this message.</p>
-                                    <p>Best regards,<br>Google Recruitment Team</p>
-                                </div>
-                            </div>
-
-                            <div class="message-bubble sent">
-                                <div class="bubble-header">
-                                    <span class="bubble-sender">You</span>
-                                    <span class="bubble-time">Dec 10, 2025 3:15 PM</span>
-                                </div>
-                                <div class="bubble-content">
-                                    <p>Thank you for the invitation! I confirm my availability for the interview on December 20th at 10:00 AM PST.</p>
-                                    <p>Looking forward to speaking with you.</p>
-                                    <p>Best regards,<br>[Your Name]</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="message-compose">
-                            <div class="compose-header">
-                                <h4>Reply to Google Recruitment</h4>
-                            </div>
-                            <textarea placeholder="Type your message here..." rows="4"></textarea>
-                            <div class="compose-actions">
-                                <button class="btn btn-secondary btn-sm">Attach File</button>
-                                <button class="btn btn-primary">Send Message</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Settings -->
             <section id="settings" class="dashboard-section">
                 <div class="settings-hero">
@@ -1544,27 +1396,6 @@ $student = getStudentProfile($user['id']);
                             <h3>Notifications</h3>
                         </div>
                         <div class="settings-cards">
-                            <div class="settings-card">
-                                <div class="card-icon">💬</div>
-                                <div class="card-content">
-                                    <h4>Messages & Chat</h4>
-                                    <p>Get notified about new messages and replies</p>
-                                    <div class="toggle-container">
-                                        <label class="toggle-label">Push Notifications</label>
-                                        <label class="toggle">
-                                            <input type="checkbox" checked>
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="toggle-container">
-                                        <label class="toggle-label">Email Notifications</label>
-                                        <label class="toggle">
-                                            <input type="checkbox" checked>
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="settings-card">
                                 <div class="card-icon">📅</div>
                                 <div class="card-content">
