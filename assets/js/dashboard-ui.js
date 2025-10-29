@@ -787,3 +787,161 @@ function sendSupportEmail() {
 function callSupport() {
   alert('Phone support: +1 (555) 123-4567\nAvailable Mon-Fri, 9AM-6PM EST');
 }
+
+// ========================================
+// REMINDERS FUNCTIONALITY
+// ========================================
+
+// Add reminder modal
+function openAddReminderModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Reminder</h3>
+        <button class="modal-close" onclick="closeModal(this)">×</button>
+      </div>
+      <form id="add-reminder-form">
+        <div class="form-group">
+          <label for="reminder-text">Reminder Text</label>
+          <input type="text" id="reminder-text" placeholder="What do you need to remember?" required>
+        </div>
+        <div class="form-group">
+          <label for="reminder-due">Due Date (Optional)</label>
+          <input type="datetime-local" id="reminder-due">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Reminder</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('add-reminder-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const text = document.getElementById('reminder-text').value;
+    const dueDate = document.getElementById('reminder-due').value;
+
+    // Add reminder to the list (frontend only for now)
+    addReminderToList(text, dueDate);
+    closeModal(modal);
+  });
+}
+
+function addReminderToList(text, dueDate) {
+  const remindersList = document.getElementById('reminders-list');
+  const reminderItem = document.createElement('div');
+  reminderItem.className = 'reminder-item';
+
+  const dueText = dueDate ? new Date(dueDate).toLocaleDateString() : 'No due date';
+  const isOverdue = dueDate && new Date(dueDate) < new Date();
+
+  reminderItem.innerHTML = `
+    <div class="reminder-content">
+      <input type="checkbox" class="reminder-checkbox" onchange="toggleReminder(this)">
+      <span class="reminder-text">${text}</span>
+    </div>
+    <div class="reminder-meta">
+      <span class="reminder-due ${isOverdue ? 'overdue' : ''}">Due: ${dueText}</span>
+    </div>
+  `;
+
+  remindersList.insertBefore(reminderItem, remindersList.firstChild);
+}
+
+function toggleReminder(checkbox) {
+  const reminderItem = checkbox.closest('.reminder-item');
+  const reminderText = reminderItem.querySelector('.reminder-text');
+  const reminderDue = reminderItem.querySelector('.reminder-due');
+
+  if (checkbox.checked) {
+    reminderItem.classList.add('completed');
+    reminderText.style.textDecoration = 'line-through';
+    reminderDue.textContent = 'Completed';
+    reminderDue.classList.add('completed');
+  } else {
+    reminderItem.classList.remove('completed');
+    reminderText.style.textDecoration = 'none';
+    reminderDue.classList.remove('completed');
+    // Restore original due date (this would need to be stored properly)
+    reminderDue.textContent = 'Due: ' + (reminderItem.dataset.originalDue || 'No due date');
+  }
+}
+
+// ========================================
+// MESSAGES FUNCTIONALITY
+// ========================================
+
+function showInbox() {
+  // Update navigation
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.nav-btn[onclick="showInbox()"]').classList.add('active');
+
+  // Show inbox content (placeholder for now)
+  updateMessageView('inbox');
+}
+
+function showSent() {
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.nav-btn[onclick="showSent()"]').classList.add('active');
+
+  updateMessageView('sent');
+}
+
+function showDrafts() {
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.nav-btn[onclick="showDrafts()"]').classList.add('active');
+
+  updateMessageView('drafts');
+}
+
+function showArchived() {
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.nav-btn[onclick="showArchived()"]').classList.add('active');
+
+  updateMessageView('archived');
+}
+
+function updateMessageView(type) {
+  const messageView = document.querySelector('.message-view');
+  const messageInfo = messageView.querySelector('.message-info');
+
+  switch(type) {
+    case 'inbox':
+      messageInfo.innerHTML = `
+        <h3>Google Recruitment</h3>
+        <p>Software Engineer Intern Application Update</p>
+      `;
+      break;
+    case 'sent':
+      messageInfo.innerHTML = `
+        <h3>Sent Messages</h3>
+        <p>Your sent communications</p>
+      `;
+      break;
+    case 'drafts':
+      messageInfo.innerHTML = `
+        <h3>Draft Messages</h3>
+        <p>Unfinished messages</p>
+      `;
+      break;
+    case 'archived':
+      messageInfo.innerHTML = `
+        <h3>Archived Messages</h3>
+        <p>Previously archived conversations</p>
+      `;
+      break;
+  }
+}
+
+// Initialize messages functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Set inbox as default active
+  const inboxBtn = document.querySelector('.nav-btn[onclick="showInbox()"]');
+  if (inboxBtn) {
+    inboxBtn.classList.add('active');
+  }
+});
