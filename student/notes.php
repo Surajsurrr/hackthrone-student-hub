@@ -9,66 +9,6 @@ require_once 'includes/student_auth.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes - <?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <style>
-        /* Fix form field visibility while keeping dark theme */
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            color: #1f2937 !important;
-            background: white !important;
-            border: 1px solid #d1d5db !important;
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #6b7280 !important;
-        }
-
-        .form-group option {
-            color: #1f2937 !important;
-            background: white !important;
-        }
-
-        /* Fix file upload area text */
-        .file-upload-content {
-            color: #374151 !important;
-        }
-
-        .file-upload-content .primary-text {
-            color: #111827 !important;
-        }
-
-        .file-upload-content .secondary-text {
-            color: #6b7280 !important;
-        }
-
-        /* Fix form labels for better visibility */
-        .form-group label {
-            color: #e6eef6 !important;
-            font-weight: 600;
-        }
-
-        .form-hint {
-            color: #9aa4b2 !important;
-        }
-
-        /* Make sure selected topics area is readable */
-        .selected-topics {
-            background: white !important;
-            color: #1f2937 !important;
-        }
-
-        /* Fix toggle buttons */
-        .toggle-btn {
-            color: #1f2937 !important;
-            background: white !important;
-        }
-
-        .toggle-btn.active {
-            background: var(--accent1) !important;
-            color: white !important;
-        }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -260,7 +200,17 @@ require_once 'includes/student_auth.php';
                     <button class="clear-filters" id="clear-filters">Clear All</button>
                 </div>
                 
-                
+                <!-- Notes Grid -->
+                <div class="notes-grid" id="notes-grid">
+                    <!-- Notes will be loaded here dynamically -->
+                    <div class="no-notes-message">
+                        <div class="empty-state">
+                            <div class="empty-icon">📚</div>
+                            <h3>No notes found</h3>
+                            <p>Be the first to share your study materials!</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

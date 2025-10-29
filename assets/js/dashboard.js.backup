@@ -223,7 +223,7 @@ function displayNotes(notes) {
     if (notes.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 60px 20px; color: #64748b;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">??</div>
+                <div style="font-size: 3rem; margin-bottom: 20px;">📚</div>
                 <h3 style="color: #374151; margin-bottom: 10px;">No notes found</h3>
                 <p>Be the first to share your knowledge with others!</p>
             </div>
@@ -248,14 +248,14 @@ function displayNotes(notes) {
         // Determine file type icon
         const fileExt = note.file_path ? note.file_path.split('.').pop().toLowerCase() : 'file';
         const fileIcons = {
-            'pdf': '??',
-            'doc': '??',
-            'docx': '??',
-            'txt': '??',
-            'ppt': '??',
-            'pptx': '??'
+            'pdf': '📄',
+            'doc': '📝',
+            'docx': '📝',
+            'txt': '📄',
+            'ppt': '📊',
+            'pptx': '📊'
         };
-        const fileIcon = fileIcons[fileExt] || '??';
+        const fileIcon = fileIcons[fileExt] || '📎';
 
         noteCard.innerHTML = `
             <div class="note-header">
@@ -281,10 +281,10 @@ function displayNotes(notes) {
                 
                 <div class="note-actions">
                     <button class="action-btn like-btn" onclick="toggleLike(${note.id || Math.random()})">
-                        ?? <span class="like-count">${note.likes || Math.floor(Math.random() * 50) + 1}</span>
+                        ❤️ <span class="like-count">${note.likes || Math.floor(Math.random() * 50) + 1}</span>
                     </button>
                     <button class="action-btn download-btn" onclick="downloadNote('${note.file_path || '#'}')">
-                        ?? Download
+                        📥 Download
                     </button>
                 </div>
             </div>
@@ -368,7 +368,7 @@ function setupFormSubmissions() {
             // Show loading state
             const submitBtn = this.querySelector('.upload-btn');
             const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="btn-icon">?</span> Uploading...';
+            submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Uploading...';
             submitBtn.disabled = true;
 
             fetch('api/student/uploadNotes.php', {
@@ -379,14 +379,14 @@ function setupFormSubmissions() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert('Notes uploaded successfully! ??', 'success');
+                    showAlert('Notes uploaded successfully! 🎉', 'success');
                     this.reset();
                     
                     // Reset file upload display
                     const uploadContent = document.querySelector('.file-upload-content');
                     if (uploadContent) {
                         uploadContent.innerHTML = `
-                            <div class="file-upload-icon">??</div>
+                            <div class="file-upload-icon">📎</div>
                             <div class="file-upload-text">
                                 <span class="primary-text">Click to upload or drag & drop</span>
                                 <span class="secondary-text">PDF, DOC, DOCX, TXT, PPT files (Max 10MB)</span>
@@ -512,11 +512,11 @@ function toggleLike(noteId) {
     if (likeBtn.classList.contains('liked')) {
         likeBtn.classList.remove('liked');
         likeCount.textContent = currentCount - 1;
-        likeBtn.innerHTML = `?? <span class="like-count">${currentCount - 1}</span>`;
+        likeBtn.innerHTML = `❤️ <span class="like-count">${currentCount - 1}</span>`;
     } else {
         likeBtn.classList.add('liked');
         likeCount.textContent = currentCount + 1;
-        likeBtn.innerHTML = `?? <span class="like-count">${currentCount + 1}</span>`;
+        likeBtn.innerHTML = `💖 <span class="like-count">${currentCount + 1}</span>`;
         
         // Add some animation
         likeBtn.style.transform = 'scale(1.2)';
@@ -617,7 +617,7 @@ function updateFileUploadDisplay(file) {
     if (uploadContent && file) {
         const fileSize = (file.size / 1024 / 1024).toFixed(2); // Convert to MB
         uploadContent.innerHTML = `
-            <div class="file-upload-icon">?</div>
+            <div class="file-upload-icon">✅</div>
             <div class="file-upload-text">
                 <span class="primary-text">File Selected: ${file.name}</span>
                 <span class="secondary-text">Size: ${fileSize} MB</span>
@@ -987,12 +987,12 @@ function createNoteCard(note, isOwner = false) {
     
     const actions = isOwner ? 
         `<div class="note-actions">
-            <button class="note-action-btn" onclick="editNote(${note.id})">?? Edit</button>
-            <button class="note-action-btn" onclick="deleteNote(${note.id})">??? Delete</button>
+            <button class="note-action-btn" onclick="editNote(${note.id})">📝 Edit</button>
+            <button class="note-action-btn" onclick="deleteNote(${note.id})">🗑️ Delete</button>
         </div>` :
         `<div class="note-actions">
-            <button class="note-action-btn" onclick="downloadNote(${note.id})">?? Download</button>
-            <button class="note-action-btn" onclick="likeNote(${note.id})">?? Like</button>
+            <button class="note-action-btn" onclick="downloadNote(${note.id})">⬇️ Download</button>
+            <button class="note-action-btn" onclick="likeNote(${note.id})">❤️ Like</button>
         </div>`;
     
     card.innerHTML = `
@@ -1003,9 +1003,9 @@ function createNoteCard(note, isOwner = false) {
         <p class="note-description">${note.description || ''}</p>
         <div class="note-footer">
             <div class="note-meta">
-                <span>??? ${note.views || 0}</span>
-                <span>?? ${note.likes || 0}</span>
-                <span>?? ${formatDate(note.created_at)}</span>
+                <span>👁️ ${note.views || 0}</span>
+                <span>❤️ ${note.likes || 0}</span>
+                <span>📅 ${formatDate(note.created_at)}</span>
             </div>
             ${actions}
         </div>
@@ -1034,6 +1034,9 @@ function deleteNote(noteId) {
     }
 }
 
+function downloadNote(noteId) {
+    window.open(pi/student/downloadNote.php?id=, '_blank');
+}
 
 function likeNote(noteId) {
     // Implement like functionality
@@ -1066,8 +1069,12 @@ function formatDate(dateString) {
 function showNotification(message, type = 'info') {
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()"></button>`;
+    notification.className = 
+otification notification-;
+    notification.innerHTML = 
+        <span></span>
+        <button onclick="this.parentElement.remove()"></button>
+    ;
     
     // Add to page
     document.body.appendChild(notification);
@@ -1205,7 +1212,7 @@ function displayValidationFeedback(isValid, message) {
     } else if (isValid) {
         const feedback = document.createElement('div');
         feedback.className = 'validation-feedback success';
-        feedback.innerHTML = `<span class="success-icon"></span> File ready to upload`;
+        feedback.innerHTML = <span class="success-icon"></span> File ready to upload;
         fileUploadSection.appendChild(feedback);
     }
 }
@@ -1297,7 +1304,7 @@ async function handleQuickUpload() {
         }
     } catch (error) {
         console.error('Upload error:', error);
-        showNotification(`Upload failed: ${error.message}`, 'error');
+        showNotification(Upload failed: , 'error');
     } finally {
         setUploadingState(submitBtn, false);
     }
@@ -1395,7 +1402,7 @@ function updateStatsDisplay(stats) {
     if (stats.rank !== undefined) {
         const rankElement = document.getElementById('community-rank');
         if (rankElement) {
-            rankElement.textContent = `#${index + 1}`;
+            rankElement.textContent = #;
         }
     }
 }
@@ -1432,10 +1439,16 @@ function formatFileSize(bytes) {
 // Enhanced notification system for uploads
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `upload-notification ${type}`;
+    notification.className = upload-notification ;
     
     const icon = type === 'success' ? '' : type === 'error' ? '' : '?';
-    notification.innerHTML = `<div class="notification-content"><span class="notification-icon">${icon}</span><span class="notification-message">${message}</span></div><button class="notification-close" onclick="this.parentElement.remove()"></button>`;
+    notification.innerHTML = 
+        <div class="notification-content">
+            <span class="notification-icon"></span>
+            <span class="notification-message"></span>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()"></button>
+    ;
     
     // Add to page
     document.body.appendChild(notification);
@@ -1450,4 +1463,110 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
+// CSS animations for upload progress
+const uploadStyles = 
+@keyframes uploadProgress {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
 
+.success-animation {
+    animation: successPulse 0.6s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.upload-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid var(--accent1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 10000;
+    max-width: 400px;
+}
+
+.upload-notification.show {
+    transform: translateX(0);
+}
+
+.upload-notification.success {
+    border-left-color: #10b981;
+}
+
+.upload-notification.error {
+    border-left-color: #ef4444;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.validation-feedback {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.validation-feedback.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.validation-feedback.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.field-error {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.quick-input-group.error {
+    border-color: #dc2626 !important;
+}
+
+.quick-input-group.success {
+    border-color: #16a34a !important;
+}
+
+.file-info {
+    margin-top: 0.5rem;
+    color: #6b7280;
+}
+;
+
+// Inject styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = uploadStyles;
+document.head.appendChild(styleSheet);

@@ -1,0 +1,7 @@
+1. under "endorsement" section, give functionalities to "send endorsement" as well as "endorse" button. also those who have endorsed our courses should also be known by us.
+2.give functionalities for "notes" section, with proper working and do whatever is needed for that, also make a chance for student's to create a community on their own and invite their friends to it via their usernames
+3.same way give functionalities for the "upload" section letting student's to create and upload a notes or study material within a community
+4. also give functionalities to "achievements" section and make it work perfectly ,if needed also make changes with other sections too to make a completely working backend for this section
+5.give functionalities to "calender" and let student's to mark or set remainders for important worksby mentioning the work in it and giving them a reminder on that day
+6.go to "settings: section and make a completely fine backend for it witout disturbing other things
+7.provide correctly working backend for "help" section in order to make it efficiently 
