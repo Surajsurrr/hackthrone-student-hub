@@ -643,17 +643,6 @@ function generateRecommendations() {
         });
 }
 
-function addReminder() {
-    const reminderText = prompt('Enter a new reminder:');
-    if (reminderText) {
-        const remindersList = document.getElementById('reminders-list');
-        const reminderDiv = document.createElement('div');
-        reminderDiv.className = 'reminder-item';
-        reminderDiv.innerHTML = `<input type="checkbox"> ${reminderText}`;
-        remindersList.appendChild(reminderDiv);
-    }
-}
-
 // Utility functions
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
@@ -809,19 +798,6 @@ style.textContent = `
         font-weight: 600;
         text-align: center;
         min-width: 60px;
-    }
-    
-    .reminder-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px;
-        border-radius: 8px;
-        transition: background 0.3s ease;
-    }
-    
-    .reminder-item:hover {
-        background: #f1f5f9;
     }
     
     .suggestion-buttons {

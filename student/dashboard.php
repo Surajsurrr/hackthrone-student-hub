@@ -44,7 +44,6 @@ $student = getStudentProfile($user['id']);
                     <li><a href="#ai-coach" class="nav-link" data-section="ai-coach"> AI Coach</a></li>
                     <li><a href="#achievements" class="nav-link" data-section="achievements"> Achievements</a></li>
                     <li><a href="#calendar" class="nav-link" data-section="calendar"> Calendar</a></li>
-                    <li><a href="#reminders" class="nav-link" data-section="reminders"> Reminders</a></li>
                     <li><a href="#messages" class="nav-link" data-section="messages"> Messages</a></li>
                     <li><a href="#settings" class="nav-link" data-section="settings"> Settings</a></li>
                     <li><a href="#help" class="nav-link" data-section="help"> Help</a></li>
@@ -651,21 +650,6 @@ $student = getStudentProfile($user['id']);
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="content-card">
-                        <h3>⏰ Reminders</h3>
-                        <div id="reminders-list">
-                            <div class="reminder-item">
-                                <input type="checkbox"> Update LinkedIn profile
-                            </div>
-                            <div class="reminder-item">
-                                <input type="checkbox"> Practice coding problems
-                            </div>
-                            <div class="reminder-item">
-                                <input type="checkbox"> Review Data Structures notes
-                            </div>
-                        </div>
-                        <button class="btn" onclick="addReminder()">Add Reminder</button>
                     </div>
                 </div>
             </section>
@@ -1320,18 +1304,6 @@ $student = getStudentProfile($user['id']);
                 </div>
             </section>
 
-            <!-- Reminders -->
-            <section id="reminders" class="dashboard-section">
-                <h2>⏰ Reminders</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>My Reminders</h3>
-                        <div id="reminders-list">Loading reminders...</div>
-                        <button class="btn" onclick="addReminder()">Add Reminder</button>
-                    </div>
-                </div>
-            </section>
-
             <!-- Messages -->
             <section id="messages" class="dashboard-section">
                 <h2>✉️ Messages</h2>
@@ -1345,11 +1317,250 @@ $student = getStudentProfile($user['id']);
 
             <!-- Settings -->
             <section id="settings" class="dashboard-section">
-                <h2>Settings</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>Account Settings</h3>
-                        <p>Change password, notification preferences and privacy settings.</p>
+                <div class="settings-hero">
+                    <div class="hero-content">
+                        <h2>⚙️ Settings & Preferences</h2>
+                        <p>Customize your experience and manage your account settings</p>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon">🔒</div>
+                            <div class="stat-label">Security</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🔔</div>
+                            <div class="stat-label">Notifications</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🎨</div>
+                            <div class="stat-label">Appearance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-grid">
+                    <!-- Account Settings -->
+                    <div class="settings-category">
+                        <div class="category-header">
+                            <div class="category-icon">👤</div>
+                            <h3>Account Settings</h3>
+                        </div>
+                        <div class="settings-cards">
+                            <div class="settings-card">
+                                <div class="card-icon">🔑</div>
+                                <div class="card-content">
+                                    <h4>Change Password</h4>
+                                    <p>Update your account password for better security</p>
+                                    <button class="btn btn-primary" onclick="openPasswordModal()">Change Password</button>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">📧</div>
+                                <div class="card-content">
+                                    <h4>Email Preferences</h4>
+                                    <p>Manage your email notifications and preferences</p>
+                                    <button class="btn btn-secondary" onclick="openEmailSettings()">Configure</button>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">📱</div>
+                                <div class="card-content">
+                                    <h4>Profile Information</h4>
+                                    <p>Update your personal information and profile details</p>
+                                    <button class="btn btn-secondary" onclick="openProfileSettings()">Edit Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy & Security -->
+                    <div class="settings-category">
+                        <div class="category-header">
+                            <div class="category-icon">🔒</div>
+                            <h3>Privacy & Security</h3>
+                        </div>
+                        <div class="settings-cards">
+                            <div class="settings-card">
+                                <div class="card-icon">👁️</div>
+                                <div class="card-content">
+                                    <h4>Privacy Settings</h4>
+                                    <p>Control who can see your profile and activity</p>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Profile Visibility</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">🔐</div>
+                                <div class="card-content">
+                                    <h4>Two-Factor Authentication</h4>
+                                    <p>Add an extra layer of security to your account</p>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Enable 2FA</label>
+                                        <label class="toggle">
+                                            <input type="checkbox">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">📊</div>
+                                <div class="card-content">
+                                    <h4>Data & Privacy</h4>
+                                    <p>Manage your data and download your information</p>
+                                    <button class="btn btn-secondary" onclick="openDataSettings()">Manage Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="settings-category">
+                        <div class="category-header">
+                            <div class="category-icon">🔔</div>
+                            <h3>Notifications</h3>
+                        </div>
+                        <div class="settings-cards">
+                            <div class="settings-card">
+                                <div class="card-icon">💬</div>
+                                <div class="card-content">
+                                    <h4>Messages & Chat</h4>
+                                    <p>Get notified about new messages and replies</p>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Push Notifications</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Email Notifications</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">📅</div>
+                                <div class="card-content">
+                                    <h4>Events & Opportunities</h4>
+                                    <p>Stay updated on hackathons, internships, and events</p>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Event Reminders</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">New Opportunities</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">🏆</div>
+                                <div class="card-content">
+                                    <h4>Achievements & Progress</h4>
+                                    <p>Celebrate your milestones and track progress</p>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Achievement Alerts</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance -->
+                    <div class="settings-category">
+                        <div class="category-header">
+                            <div class="category-icon">🎨</div>
+                            <h3>Appearance</h3>
+                        </div>
+                        <div class="settings-cards">
+                            <div class="settings-card">
+                                <div class="card-icon">🌙</div>
+                                <div class="card-content">
+                                    <h4>Theme</h4>
+                                    <p>Choose your preferred theme</p>
+                                    <div class="theme-options">
+                                        <label class="theme-option active">
+                                            <input type="radio" name="theme" value="light" checked>
+                                            <span>Light</span>
+                                        </label>
+                                        <label class="theme-option">
+                                            <input type="radio" name="theme" value="dark">
+                                            <span>Dark</span>
+                                        </label>
+                                        <label class="theme-option">
+                                            <input type="radio" name="theme" value="auto">
+                                            <span>Auto</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-card">
+                                <div class="card-icon">📏</div>
+                                <div class="card-content">
+                                    <h4>Display Settings</h4>
+                                    <p>Customize your dashboard layout and appearance</p>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Compact Mode</label>
+                                        <label class="toggle">
+                                            <input type="checkbox">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Show Animations</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Management -->
+                    <div class="settings-category danger-zone">
+                        <div class="category-header">
+                            <div class="category-icon">⚠️</div>
+                            <h3>Account Management</h3>
+                        </div>
+                        <div class="settings-cards">
+                            <div class="settings-card danger">
+                                <div class="card-icon">🗂️</div>
+                                <div class="card-content">
+                                    <h4>Export Data</h4>
+                                    <p>Download all your data in JSON format</p>
+                                    <button class="btn btn-outline" onclick="exportUserData()">Export Data</button>
+                                </div>
+                            </div>
+                            <div class="settings-card danger">
+                                <div class="card-icon">🚫</div>
+                                <div class="card-content">
+                                    <h4>Delete Account</h4>
+                                    <p>Permanently delete your account and all associated data</p>
+                                    <button class="btn btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
