@@ -204,6 +204,21 @@ $college = getCollegeProfile($user['id']);
                 </div>
             </section>
 
+            <section id="applicants" class="dashboard-section">
+                <h2>👥 Applicants</h2>
+                <div class="applicants-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="color: #1e293b; margin-top: 0;">Event Registrations</h3>
+                    <p style="color: #64748b; margin-bottom: 2rem;">View and manage students who have registered for your events</p>
+                    
+                    <div id="applicants-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="text-align: center; padding: 3rem; color: #64748b;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                            <p>No applicants yet. When students register for your events, they will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="profile" class="dashboard-section">
                 <h2>🏫 College Profile</h2>
                 <div class="profile-card" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -366,6 +381,24 @@ $college = getCollegeProfile($user['id']);
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/dashboard.js"></script>
     <style>
+        /* Section Navigation Styles */
+        .dashboard-section {
+            display: none;
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+        
+        .sidebar nav a {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
         /* Posts Section Styling */
         .posts-feed {
             display: flex;
@@ -900,6 +933,59 @@ $college = getCollegeProfile($user['id']);
         // Load posts on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadPosts();
+            
+            // Section Navigation Handler
+            const navLinks = document.querySelectorAll('.sidebar nav a');
+            const sections = document.querySelectorAll('.dashboard-section');
+            
+            function showSection(sectionId) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'none';
+                });
+                
+                // Show target section
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    targetSection.style.display = 'block';
+                }
+                
+                // Update active nav link
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + sectionId) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Update URL hash without scrolling
+                history.pushState(null, null, '#' + sectionId);
+            }
+            
+            // Add click handlers to nav links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('href').substring(1);
+                    showSection(sectionId);
+                });
+            });
+            
+            // Handle direct URL hash navigation
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                showSection(hash);
+            } else {
+                showSection('overview');
+            }
+            
+            // Handle browser back/forward buttons
+            window.addEventListener('hashchange', function() {
+                const newHash = window.location.hash.substring(1) || 'overview';
+                showSection(newHash);
+            });
             
             // Profile form submission
             const profileForm = document.getElementById('profile-form');
