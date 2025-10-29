@@ -293,6 +293,19 @@ $student = getStudentProfile($user['id']);
                 </div>
             </section>
 
+            <!-- College Updates Feed -->
+            <section id="college-updates" class="dashboard-section">
+                <h2 style="display: flex; align-items: center; gap: 0.5rem;">
+                    📢 College Updates & News
+                </h2>
+                <div id="college-posts-feed" class="college-posts-feed">
+                    <div class="loading-posts" style="text-align: center; padding: 3rem; color: #64748b;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">🔄</div>
+                        <p>Loading college updates...</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Profile Section -->
             <section id="profile" class="dashboard-section">
                 <h2>My Profile</h2>
@@ -2245,7 +2258,105 @@ $student = getStudentProfile($user['id']);
             } catch (error) {
                 console.error('Error loading settings:', error);
             }
+
+            // Load college posts
+            loadCollegePosts();
         });
+
+        // Load College Posts Function
+        async function loadCollegePosts() {
+            try {
+                const response = await fetch('../api/student/getCollegePosts.php');
+                const data = await response.json();
+
+                const feedContainer = document.getElementById('college-posts-feed');
+
+                if (data.success && data.posts && data.posts.length > 0) {
+                    displayCollegePosts(data.posts);
+                } else {
+                    feedContainer.innerHTML = `
+                        <div class="no-posts-message">
+                            <span>📭</span>
+                            <p>No college updates yet. Check back later!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading college posts:', error);
+                document.getElementById('college-posts-feed').innerHTML = `
+                    <div class="no-posts-message">
+                        <span>⚠️</span>
+                        <p>Unable to load college updates. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display College Posts
+        function displayCollegePosts(posts) {
+            const feedContainer = document.getElementById('college-posts-feed');
+            feedContainer.innerHTML = '';
+
+            posts.forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = 'college-post-card';
+                
+                // Format the time ago
+                const timeAgo = getTimeAgo(new Date(post.created_at));
+                
+                // Default logo if not available
+                const logo = post.college_logo || '../assets/images/logos/default-college.png';
+                
+                postCard.innerHTML = `
+                    <div class="college-post-header">
+                        <img src="${logo}" alt="${post.college_name}" class="college-logo" 
+                             onerror="this.src='../assets/images/logos/default-college.png'">
+                        <div class="college-info">
+                            <h4>${post.college_name}</h4>
+                            <div class="post-meta">
+                                <span>📍 ${post.college_location || 'Location not specified'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <span class="post-category-badge ${post.category}">${post.category.replace('-', ' ')}</span>
+                    
+                    <div class="post-content">
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                        ${post.image_url ? `<img src="${post.image_url}" alt="Post image" class="post-image" onerror="this.style.display='none'">` : ''}
+                    </div>
+                    
+                    <div class="post-time">
+                        🕒 ${timeAgo}
+                    </div>
+                `;
+                
+                feedContainer.appendChild(postCard);
+            });
+        }
+
+        // Get Time Ago Helper Function
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + ' years ago';
+            
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + ' months ago';
+            
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + ' days ago';
+            
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + ' hours ago';
+            
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + ' minutes ago';
+            
+            return 'Just now';
+        }
 
         // FAQ Toggle Function
         function toggleFAQ(element) {
@@ -2548,6 +2659,118 @@ $student = getStudentProfile($user['id']);
             font-size: 0.875rem;
             color: var(--text-secondary);
             margin-top: 0.5rem;
+        }
+
+        /* College Posts Feed Styles */
+        .college-posts-feed {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .college-post-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .college-post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .college-post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .college-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+        }
+
+        .college-info h4 {
+            color: #1e293b;
+            font-size: 1rem;
+            margin: 0 0 0.25rem 0;
+            font-weight: 600;
+        }
+
+        .college-info .post-meta {
+            color: #64748b;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .post-category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .post-category-badge.research { background: #dbeafe; color: #1e40af; }
+        .post-category-badge.achievement { background: #fef3c7; color: #92400e; }
+        .post-category-badge.event { background: #e0e7ff; color: #4338ca; }
+        .post-category-badge.placement { background: #d1fae5; color: #065f46; }
+        .post-category-badge.campus-life { background: #fce7f3; color: #9f1239; }
+        .post-category-badge.announcement { background: #fed7aa; color: #9a3412; }
+        .post-category-badge.facilities { background: #e0f2fe; color: #075985; }
+        .post-category-badge.collaboration { background: #f3e8ff; color: #6b21a8; }
+
+        .post-content h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.4;
+        }
+
+        .post-content p {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0 0 1rem 0;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .post-time {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .no-posts-message {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .no-posts-message span {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
         }
     </style>
 </body>
