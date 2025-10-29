@@ -726,28 +726,14 @@ $student = getStudentProfile($user['id']);
                 <h2>Applications Tracker</h2>
                 <div class="applications-container">
                     <div class="content-card applications-list-card">
-                        <h3>My Applications</h3>
+                        <h3>My Event Applications</h3>
                         <div id="my-applications" class="applications-grid">
-                            <div class="application-item">
-                                <div class="app-header">
-                                    <h4>Software Engineer Intern</h4>
-                                    <span class="app-status status-applied">Applied</span>
-                                </div>
-                                <p class="app-company">Google Inc.</p>
-                                <p class="app-platform">Platform: LinkedIn</p>
-                                <small class="app-date">Applied: Oct 25, 2025</small>
-                            </div>
-                            <div class="application-item">
-                                <div class="app-header">
-                                    <h4>Data Science Intern</h4>
-                                    <span class="app-status status-in-process">In Process</span>
-                                </div>
-                                <p class="app-company">Microsoft</p>
-                                <p class="app-platform">Platform: Company Website</p>
-                                <small class="app-date">Applied: Oct 20, 2025</small>
+                            <div style="text-align: center; padding: 2rem; color: #64748b;">
+                                <div style="font-size: 2rem;">⏳</div>
+                                <p>Loading applications...</p>
                             </div>
                         </div>
-                        <p class="muted">Track your job, internship and scholarship applications</p>
+                        <p class="muted">Track your event, hackathon, and workshop applications</p>
                         <button class="btn btn-secondary" onclick="loadApplications()">Refresh Applications</button>
                     </div>
                     
@@ -2596,6 +2582,135 @@ $student = getStudentProfile($user['id']);
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
+        
+        // Load Event Applications
+        async function loadApplications() {
+            const container = document.getElementById('my-applications');
+            
+            if (!container) return;
+            
+            container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #64748b;"><div style="font-size: 2rem;">⏳</div><p>Loading applications...</p></div>';
+            
+            try {
+                const response = await fetch('../api/student/getMyApplications.php', {
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayApplications(data.applications);
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                            <div style="font-size: 2rem;">❌</div>
+                            <p>${data.error || 'Failed to load applications'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                        <div style="font-size: 2rem;">❌</div>
+                        <p>Error loading applications. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayApplications(applications) {
+            const container = document.getElementById('my-applications');
+            
+            if (!applications || applications.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #64748b;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                        <h3 style="margin-bottom: 0.5rem;">No Applications Yet</h3>
+                        <p>Apply to events from the <a href="hackathons.php" style="color: #7c3aed;">Hackathons page</a> to track them here.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const statusConfig = {
+                'pending': { color: '#f59e0b', bg: '#fef3c7', icon: '⏳', text: 'Pending' },
+                'approved': { color: '#10b981', bg: '#d1fae5', icon: '✅', text: 'Approved' },
+                'rejected': { color: '#ef4444', bg: '#fee2e2', icon: '❌', text: 'Rejected' }
+            };
+            
+            const typeIcons = {
+                'hackathon': '💻',
+                'workshop': '🛠️',
+                'symposium': '🎓',
+                'project-expo': '🔬',
+                'other': '📋'
+            };
+            
+            container.innerHTML = applications.map(app => {
+                const status = statusConfig[app.status] || statusConfig['pending'];
+                const typeIcon = typeIcons[app.event_type] || typeIcons['other'];
+                
+                return `
+                    <div class="application-item" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;">
+                        <div class="app-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 1.5rem;">${typeIcon}</span>
+                                    <h4 style="margin: 0; color: #1e293b; font-size: 1.1rem;">${escapeHtml(app.event_title)}</h4>
+                                </div>
+                                <p class="app-company" style="color: #64748b; margin: 0.25rem 0; font-size: 0.9rem;">
+                                    🏫 ${escapeHtml(app.college_name)}
+                                </p>
+                                <p class="app-platform" style="color: #64748b; margin: 0.25rem 0; font-size: 0.9rem;">
+                                    📅 Event Date: ${app.event_date_formatted}
+                                </p>
+                                ${app.event_location ? `
+                                    <p style="color: #64748b; margin: 0.25rem 0; font-size: 0.9rem;">
+                                        📍 ${escapeHtml(app.event_location)}
+                                    </p>
+                                ` : ''}
+                            </div>
+                            <span class="app-status" style="background: ${status.bg}; color: ${status.color}; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">
+                                ${status.icon} ${status.text}
+                            </span>
+                        </div>
+                        
+                        ${app.team_name ? `
+                            <div style="background: #f8fafc; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <span style="color: #64748b; font-size: 0.85rem;">👥 Team: <strong style="color: #1e293b;">${escapeHtml(app.team_name)}</strong> (${app.team_size} members)</span>
+                            </div>
+                        ` : ''}
+                        
+                        <small class="app-date" style="color: #94a3b8; font-size: 0.85rem;">
+                            Applied on: ${app.applied_at_formatted}
+                        </small>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Load applications when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load applications if on applications section
+            if (window.location.hash === '#applications' || document.querySelector('.nav-link[data-section="applications"].active')) {
+                loadApplications();
+            }
+            
+            // Load applications when applications tab is clicked
+            document.querySelectorAll('.nav-link[data-section="applications"]').forEach(link => {
+                link.addEventListener('click', function() {
+                    setTimeout(loadApplications, 100);
+                });
+            });
+        });
     </script>
     
     <style>
