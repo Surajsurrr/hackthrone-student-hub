@@ -97,6 +97,122 @@ $student = getStudentProfile($user['id']);
         .application-form-card .btn:hover {
             background: #6d28d9 !important;
         }
+
+        /* Fix text visibility for events section */
+        .events-list-card,
+        .events-list-card * {
+            color: inherit;
+        }
+
+        .events-list-card .event-item {
+            background: white !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .events-list-card .event-item * {
+            color: #1f2937 !important;
+        }
+
+        .events-list-card .event-item h4 {
+            color: #111827 !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .events-list-card .event-item p {
+            color: #4b5563 !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .events-list-card .event-item-date {
+            background: var(--accent1) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            padding: 0.5rem !important;
+            text-align: center !important;
+            min-width: 60px !important;
+        }
+
+        .events-list-card .date-day {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            color: white !important;
+        }
+
+        .events-list-card .date-month {
+            font-size: 0.8rem !important;
+            color: white !important;
+            text-transform: uppercase !important;
+        }
+
+        .events-list-card .tag {
+            padding: 0.25rem 0.75rem !important;
+            border-radius: 20px !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            margin-right: 0.5rem !important;
+        }
+
+        .events-list-card .tag.workshop {
+            background: #dcfce7 !important;
+            color: #166534 !important;
+        }
+
+        .events-list-card .tag-location {
+            color: #6b7280 !important;
+        }
+
+        .events-list-card .btn-small {
+            background: var(--accent1) !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px !important;
+            font-size: 0.875rem !important;
+            font-weight: 600 !important;
+        }
+
+        .events-list-card .btn-small:hover {
+            background: #6d28d9 !important;
+        }
+
+        /* View toggle buttons */
+        .events-list-card .toggle-btn {
+            background: white !important;
+            color: #374151 !important;
+            border: 1px solid #d1d5db !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px !important;
+            font-size: 0.875rem !important;
+        }
+
+        .events-list-card .toggle-btn.active {
+            background: var(--accent1) !important;
+            color: white !important;
+            border-color: var(--accent1) !important;
+        }
+
+        /* Load More button */
+        .load-more-events {
+            background: white !important;
+            color: var(--accent1) !important;
+            border: 2px solid var(--accent1) !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 25px !important;
+            font-weight: 600 !important;
+            text-align: center !important;
+            display: block !important;
+            width: 100% !important;
+            margin-top: 1rem !important;
+        }
+
+        .load-more-events:hover {
+            background: var(--accent1) !important;
+            color: white !important;
+        }
     </style>
 </head>
 <body>
