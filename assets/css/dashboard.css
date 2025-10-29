@@ -232,7 +232,7 @@ body.compact .welcome-section h2 { font-size: 1.8rem; }
 /* Stats Grid */
 .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1.25rem;
 }
 .content-card {
