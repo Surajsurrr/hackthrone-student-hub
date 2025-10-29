@@ -598,15 +598,304 @@ $student = getStudentProfile($user['id']);
 
             <!-- Endorsements -->
             <section id="endorsements" class="dashboard-section">
-                <h2>👏 Endorsements</h2>
-                <div class="content-grid">
-                    <div class="content-card">
-                        <h3>Received Endorsements</h3>
-                        <div id="received-endorsements">Loading endorsements...</div>
+                <div class="endorsements-header">
+                    <h2>Professional Endorsements</h2>
+                    <p class="section-subtitle">Build credibility through peer recognition and skill validation</p>
+                </div>
+
+                <!-- Endorsement Stats -->
+                <div class="endorsement-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <h3>24</h3>
+                            <p>Total Endorsements</p>
+                        </div>
                     </div>
-                    <div class="content-card">
-                        <h3>Give an Endorsement</h3>
-                        <p>Endorse a peer's skill to help them stand out.</p>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <h3>8</h3>
+                            <p>Skills Endorsed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <h3>15</h3>
+                            <p>Endorsers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endorsements-container">
+                    <!-- My Skills with Endorsements -->
+                    <div class="endorsements-main">
+                        <div class="content-card skills-endorsements-card">
+                            <div class="card-header">
+                                <h3>My Skills & Endorsements</h3>
+                                <button class="btn btn-outline btn-small">Manage Skills</button>
+                            </div>
+                            
+                            <div class="skills-grid">
+                                <div class="skill-endorsement-item">
+                                    <div class="skill-info">
+                                        <div class="skill-name">
+                                            <span class="skill-icon">💻</span>
+                                            <h4>JavaScript</h4>
+                                        </div>
+                                        <div class="skill-level">
+                                            <div class="level-bar">
+                                                <div class="level-fill" style="width: 85%"></div>
+                                            </div>
+                                            <span class="level-text">Expert</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-count">
+                                        <span class="count">8</span>
+                                        <span class="label">endorsements</span>
+                                    </div>
+                                    <div class="recent-endorsers">
+                                        <div class="endorser-avatars">
+                                            <div class="avatar">A</div>
+                                            <div class="avatar">M</div>
+                                            <div class="avatar">S</div>
+                                            <div class="avatar-more">+5</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="skill-endorsement-item">
+                                    <div class="skill-info">
+                                        <div class="skill-name">
+                                            <span class="skill-icon">⚛️</span>
+                                            <h4>React.js</h4>
+                                        </div>
+                                        <div class="skill-level">
+                                            <div class="level-bar">
+                                                <div class="level-fill" style="width: 75%"></div>
+                                            </div>
+                                            <span class="level-text">Advanced</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-count">
+                                        <span class="count">6</span>
+                                        <span class="label">endorsements</span>
+                                    </div>
+                                    <div class="recent-endorsers">
+                                        <div class="endorser-avatars">
+                                            <div class="avatar">J</div>
+                                            <div class="avatar">R</div>
+                                            <div class="avatar">K</div>
+                                            <div class="avatar-more">+3</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="skill-endorsement-item">
+                                    <div class="skill-info">
+                                        <div class="skill-name">
+                                            <span class="skill-icon">🐍</span>
+                                            <h4>Python</h4>
+                                        </div>
+                                        <div class="skill-level">
+                                            <div class="level-bar">
+                                                <div class="level-fill" style="width: 90%"></div>
+                                            </div>
+                                            <span class="level-text">Expert</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-count">
+                                        <span class="count">5</span>
+                                        <span class="label">endorsements</span>
+                                    </div>
+                                    <div class="recent-endorsers">
+                                        <div class="endorser-avatars">
+                                            <div class="avatar">P</div>
+                                            <div class="avatar">L</div>
+                                            <div class="avatar-more">+3</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="skill-endorsement-item">
+                                    <div class="skill-info">
+                                        <div class="skill-name">
+                                            <span class="skill-icon">🗄️</span>
+                                            <h4>Database Design</h4>
+                                        </div>
+                                        <div class="skill-level">
+                                            <div class="level-bar">
+                                                <div class="level-fill" style="width: 70%"></div>
+                                            </div>
+                                            <span class="level-text">Intermediate</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-count">
+                                        <span class="count">3</span>
+                                        <span class="label">endorsements</span>
+                                    </div>
+                                    <div class="recent-endorsers">
+                                        <div class="endorser-avatars">
+                                            <div class="avatar">D</div>
+                                            <div class="avatar">N</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Endorsements -->
+                        <div class="content-card recent-endorsements-card">
+                            <div class="card-header">
+                                <h3>Recent Endorsements</h3>
+                                <a href="#" class="view-all-link">View All</a>
+                            </div>
+                            
+                            <div class="endorsements-feed">
+                                <div class="endorsement-item">
+                                    <div class="endorser-info">
+                                        <div class="endorser-avatar">AM</div>
+                                        <div class="endorser-details">
+                                            <h4>Arjun Mehta</h4>
+                                            <p>Full Stack Developer at TechCorp</p>
+                                            <span class="endorsement-time">2 hours ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-content">
+                                        <div class="endorsed-skill">
+                                            <span class="skill-badge">JavaScript</span>
+                                        </div>
+                                        <p class="endorsement-message">"Excellent problem-solving skills and deep understanding of JavaScript frameworks. Great team player!"</p>
+                                    </div>
+                                </div>
+
+                                <div class="endorsement-item">
+                                    <div class="endorser-info">
+                                        <div class="endorser-avatar">SK</div>
+                                        <div class="endorser-details">
+                                            <h4>Sneha Kumar</h4>
+                                            <p>Product Manager at InnovateLabs</p>
+                                            <span class="endorsement-time">1 day ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-content">
+                                        <div class="endorsed-skill">
+                                            <span class="skill-badge">React.js</span>
+                                        </div>
+                                        <p class="endorsement-message">"Outstanding React development skills. Delivered high-quality components with clean, maintainable code."</p>
+                                    </div>
+                                </div>
+
+                                <div class="endorsement-item">
+                                    <div class="endorser-info">
+                                        <div class="endorser-avatar">RG</div>
+                                        <div class="endorser-details">
+                                            <h4>Rahul Gupta</h4>
+                                            <p>Senior Developer at DataFlow</p>
+                                            <span class="endorsement-time">3 days ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="endorsement-content">
+                                        <div class="endorsed-skill">
+                                            <span class="skill-badge">Python</span>
+                                        </div>
+                                        <p class="endorsement-message">"Exceptional Python programming skills and machine learning expertise. Highly recommended!"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Give Endorsement Sidebar -->
+                    <div class="endorsements-sidebar">
+                        <div class="content-card give-endorsement-card">
+                            <div class="card-header">
+                                <h3>Give an Endorsement</h3>
+                                <p class="card-subtitle">Help your peers grow their professional network</p>
+                            </div>
+                            
+                            <form id="endorsement-form" class="endorsement-form">
+                                <div class="form-group">
+                                    <label for="endorsee-search">Search Student</label>
+                                    <div class="search-input-container">
+                                        <input type="text" id="endorsee-search" placeholder="Type name or email..." autocomplete="off">
+                                        <div class="search-results" id="endorsee-results"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="skill-select">Select Skill</label>
+                                    <select id="skill-select" required>
+                                        <option value="">Choose a skill...</option>
+                                        <option value="javascript">JavaScript</option>
+                                        <option value="python">Python</option>
+                                        <option value="react">React.js</option>
+                                        <option value="nodejs">Node.js</option>
+                                        <option value="database">Database Design</option>
+                                        <option value="ui-ux">UI/UX Design</option>
+                                        <option value="project-management">Project Management</option>
+                                        <option value="leadership">Leadership</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="endorsement-message">Endorsement Message</label>
+                                    <textarea id="endorsement-message" rows="4" placeholder="Write a meaningful endorsement highlighting their skills and achievements..." required></textarea>
+                                    <div class="character-count">
+                                        <span id="char-count">0</span>/500 characters
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-full-width">
+                                    <span class="btn-icon">🌟</span>
+                                    Send Endorsement
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Endorsement Suggestions -->
+                        <div class="content-card suggestions-card">
+                            <div class="card-header">
+                                <h3>Suggested Endorsements</h3>
+                                <p class="card-subtitle">People you've worked with recently</p>
+                            </div>
+                            
+                            <div class="suggestions-list">
+                                <div class="suggestion-item">
+                                    <div class="suggestion-info">
+                                        <div class="suggestion-avatar">VT</div>
+                                        <div class="suggestion-details">
+                                            <h4>Vikram Thakur</h4>
+                                            <p>Hackathon teammate</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn-small btn-primary">Endorse</button>
+                                </div>
+
+                                <div class="suggestion-item">
+                                    <div class="suggestion-info">
+                                        <div class="suggestion-avatar">PS</div>
+                                        <div class="suggestion-details">
+                                            <h4>Priya Singh</h4>
+                                            <p>Project partner</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn-small btn-primary">Endorse</button>
+                                </div>
+
+                                <div class="suggestion-item">
+                                    <div class="suggestion-info">
+                                        <div class="suggestion-avatar">AK</div>
+                                        <div class="suggestion-details">
+                                            <h4>Anil Kumar</h4>
+                                            <p>Study group member</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn-small btn-primary">Endorse</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -91,6 +91,36 @@ function setupEventListeners() {
         });
     });
 
+    // Endorsement form submission
+    const endorsementForm = document.getElementById('endorsement-form');
+    if (endorsementForm) {
+        endorsementForm.addEventListener('submit', handleEndorsementSubmit);
+    }
+
+    // Character counter for endorsement message
+    const endorsementMessage = document.getElementById('endorsement-message');
+    const charCount = document.getElementById('char-count');
+    if (endorsementMessage && charCount) {
+        endorsementMessage.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = count;
+            
+            if (count > 500) {
+                charCount.style.color = '#ef4444';
+            } else if (count > 400) {
+                charCount.style.color = '#f59e0b';
+            } else {
+                charCount.style.color = '#64748b';
+            }
+        });
+    }
+
+    // Endorsee search functionality
+    const endorseeSearch = document.getElementById('endorsee-search');
+    if (endorseeSearch) {
+        endorseeSearch.addEventListener('input', debounce(searchEndorsees, 300));
+    }
+
     // AI Chat enhancement
     setupAIChat();
 }
@@ -819,3 +849,131 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Endorsement functions
+async function handleEndorsementSubmit(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const endorsementData = {
+        endorsee_name: formData.get('endorsee_name'),
+        skill: formData.get('skill'),
+        message: formData.get('message')
+    };
+
+    try {
+        // Show loading state
+        const submitBtn = e.target.querySelector('.submit-btn');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+
+        // Send to API
+        const response = await fetch('../api/student/submitEndorsement.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(endorsementData)
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Endorsement submitted successfully!', 'success');
+            
+            // Reset form
+            e.target.reset();
+            document.getElementById('char-count').textContent = '0';
+        } else {
+            showNotification(result.message || 'Failed to submit endorsement', 'error');
+        }
+        
+        // Restore button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+    } catch (error) {
+        console.error('Error submitting endorsement:', error);
+        showNotification('Failed to submit endorsement. Please try again.', 'error');
+        
+        // Restore button on error
+        const submitBtn = e.target.querySelector('.submit-btn');
+        submitBtn.textContent = 'Submit Endorsement';
+        submitBtn.disabled = false;
+    }
+}
+
+async function searchEndorsees(query) {
+    if (query.length < 2) {
+        clearSearchResults();
+        return;
+    }
+
+    try {
+        // Simulate search API call (replace with actual endpoint)
+        const mockResults = [
+            { id: 1, name: 'Alex Johnson', title: 'Software Engineer', avatar: 'assets/images/profile_pics/default.jpg' },
+            { id: 2, name: 'Sarah Wilson', title: 'UI/UX Designer', avatar: 'assets/images/profile_pics/default.jpg' },
+            { id: 3, name: 'Mike Chen', title: 'Data Scientist', avatar: 'assets/images/profile_pics/default.jpg' }
+        ].filter(user => user.name.toLowerCase().includes(query.toLowerCase()));
+
+        displaySearchResults(mockResults);
+    } catch (error) {
+        console.error('Error searching endorsees:', error);
+    }
+}
+
+function displaySearchResults(results) {
+    const searchResults = document.getElementById('search-results');
+    if (!searchResults) return;
+
+    if (results.length === 0) {
+        searchResults.innerHTML = '<div class="no-results">No users found</div>';
+        searchResults.style.display = 'block';
+        return;
+    }
+
+    const resultsHTML = results.map(user => `
+        <div class="search-result-item" onclick="selectEndorsee('${user.name}')">
+            <img src="${user.avatar}" alt="${user.name}" class="result-avatar">
+            <div class="result-info">
+                <div class="result-name">${user.name}</div>
+                <div class="result-title">${user.title}</div>
+            </div>
+        </div>
+    `).join('');
+
+    searchResults.innerHTML = resultsHTML;
+    searchResults.style.display = 'block';
+}
+
+function selectEndorsee(name) {
+    const searchInput = document.getElementById('endorsee-search');
+    if (searchInput) {
+        searchInput.value = name;
+        clearSearchResults();
+    }
+}
+
+function clearSearchResults() {
+    const searchResults = document.getElementById('search-results');
+    if (searchResults) {
+        searchResults.style.display = 'none';
+        searchResults.innerHTML = '';
+    }
+}
+
+// Utility function for debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
