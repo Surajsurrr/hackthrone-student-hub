@@ -15,6 +15,18 @@ function getStudentProfile($userId) {
 // Update student profile
 function updateStudentProfile($userId, $data) {
     global $db;
-    $db->update('students', $data, "user_id = $userId");
+    if (empty($data) || !is_array($data)) return;
+
+    $setParts = [];
+    $params = [];
+    foreach ($data as $key => $value) {
+        $setParts[] = "$key = :$key";
+        $params[$key] = $value;
+    }
+    $params['user_id'] = $userId;
+    $setSql = implode(', ', $setParts);
+    $sql = "UPDATE students SET $setSql WHERE user_id = :user_id";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
 }
 ?>

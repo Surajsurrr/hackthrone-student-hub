@@ -136,7 +136,9 @@ function handleProfileUpdate(e) {
         if (data.success) {
             showNotification('Profile updated successfully!', 'success');
         } else {
-            showNotification('Error updating profile: ' + data.message, 'error');
+            // Support both `message` and `error` keys from various endpoints
+            const msg = data.message || data.error || 'Unknown error';
+            showNotification('Error updating profile: ' + msg, 'error');
         }
     })
     .catch(error => {

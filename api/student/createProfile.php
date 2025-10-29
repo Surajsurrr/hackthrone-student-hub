@@ -6,11 +6,11 @@ require_once __DIR__ . '/../../includes/functions.php';
 header('Content-Type: application/json');
 
 if (!isLoggedIn() || !hasRole('student')) {
-    jsonResponse(['error' => 'Unauthorized'], 401);
+    jsonResponse(['success' => false, 'message' => 'Unauthorized'], 401);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    jsonResponse(['error' => 'Method not allowed'], 405);
+    jsonResponse(['success' => false, 'message' => 'Method not allowed'], 405);
 }
 
 // Support both JSON payloads and form-data (FormData)
@@ -30,13 +30,17 @@ $data = [
     'name' => sanitize($input['name'] ?? ''),
     'college' => sanitize($input['college'] ?? ''),
     'year' => sanitize($input['year'] ?? ''),
-    'skills' => sanitize($input['skills'] ?? '')
+    'branch' => sanitize($input['branch'] ?? ''),
+    'skills' => sanitize($input['skills'] ?? ''),
+    'bio' => sanitize($input['bio'] ?? '')
 ];
 
 try {
     updateStudentProfile($userId, $data);
     jsonResponse(['success' => true]);
 } catch (Exception $e) {
-    jsonResponse(['error' => 'Failed to update profile'], 500);
+    // Include exception message for debugging
+    $msg = 'Failed to update profile: ' . $e->getMessage();
+    jsonResponse(['success' => false, 'message' => $msg], 500);
 }
 ?>

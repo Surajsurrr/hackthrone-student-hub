@@ -1,4 +1,5 @@
 <?php
+define('DEBUG', true);
 require_once 'includes/student_auth.php';
 $user = getCurrentUser();
 $student = getStudentProfile($user['id']);
