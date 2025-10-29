@@ -14,40 +14,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'college') {
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Validate input
-if (!isset($input['name']) || empty(trim($input['name']))) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'College name is required']);
-    exit;
-}
-
 $user_id = $_SESSION['user_id'];
-$name = trim($input['name']);
+$name = isset($input['name']) ? trim($input['name']) : null;
 $location = isset($input['location']) ? trim($input['location']) : null;
 $description = isset($input['description']) ? trim($input['description']) : null;
 $website = isset($input['website']) ? trim($input['website']) : null;
 $contact_email = isset($input['contact_email']) ? trim($input['contact_email']) : null;
 $logo = isset($input['logo']) ? trim($input['logo']) : null;
-
-// Validate email if provided
-if ($contact_email && !filter_var($contact_email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid email format']);
-    exit;
-}
-
-// Validate URL if provided
-if ($website && !filter_var($website, FILTER_VALIDATE_URL)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid website URL']);
-    exit;
-}
-
-if ($logo && !filter_var($logo, FILTER_VALIDATE_URL)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid logo URL']);
-    exit;
-}
 
 try {
     // Check if college profile exists

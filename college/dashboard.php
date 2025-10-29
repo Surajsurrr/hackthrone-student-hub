@@ -257,7 +257,7 @@ $college = getCollegeProfile($user['id']);
                                     Website URL
                                 </label>
                                 <input 
-                                    type="url" 
+                                    type="text" 
                                     id="profile-website" 
                                     value="<?php echo htmlspecialchars($college['website'] ?? ''); ?>"
                                     placeholder="https://www.college.edu"
@@ -269,7 +269,7 @@ $college = getCollegeProfile($user['id']);
                                     Contact Email
                                 </label>
                                 <input 
-                                    type="email" 
+                                    type="text" 
                                     id="profile-email" 
                                     value="<?php echo htmlspecialchars($college['contact_email'] ?? ''); ?>"
                                     placeholder="info@college.edu"
@@ -283,7 +283,7 @@ $college = getCollegeProfile($user['id']);
                                 Logo URL
                             </label>
                             <input 
-                                type="url" 
+                                type="text" 
                                 id="profile-logo" 
                                 value="<?php echo htmlspecialchars($college['logo'] ?? ''); ?>"
                                 placeholder="https://www.college.edu/logo.png"
@@ -975,6 +975,11 @@ $college = getCollegeProfile($user['id']);
                     if (sectionId === 'events') {
                         loadEvents();
                     }
+                    
+                    // Load profile when profile section is shown
+                    if (sectionId === 'profile') {
+                        loadProfileData();
+                    }
                 });
             });
             
@@ -982,6 +987,9 @@ $college = getCollegeProfile($user['id']);
             const hash = window.location.hash.substring(1);
             if (hash) {
                 showSection(hash);
+                if (hash === 'profile') {
+                    loadProfileData();
+                }
             } else {
                 showSection('overview');
             }
@@ -991,6 +999,31 @@ $college = getCollegeProfile($user['id']);
                 const newHash = window.location.hash.substring(1) || 'overview';
                 showSection(newHash);
             });
+            
+            // Load profile data function
+            async function loadProfileData() {
+                try {
+                    const response = await fetch('../api/college/getProfile.php', {
+                        credentials: 'same-origin'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.profile) {
+                        const profile = data.profile;
+                        
+                        // Populate form fields
+                        document.getElementById('profile-name').value = profile.name || '';
+                        document.getElementById('profile-location').value = profile.location || '';
+                        document.getElementById('profile-website').value = profile.website || '';
+                        document.getElementById('profile-email').value = profile.contact_email || '';
+                        document.getElementById('profile-logo').value = profile.logo || '';
+                        document.getElementById('profile-description').value = profile.description || '';
+                    }
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                }
+            }
             
             // Profile form submission
             const profileForm = document.getElementById('profile-form');
@@ -1070,11 +1103,11 @@ $college = getCollegeProfile($user['id']);
                     }
                     
                     // Validate password length
-                    if (newPassword.length < 6) {
+                    if (newPassword.length < 8) {
                         messageDiv.style.display = 'block';
                         messageDiv.style.background = '#fee2e2';
                         messageDiv.style.color = '#dc2626';
-                        messageDiv.textContent = '❌ Password must be at least 6 characters';
+                        messageDiv.textContent = '❌ Password must be at least 8 characters';
                         return;
                     }
                     
@@ -1083,13 +1116,33 @@ $college = getCollegeProfile($user['id']);
                     messageDiv.style.color = '#92400e';
                     messageDiv.textContent = '🔄 Updating password...';
                     
-                    // TODO: Add change password API endpoint
-                    setTimeout(() => {
-                        messageDiv.style.background = '#d1fae5';
-                        messageDiv.style.color = '#065f46';
-                        messageDiv.textContent = '✅ Password updated successfully!';
-                        passwordForm.reset();
-                    }, 1000);
+                    try {
+                        const response = await fetch('../api/college/changePassword.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                current_password: currentPassword,
+                                new_password: newPassword
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            messageDiv.style.background = '#d1fae5';
+                            messageDiv.style.color = '#065f46';
+                            messageDiv.textContent = '✅ Password updated successfully!';
+                            passwordForm.reset();
+                        } else {
+                            throw new Error(data.error || 'Failed to update password');
+                        }
+                    } catch (error) {
+                        messageDiv.style.background = '#fee2e2';
+                        messageDiv.style.color = '#dc2626';
+                        messageDiv.textContent = '❌ ' + error.message;
+                    }
                 });
             }
             
