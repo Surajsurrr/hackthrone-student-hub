@@ -192,8 +192,9 @@ require_once 'includes/student_auth.php';
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #475569;
+            color: #0f172a;
             font-weight: 600;
+            font-size: 1rem;
         }
 
         .form-group input[type="file"] {
@@ -201,8 +202,21 @@ require_once 'includes/student_auth.php';
             padding: 0.75rem;
             border: 2px dashed #cbd5e1;
             border-radius: 8px;
-            background: #f8fafc;
+            background: white;
             cursor: pointer;
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        .form-group input[type="file"]::file-selector-button {
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 1rem;
         }
 
         .form-group textarea {
@@ -213,6 +227,19 @@ require_once 'includes/student_auth.php';
             font-size: 1rem;
             resize: vertical;
             min-height: 120px;
+            background: white;
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        .form-group textarea::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .form-group small {
+            color: #475569;
+            font-weight: 500;
         }
 
         .submit-btn {
