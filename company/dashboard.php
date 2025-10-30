@@ -23,11 +23,11 @@ $company = getCompanyProfile($user['id']);
                 <h2>Welcome, <?php echo htmlspecialchars($user['username']); ?>!</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3>Total Job Postings</h3>
+                        <h3>Total Employees</h3>
                         <p id="jobs-count">Loading...</p>
                     </div>
                     <div class="stat-card">
-                        <h3>Active Postings</h3>
+                        <h3>Active Job Vacancies</h3>
                         <p id="active-jobs-count">Loading...</p>
                     </div>
                 </div>
@@ -115,8 +115,14 @@ $company = getCompanyProfile($user['id']);
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/dashboard.js"></script>
     <script>
+        // Constants
+        const TOTAL_EMPLOYEES = 100; // Total number of employees in the company
+
         // Enhanced Navigation for Company Dashboard
         document.addEventListener('DOMContentLoaded', function() {
+            // Load job statistics
+            loadJobStats();
+            
             // Handle hash navigation on page load
             function handleHashNavigation() {
                 const hash = window.location.hash.substring(1); // Remove #
@@ -339,6 +345,29 @@ $company = getCompanyProfile($user['id']);
                 alert(`Application ${status} successfully! ✅`);
                 // TODO: Call API to update status
                 loadApplicationsData(); // Reload data
+            }
+        }
+
+        // ============ JOB STATISTICS FUNCTIONALITY ============
+        async function loadJobStats() {
+            try {
+                // Set Total Job Postings (constant - total employees)
+                document.getElementById('jobs-count').textContent = TOTAL_EMPLOYEES;
+
+                // Fetch Active Postings (actual job postings created)
+                const response = await fetch('../api/company/getJobs.php');
+                const data = await response.json();
+
+                if (data.jobs && Array.isArray(data.jobs)) {
+                    const activeJobsCount = data.jobs.filter(job => job.status === 'active').length;
+                    document.getElementById('active-jobs-count').textContent = activeJobsCount;
+                } else {
+                    document.getElementById('active-jobs-count').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error loading job stats:', error);
+                document.getElementById('jobs-count').textContent = TOTAL_EMPLOYEES;
+                document.getElementById('active-jobs-count').textContent = '0';
             }
         }
 
