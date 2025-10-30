@@ -42,5 +42,60 @@ $company = getCompanyProfile($user['id']);
 
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/dashboard.js"></script>
+    <script>
+        // Handle profile form submission
+        document.getElementById('profile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            // Get form data
+            const profileData = {
+                name: document.getElementById('name').value.trim(),
+                industry: document.getElementById('industry').value.trim(),
+                description: document.getElementById('description').value.trim()
+            };
+
+            // Validate
+            if (!profileData.name) {
+                alert('⚠️ Company name is required');
+                return;
+            }
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Saving...';
+
+            try {
+                const response = await fetch('../api/company/updateProfile.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ ' + (result.message || 'Profile updated successfully!'));
+                    // Optionally reload the page to show updated data
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    alert('❌ ' + (result.error || 'Failed to update profile'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('❌ An error occurred while updating your profile');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    </script>
 </body>
 </html>
