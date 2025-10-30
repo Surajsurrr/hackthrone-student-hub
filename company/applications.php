@@ -188,6 +188,147 @@ $user = getCurrentUser();
                 }
             });
         }
+
+        // NEW: Load actual applications from database
+        document.addEventListener('DOMContentLoaded', function() {
+            loadActualApplications();
+        });
+
+        async function loadActualApplications() {
+            try {
+                const response = await fetch('../api/company/getApplications.php');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update stats
+                    document.getElementById('total-applications').textContent = data.stats.total;
+                    document.getElementById('pending-applications').textContent = data.stats.pending;
+                    document.getElementById('accepted-applications').textContent = data.stats.accepted;
+                    document.getElementById('rejected-applications').textContent = data.stats.rejected;
+
+                    // Display applications
+                    displayRealApplications(data.applications);
+                } else {
+                    console.error('Failed to load applications:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        function displayRealApplications(applications) {
+            const container = document.getElementById('applications-list');
+            
+            if (!applications || applications.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #64748b;">
+                        <p style="font-size: 1.1rem; margin: 0;">📋 No applications received yet</p>
+                        <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0;">Student applications will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const statusColors = {
+                'pending': { bg: '#fef3c7', color: '#92400e', border: '#fbbf24' },
+                'reviewing': { bg: '#dbeafe', color: '#1e3a8a', border: '#3b82f6' },
+                'accepted': { bg: '#d1fae5', color: '#065f46', border: '#10b981' },
+                'rejected': { bg: '#fee2e2', color: '#991b1b', border: '#ef4444' }
+            };
+
+            const applicationsHTML = applications.map(app => {
+                const statusStyle = statusColors[app.status.toLowerCase()] || statusColors['pending'];
+                const formattedDate = new Date(app.applied_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                return `
+                    <div class="application-card" data-status="${app.status.toLowerCase()}" style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid ${statusStyle.border};">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.5rem 0; color: #0f172a; font-size: 1.25rem;">👤 ${escapeHtml(app.student_name)}</h3>
+                                <p style="margin: 0 0 0.5rem 0; color: #64748b;">Applied for: <strong style="color: #667eea;">${escapeHtml(app.job_title)}</strong></p>
+                                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                                    <span style="color: #64748b; font-size: 0.875rem;">📧 ${escapeHtml(app.student_email)}</span>
+                                    <span style="color: #64748b; font-size: 0.875rem;">📅 ${formattedDate}</span>
+                                </div>
+                            </div>
+                            <span style="background: ${statusStyle.bg}; color: ${statusStyle.color}; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.875rem; text-transform: capitalize; border: 1px solid ${statusStyle.border};">
+                                ${app.status}
+                            </span>
+                        </div>
+
+                        ${app.cover_letter ? `
+                        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="margin: 0 0 0.5rem 0; color: #475569; font-size: 0.9rem;">📝 Cover Letter:</h4>
+                            <p style="margin: 0; color: #64748b; line-height: 1.6;">${escapeHtml(app.cover_letter)}</p>
+                        </div>
+                        ` : ''}
+
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="../student/${app.resume_path}" target="_blank" style="padding: 0.5rem 1rem; background: #f1f5f9; color: #1e293b; border: 2px solid #cbd5e1; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                📄 View Resume
+                            </a>
+                            ${app.status.toLowerCase() !== 'accepted' && app.status.toLowerCase() !== 'rejected' ? `
+                            <button onclick="updateApplicationStatus(${app.id}, 'reviewing')" style="padding: 0.5rem 1rem; background: #dbeafe; color: #1e40af; border: 2px solid #3b82f6; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                👀 Review
+                            </button>
+                            <button onclick="updateApplicationStatus(${app.id}, 'accepted')" style="padding: 0.5rem 1rem; background: #d1fae5; color: #065f46; border: 2px solid #10b981; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                ✅ Accept
+                            </button>
+                            <button onclick="updateApplicationStatus(${app.id}, 'rejected')" style="padding: 0.5rem 1rem; background: #fee2e2; color: #991b1b; border: 2px solid #ef4444; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                ❌ Reject
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = applicationsHTML;
+        }
+
+        async function updateApplicationStatus(applicationId, newStatus) {
+            if (!confirm(`Are you sure you want to mark this application as ${newStatus}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('../api/company/updateApplicationStatus.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        application_id: applicationId,
+                        status: newStatus
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ Application status updated to ${newStatus}!`);
+                    loadActualApplications(); // Reload applications
+                } else {
+                    alert('❌ ' + (result.error || 'Failed to update status'));
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('❌ An error occurred while updating the application status');
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </body>
 </html>
