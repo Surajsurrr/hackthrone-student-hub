@@ -69,7 +69,7 @@ $company = getCompanyProfile($user['id']);
                     <form id="createPostForm" class="post-form" style="padding: 1.5rem;">
                         <div class="form-group" style="margin-bottom: 1.5rem;">
                             <label for="postCategory" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">Post Category *</label>
-                            <select id="postCategory" required style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                            <select id="postCategory" required style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background: white; color: #0f172a; font-weight: 500;">
                                 <option value="">Select a category...</option>
                                 <option value="job-opening">💼 Job Openings</option>
                                 <option value="company-news">📰 Company News</option>
@@ -89,7 +89,7 @@ $company = getCompanyProfile($user['id']);
                                 placeholder="e.g., Now Hiring: Senior Software Engineer" 
                                 required
                                 maxlength="200"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background: white; color: #0f172a; font-weight: 500;"
                             >
                         </div>
                         <div class="form-group" style="margin-bottom: 1.5rem;">
@@ -100,9 +100,9 @@ $company = getCompanyProfile($user['id']);
                                 required
                                 rows="6"
                                 maxlength="2000"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; resize: vertical;"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; resize: vertical; background: white; color: #0f172a; font-weight: 500; line-height: 1.6;"
                             ></textarea>
-                            <small style="color: #64748b; font-size: 0.85rem;"><span id="charCount">0</span>/2000 characters</small>
+                            <small style="color: #475569; font-size: 0.85rem; font-weight: 600;"><span id="charCount">0</span>/2000 characters</small>
                         </div>
                         
                         <div id="postError" style="display: none; padding: 1rem; background: #fee2e2; color: #dc2626; border-radius: 8px; margin-bottom: 1rem;"></div>
