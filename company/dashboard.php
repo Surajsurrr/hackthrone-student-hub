@@ -41,7 +41,84 @@ $company = getCompanyProfile($user['id']);
                         <p id="active-jobs-count">Loading...</p>
                     </div>
                 </div>
+
+                <!-- Company Posts Section -->
+                <div class="posts-section" style="margin-top: 2rem;">
+                    <div class="posts-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0; color: #1e293b; font-size: 1.5rem;">📢 Company Updates & Posts</h3>
+                        <button class="btn btn-primary" onclick="openCreatePostModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                            ✏️ Create Post
+                        </button>
+                    </div>
+
+                    <!-- Posts Feed -->
+                    <div id="posts-feed" class="posts-feed">
+                        <p style="text-align: center; color: #64748b; padding: 2rem;">Loading posts...</p>
+                    </div>
+                </div>
             </section>
+
+            <!-- Create Post Modal -->
+            <div id="createPostModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; overflow-y: auto;">
+                <div class="modal-overlay" onclick="closeCreatePostModal()" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);"></div>
+                <div class="modal-container" style="position: relative; max-width: 600px; margin: 2rem auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); z-index: 1001;">
+                    <div class="modal-header" style="padding: 1.5rem; border-bottom: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">✏️ Create New Post</h3>
+                        <button class="modal-close" onclick="closeCreatePostModal()" style="background: none; border: none; font-size: 2rem; color: #64748b; cursor: pointer; line-height: 1;">&times;</button>
+                    </div>
+                    <form id="createPostForm" class="post-form" style="padding: 1.5rem;">
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="postCategory" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">Post Category *</label>
+                            <select id="postCategory" required style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                                <option value="">Select a category...</option>
+                                <option value="job-opening">💼 Job Openings</option>
+                                <option value="company-news">📰 Company News</option>
+                                <option value="achievement">🏆 Achievements & Milestones</option>
+                                <option value="culture">🎯 Company Culture</option>
+                                <option value="technology">💻 Technology & Innovation</option>
+                                <option value="internship">🎓 Internship Programs</option>
+                                <option value="announcement">📢 Announcements</option>
+                                <option value="event">📅 Events & Workshops</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="postTitle" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">Post Title *</label>
+                            <input 
+                                type="text" 
+                                id="postTitle" 
+                                placeholder="e.g., Now Hiring: Senior Software Engineer" 
+                                required
+                                maxlength="200"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
+                            >
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="postContent" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b;">Content *</label>
+                            <textarea 
+                                id="postContent" 
+                                placeholder="Share company updates, job openings, achievements, or announcements..."
+                                required
+                                rows="6"
+                                maxlength="2000"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; resize: vertical;"
+                            ></textarea>
+                            <small style="color: #64748b; font-size: 0.85rem;"><span id="charCount">0</span>/2000 characters</small>
+                        </div>
+                        
+                        <div id="postError" style="display: none; padding: 1rem; background: #fee2e2; color: #dc2626; border-radius: 8px; margin-bottom: 1rem;"></div>
+                        <div id="postSuccess" style="display: none; padding: 1rem; background: #d1fae5; color: #065f46; border-radius: 8px; margin-bottom: 1rem;"></div>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" onclick="closeCreatePostModal()" style="flex: 1; padding: 0.875rem; background: #f1f5f9; color: #1e293b; border: 2px solid #cbd5e1; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                Cancel
+                            </button>
+                            <button type="submit" id="submitPostBtn" style="flex: 1; padding: 0.875rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+                                📤 Publish Post
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <section id="jobs" class="dashboard-section">
                 <h2>Manage Job Postings</h2>
@@ -453,6 +530,243 @@ $company = getCompanyProfile($user['id']);
                 // TODO: Call API to update status
                 loadApplicationsData(); // Reload data
             }
+        }
+
+        // ============ POSTS FUNCTIONALITY ============
+        let allPosts = [];
+
+        // Load posts on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+            
+            // Character counter for post content
+            const postContent = document.getElementById('postContent');
+            if (postContent) {
+                postContent.addEventListener('input', function() {
+                    document.getElementById('charCount').textContent = this.value.length;
+                });
+            }
+        });
+
+        function openCreatePostModal() {
+            document.getElementById('createPostModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCreatePostModal() {
+            document.getElementById('createPostModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('createPostForm').reset();
+            document.getElementById('charCount').textContent = '0';
+            document.getElementById('postError').style.display = 'none';
+            document.getElementById('postSuccess').style.display = 'none';
+        }
+
+        // Handle post form submission
+        document.getElementById('createPostForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitPostBtn');
+            const errorDiv = document.getElementById('postError');
+            const successDiv = document.getElementById('postSuccess');
+            
+            const category = document.getElementById('postCategory').value;
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!category || !title || !content) {
+                errorDiv.textContent = '❌ Please fill in all required fields';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Publishing...';
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('../api/company/createPost.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        category: category,
+                        title: title,
+                        content: content
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successDiv.textContent = '✅ Post published successfully!';
+                    successDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        closeCreatePostModal();
+                        loadPosts();
+                    }, 1500);
+                } else {
+                    errorDiv.textContent = '❌ ' + (data.error || 'Failed to create post');
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📤 Publish Post';
+                }
+            } catch (error) {
+                console.error('Error creating post:', error);
+                errorDiv.textContent = '❌ Network error. Please try again.';
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 Publish Post';
+            }
+        });
+
+        async function loadPosts() {
+            try {
+                const response = await fetch('../api/company/getPosts.php');
+                const data = await response.json();
+                
+                if (data.success && data.posts) {
+                    allPosts = data.posts;
+                    displayPosts(allPosts);
+                } else {
+                    showEmptyPosts();
+                }
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('posts-feed').innerHTML = `
+                    <p style="text-align: center; color: #dc2626; padding: 2rem;">
+                        Failed to load posts. Please refresh the page.
+                    </p>
+                `;
+            }
+        }
+
+        function displayPosts(posts) {
+            const container = document.getElementById('posts-feed');
+            
+            if (!posts || posts.length === 0) {
+                showEmptyPosts();
+                return;
+            }
+
+            const categoryLabels = {
+                'job-opening': '💼 Job Opening',
+                'company-news': '📰 Company News',
+                'achievement': '🏆 Achievement',
+                'culture': '🎯 Company Culture',
+                'technology': '💻 Technology',
+                'internship': '🎓 Internship',
+                'announcement': '📢 Announcement',
+                'event': '📅 Event'
+            };
+
+            container.innerHTML = posts.map(post => {
+                const postDate = new Date(post.created_at);
+                const timeAgo = getTimeAgo(postDate);
+                const categoryClass = 'category-' + post.category;
+                
+                return `
+                    <div class="post-card" style="background: white; border: 2px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s;">
+                        <div class="post-header" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <img src="${post.company_logo || '../assets/images/logos/default-company.png'}" 
+                                 alt="Company Logo" 
+                                 style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 2px solid #e2e8f0;"
+                                 onerror="this.src='../assets/images/logos/default-company.png'">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.1rem;">${escapeHtml(post.company_name)}</h4>
+                                <div style="display: flex; gap: 0.75rem; align-items: center; color: #64748b; font-size: 0.9rem;">
+                                    <span style="padding: 0.25rem 0.75rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">
+                                        ${categoryLabels[post.category] || post.category}
+                                    </span>
+                                    <span>•</span>
+                                    <span>${timeAgo}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin: 0 0 0.75rem 0; color: #0f172a; font-size: 1.25rem; font-weight: 700;">${escapeHtml(post.title)}</h3>
+                        <p style="margin: 0; color: #475569; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(post.content)}</p>
+                        
+                        <div class="post-actions" style="display: flex; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                            <button onclick="deletePost(${post.id})" style="padding: 0.5rem 1rem; background: #fee2e2; color: #dc2626; border: 2px solid #fecaca; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showEmptyPosts() {
+            document.getElementById('posts-feed').innerHTML = `
+                <div style="text-align: center; padding: 4rem 2rem; background: white; border: 2px dashed #cbd5e1; border-radius: 16px;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
+                    <h3 style="margin: 0 0 0.5rem 0; color: #0f172a; font-size: 1.5rem;">No Posts Yet</h3>
+                    <p style="margin: 0 0 1.5rem 0; color: #64748b;">Start sharing your company updates, job openings, and announcements!</p>
+                    <button class="btn btn-primary" onclick="openCreatePostModal()" style="padding: 0.875rem 1.75rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                        ✏️ Create Your First Post
+                    </button>
+                </div>
+            `;
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('../api/company/deletePost.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ post_id: postId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadPosts();
+                } else {
+                    alert('Failed to delete post: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            const intervals = {
+                year: 31536000,
+                month: 2592000,
+                week: 604800,
+                day: 86400,
+                hour: 3600,
+                minute: 60
+            };
+            
+            for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                const interval = Math.floor(seconds / secondsInUnit);
+                if (interval >= 1) {
+                    return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+                }
+            }
+            
+            return 'Just now';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     </script>
 </body>
