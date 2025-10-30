@@ -1149,7 +1149,7 @@ $student = getStudentProfile($user['id']);
                                 <div class="card-content">
                                     <h4>Change Password</h4>
                                     <p>Update your account password for better security</p>
-                                    <button class="btn btn-primary" onclick="openPasswordModal()">Change Password</button>
+                                    <a href="change_password.php" class="btn btn-primary" style="display: inline-block; text-decoration: none;">Change Password</a>
                                 </div>
                             </div>
                             <div class="settings-card">

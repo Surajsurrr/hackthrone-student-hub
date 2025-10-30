@@ -1,14 +1,18 @@
 <?php
-require_once '../../includes/config.php';
 require_once '../../includes/session.php';
+require_once '../../includes/functions.php';
+require_once '../../includes/db_connect.php';
 
 header('Content-Type: application/json');
 
 // Check if user is logged in and is a company
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'company') {
+if (!isLoggedIn() || !hasRole('company')) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized access']);
     exit;
 }
+
+// Get database connection
+$pdo = Database::getInstance()->getConnection();
 
 // Get POST data
 $data = json_decode(file_get_contents('php://input'), true);

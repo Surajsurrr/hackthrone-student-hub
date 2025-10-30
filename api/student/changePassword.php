@@ -1,61 +1,52 @@
 <?php
 require_once '../../includes/session.php';
+require_once '../../includes/functions.php';
 require_once '../../includes/db_connect.php';
 
 header('Content-Type: application/json');
 
 // Check if user is logged in and is a student
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+if (!isLoggedIn() || !hasRole('student')) {
+    echo json_encode(['success' => false, 'error' => 'Unauthorized access']);
     exit;
 }
+
+// Get database connection
+$pdo = Database::getInstance()->getConnection();
 
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Validate input
-if (!isset($input['current_password']) || !isset($input['new_password']) || !isset($input['confirm_password'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'All fields are required']);
+if (!isset($input['current_password']) || !isset($input['new_password'])) {
+    echo json_encode(['success' => false, 'error' => 'Missing required fields']);
     exit;
 }
 
 $current_password = $input['current_password'];
 $new_password = $input['new_password'];
-$confirm_password = $input['confirm_password'];
 $user_id = $_SESSION['user_id'];
 
 // Validate new password
-if (strlen($new_password) < 6) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'New password must be at least 6 characters long']);
-    exit;
-}
-
-// Check if new passwords match
-if ($new_password !== $confirm_password) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'New passwords do not match']);
+if (strlen($new_password) < 8) {
+    echo json_encode(['success' => false, 'error' => 'New password must be at least 8 characters long']);
     exit;
 }
 
 try {
     // Get current password hash from database
-    $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ? AND role = 'student'");
+    $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$user) {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'User not found']);
+        echo json_encode(['success' => false, 'error' => 'User not found']);
         exit;
     }
     
     // Verify current password
     if (!password_verify($current_password, $user['password'])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Current password is incorrect']);
+        echo json_encode(['success' => false, 'error' => 'Current password is incorrect']);
         exit;
     }
     
@@ -63,11 +54,17 @@ try {
     $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
     
     // Update password in database
-    $stmt = $pdo->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
     $stmt->execute([$new_password_hash, $user_id]);
     
     echo json_encode([
         'success' => true,
+        'message' => 'Password updated successfully'
+    ]);
+    
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+}
         'message' => 'Password changed successfully'
     ]);
     
