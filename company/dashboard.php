@@ -16,17 +16,7 @@ $company = getCompanyProfile($user['id']);
     <?php include 'includes/header.php'; ?>
 
     <div class="dashboard-container">
-        <aside class="sidebar">
-            <nav>
-                <ul>
-                    <li><a href="#overview" class="active">Overview</a></li>
-                    <li><a href="#jobs">Manage Jobs</a></li>
-                    <li><a href="#applications">Applications</a></li>
-                    <li><a href="#profile">Profile</a></li>
-                    <li><a href="#settings">Settings</a></li>
-                </ul>
-            </nav>
-        </aside>
+        <?php include 'includes/sidebar.php'; ?>
 
         <main class="main-content">
             <section id="overview" class="dashboard-section active">
@@ -119,253 +109,73 @@ $company = getCompanyProfile($user['id']);
                     </form>
                 </div>
             </div>
-
-            <section id="jobs" class="dashboard-section">
-                <h2>Manage Job Postings</h2>
-                <div class="jobs-management">
-                    <div class="create-job">
-                        <h3>Post New Job</h3>
-                        <form id="create-job-form">
-                            <div class="form-group">
-                                <label for="job-title">Job Title:</label>
-                                <input type="text" id="job-title" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="job-description">Description:</label>
-                                <textarea id="job-description" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="job-requirements">Requirements:</label>
-                                <textarea id="job-requirements" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="job-salary">Salary (optional):</label>
-                                <input type="text" id="job-salary" placeholder="e.g., $5000/month">
-                            </div>
-                            <div class="form-group">
-                                <label for="job-type">Job Type:</label>
-                                <select id="job-type" required>
-                                    <option value="internship">Internship</option>
-                                    <option value="full-time">Full-time</option>
-                                    <option value="part-time">Part-time</option>
-                                    <option value="contract">Contract</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn">Post Job</button>
-                        </form>
-                    </div>
-                    <div class="jobs-list">
-                        <h3>Your Job Postings</h3>
-                        <div id="jobs-list">
-                            <!-- Jobs will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="applications" class="dashboard-section">
-                <h2>Job Applications</h2>
-                <div class="applications-management">
-                    <!-- Filter Options -->
-                    <div class="applications-filters" style="margin-bottom: 2rem;">
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <button class="filter-btn active" data-status="all" style="padding: 0.75rem 1.5rem; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                                All Applications
-                            </button>
-                            <button class="filter-btn" data-status="pending" style="padding: 0.75rem 1.5rem; border: 2px solid #cbd5e1; background: white; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                                Pending
-                            </button>
-                            <button class="filter-btn" data-status="reviewing" style="padding: 0.75rem 1.5rem; border: 2px solid #cbd5e1; background: white; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                                Reviewing
-                            </button>
-                            <button class="filter-btn" data-status="accepted" style="padding: 0.75rem 1.5rem; border: 2px solid #cbd5e1; background: white; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                                Accepted
-                            </button>
-                            <button class="filter-btn" data-status="rejected" style="padding: 0.75rem 1.5rem; border: 2px solid #cbd5e1; background: white; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">
-                                Rejected
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Applications Stats -->
-                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <h3 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Total Applications</h3>
-                            <p id="total-applications" style="font-size: 2rem; font-weight: 700; margin: 0;">0</p>
-                        </div>
-                        <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <h3 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Pending Review</h3>
-                            <p id="pending-applications" style="font-size: 2rem; font-weight: 700; margin: 0;">0</p>
-                        </div>
-                        <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <h3 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Accepted</h3>
-                            <p id="accepted-applications" style="font-size: 2rem; font-weight: 700; margin: 0;">0</p>
-                        </div>
-                        <div class="stat-card" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <h3 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Rejected</h3>
-                            <p id="rejected-applications" style="font-size: 2rem; font-weight: 700; margin: 0;">0</p>
-                        </div>
-                    </div>
-
-                    <!-- Applications List -->
-                    <div class="applications-list" style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                        <h3 style="margin: 0 0 1.5rem 0; color: #0f172a;">Recent Applications</h3>
-                        <div id="applications-list">
-                            <!-- Applications will be loaded here dynamically -->
-                            <div style="text-align: center; padding: 3rem; color: #64748b;">
-                                <p style="font-size: 1.1rem; margin: 0;">📋 No applications yet</p>
-                                <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0;">Applications from students will appear here</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="profile" class="dashboard-section">
-                <h2>Company Profile</h2>
-                <form id="profile-form">
-                    <div class="form-group">
-                        <label for="name">Company Name:</label>
-                        <input type="text" id="name" value="<?php echo htmlspecialchars($company['name'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="industry">Industry:</label>
-                        <input type="text" id="industry" value="<?php echo htmlspecialchars($company['industry'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description:</label>
-                        <textarea id="description"><?php echo htmlspecialchars($company['description'] ?? ''); ?></textarea>
-                    </div>
-                    <button type="submit" class="btn">Update Profile</button>
-                </form>
-            </section>
-
-            <section id="settings" class="dashboard-section">
-                <h2>Settings</h2>
-                <div class="settings-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                    
-                    <!-- Account Information Card -->
-                    <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                        <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.25rem;">Account Information</h3>
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            <div style="padding: 1rem; background: #fefce8; border-left: 4px solid #fbbf24; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; font-weight: 600; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">USERNAME</div>
-                                <div style="font-size: 1rem; font-weight: 600; color: #0f172a;"><?php echo htmlspecialchars($user['username']); ?></div>
-                            </div>
-                            <div style="padding: 1rem; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; font-weight: 600; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">EMAIL</div>
-                                <div style="font-size: 1rem; font-weight: 600; color: #0f172a;"><?php echo htmlspecialchars($user['email'] ?? 'Not set'); ?></div>
-                            </div>
-                            <div style="padding: 1rem; background: #dcfce7; border-left: 4px solid #10b981; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; font-weight: 600; color: #065f46; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">ACCOUNT TYPE</div>
-                                <div style="font-size: 1rem; font-weight: 600; color: #0f172a;">Company</div>
-                            </div>
-                            <div style="padding: 1rem; background: #fae8ff; border-left: 4px solid #a855f7; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; font-weight: 600; color: #6b21a8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">MEMBER SINCE</div>
-                                <div style="font-size: 1rem; font-weight: 600; color: #0f172a;"><?php echo date('F Y', strtotime($user['created_at'] ?? 'now')); ?></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Security Settings Card -->
-                    <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🔒</div>
-                            <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">Security Settings</h3>
-                        </div>
-                        
-                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; border: 1px solid #fbbf24;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                <span style="font-size: 1.25rem;">⚠️</span>
-                                <strong style="color: #92400e; font-size: 0.95rem;">Security Recommendation</strong>
-                            </div>
-                            <p style="margin: 0; color: #78350f; font-size: 0.875rem; line-height: 1.5;">Change your password regularly to keep your account secure.</p>
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <a href="change_password.php" style="display: block; width: 100%; padding: 1rem; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; text-align: center; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-                                🔐 Change Password
-                            </a>
-                        </div>
-
-                        <div style="padding: 1rem; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
-                            <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.5rem;">
-                                <strong style="color: #1e293b;">Last password change:</strong> Never
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 1.5rem; padding: 1rem; background: #f1f5f9; border-radius: 10px;">
-                            <h4 style="margin: 0 0 0.75rem 0; color: #1e293b; font-size: 0.9rem;">🛡️ Security Tips:</h4>
-                            <ul style="margin: 0; padding-left: 1.25rem; color: #475569; font-size: 0.85rem; line-height: 1.8;">
-                                <li>Use a strong, unique password</li>
-                                <li>Never share your password with anyone</li>
-                                <li>Enable two-factor authentication when available</li>
-                                <li>Review your account activity regularly</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Notification Preferences -->
-                    <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                        <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.25rem;">Notification Preferences</h3>
-                        <form id="notification-settings-form">
-                            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                    <input type="checkbox" checked style="width: 20px; height: 20px; cursor: pointer;">
-                                    <div>
-                                        <div style="font-weight: 600; color: #0f172a; margin-bottom: 0.25rem;">Email Notifications</div>
-                                        <div style="font-size: 0.85rem; color: #64748b;">Receive email updates about new applications</div>
-                                    </div>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                    <input type="checkbox" checked style="width: 20px; height: 20px; cursor: pointer;">
-                                    <div>
-                                        <div style="font-weight: 600; color: #0f172a; margin-bottom: 0.25rem;">Application Alerts</div>
-                                        <div style="font-size: 0.85rem; color: #64748b;">Get notified when students apply to your jobs</div>
-                                    </div>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                    <input type="checkbox" style="width: 20px; height: 20px; cursor: pointer;">
-                                    <div>
-                                        <div style="font-weight: 600; color: #0f172a; margin-bottom: 0.25rem;">Weekly Summary</div>
-                                        <div style="font-size: 0.85rem; color: #64748b;">Receive weekly reports about your job postings</div>
-                                    </div>
-                                </label>
-                            </div>
-                            <button type="submit" class="btn" style="width: 100%; margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                                💾 Save Preferences
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Account Actions -->
-                    <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                        <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.25rem;">Account Actions</h3>
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            <button class="btn" style="width: 100%; padding: 1rem; background: #f1f5f9; color: #1e293b; border: 2px solid #cbd5e1; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                                📥 Download Account Data
-                            </button>
-                            <button class="btn" style="width: 100%; padding: 1rem; background: #fef2f2; color: #dc2626; border: 2px solid #fecaca; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                                🗑️ Delete Account
-                            </button>
-                        </div>
-                        <div style="margin-top: 1.5rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px;">
-                            <p style="margin: 0; color: #991b1b; font-size: 0.85rem; line-height: 1.6;">
-                                ⚠️ <strong>Warning:</strong> Deleting your account is permanent and cannot be undone. All your data will be permanently removed.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
         </main>
     </div>
 
     <?php include 'includes/footer.php'; ?>
     <script src="../assets/js/dashboard.js"></script>
     <script>
-        // Applications Section JavaScript
+        // Enhanced Navigation for Company Dashboard
         document.addEventListener('DOMContentLoaded', function() {
+            // Handle hash navigation on page load
+            function handleHashNavigation() {
+                const hash = window.location.hash.substring(1); // Remove #
+                if (hash) {
+                    toggleSection(hash);
+                } else {
+                    toggleSection('overview'); // Default to overview
+                }
+            }
+
+            // Call on page load
+            handleHashNavigation();
+
+            // Handle browser back/forward buttons
+            window.addEventListener('hashchange', handleHashNavigation);
+
+            // Add click handlers to sidebar links
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('href').substring(1);
+                    window.location.hash = sectionId;
+                    toggleSection(sectionId);
+                });
+            });
+
+            // Toggle section function (enhanced)
+            window.toggleSection = function(sectionId) {
+                // Hide all sections
+                const sections = document.querySelectorAll('.dashboard-section');
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'none';
+                });
+
+                // Show target section
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    targetSection.style.display = 'block';
+                }
+
+                // Update sidebar active state
+                const sidebarLinks = document.querySelectorAll('.sidebar a');
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                const activeLink = document.querySelector(`.sidebar a[href="#${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            // Applications Section JavaScript
             // Filter buttons functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
             filterButtons.forEach(button => {
