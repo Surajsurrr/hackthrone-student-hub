@@ -23,10 +23,33 @@ if (!$jobId) {
 try {
     $pdo = Database::getInstance()->getConnection();
     
+    // Drop and recreate the table to ensure correct schema
+    $pdo->exec("DROP TABLE IF EXISTS job_applications");
+    
+    // Create job_applications table with correct schema
+    $createTableSQL = "CREATE TABLE job_applications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        job_id INT NOT NULL,
+        resume_path VARCHAR(255) NOT NULL,
+        cover_letter TEXT,
+        status VARCHAR(50) DEFAULT 'pending',
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+        INDEX idx_user_id (user_id),
+        INDEX idx_job_id (job_id),
+        INDEX idx_status (status),
+        UNIQUE KEY unique_application (user_id, job_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    
+    $pdo->exec($createTableSQL);
+    
     // Check if student has already applied for this job
-    $stmt = $pdo->prepare("SELECT id FROM job_applications WHERE user_id = ? AND job_id = ?");
-    $stmt->execute([$userId, $jobId]);
-    if ($stmt->fetch()) {
+    $checkStmt = $pdo->prepare("SELECT id FROM job_applications WHERE user_id = ? AND job_id = ?");
+    $checkStmt->execute([$userId, $jobId]);
+    if ($checkStmt->fetch()) {
         jsonResponse(['error' => 'You have already applied for this job'], 400);
     }
 
@@ -56,25 +79,6 @@ try {
     } else {
         jsonResponse(['error' => 'Resume is required'], 400);
     }
-
-    // Create job_applications table if it doesn't exist
-    $createTableSQL = "CREATE TABLE IF NOT EXISTS job_applications (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        job_id INT NOT NULL,
-        resume_path VARCHAR(255) NOT NULL,
-        cover_letter TEXT,
-        status VARCHAR(50) DEFAULT 'pending',
-        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
-        UNIQUE KEY unique_application (user_id, job_id),
-        INDEX idx_user_id (user_id),
-        INDEX idx_job_id (job_id),
-        INDEX idx_status (status)
-    )";
-    $pdo->exec($createTableSQL);
 
     // Insert application
     $stmt = $pdo->prepare("
