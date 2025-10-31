@@ -101,16 +101,20 @@ require_once 'includes/company_auth.php';
 
         .filter-select {
             padding: 8px 12px;
-            border: 2px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             min-width: 150px;
             cursor: pointer;
+            background: #ffffff;
+            color: #0b1220; /* dark text for contrast */
+            font-weight: 600;
         }
 
         .filter-select:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.06);
         }
 
         .search-box {
@@ -121,14 +125,31 @@ require_once 'includes/company_auth.php';
         .search-box input {
             width: 100%;
             padding: 10px 15px;
-            border: 2px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            background: #ffffff;
+            color: #0b1220; /* dark text for readable input */
+            font-weight: 500;
+        }
+
+        .search-box input::placeholder {
+            color: #94a3b8; /* visible muted placeholder */
+            opacity: 1;
         }
 
         .search-box input:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.06);
+        }
+
+        /* Ensure select text is visible across browsers */
+        select.filter-select,
+        .filter-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .postings-grid {
