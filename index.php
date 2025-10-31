@@ -10,6 +10,58 @@ require_once 'includes/functions.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo APP_NAME; ?> - Your Career Hub</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <style>
+        /* Hero overrides to match dashboard template */
+        .hero {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, rgba(11,18,32,1) 0%, rgba(15,23,36,1) 100%);
+            border-radius: 0 0 0 0;
+            box-shadow: inset 0 -40px 80px rgba(2,6,23,0.6);
+        }
+        .hero .hero-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .hero .hero-content h2 {
+            font-size: 3.2rem;
+            line-height: 1.05;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero .hero-content p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            margin-bottom: 1.75rem;
+        }
+        .hero .btn-primary {
+            padding: 0.9rem 1.25rem;
+            font-size: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.18);
+        }
+        /* Decorative accent on wide screens */
+        .hero-accent {
+            position: absolute;
+            right: 2rem;
+            top: 30px;
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(ellipse at center, rgba(124,58,237,0.12), rgba(6,182,212,0.06));
+            border-radius: 50%;
+            filter: blur(18px);
+            pointer-events: none;
+            display: none;
+        }
+        @media (min-width: 1100px) {
+            .hero-accent { display: block; }
+        }
+    </style>
 </head>
 <body>
     <header>
