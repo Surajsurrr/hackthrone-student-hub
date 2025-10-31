@@ -61,6 +61,24 @@ require_once 'includes/functions.php';
         @media (min-width: 1100px) {
             .hero-accent { display: block; }
         }
+        /* Feature card CTA and floating action button */
+        .feature-cta { margin-top: 1rem; text-align: center; }
+        .btn-sm { padding: 0.5rem 0.85rem; font-size: 0.9rem; border-radius: 8px; }
+        .floating-cta {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            background: var(--accent1, #6b46c1);
+            color: #fff;
+            padding: 0.8rem 1rem;
+            border-radius: 999px;
+            box-shadow: 0 8px 30px rgba(99,102,241,0.18);
+            z-index: 9999;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+        .floating-cta:hover { transform: translateY(-3px); box-shadow: 0 18px 45px rgba(99,102,241,0.18); }
     </style>
 </head>
 <body>
@@ -102,9 +120,7 @@ require_once 'includes/functions.php';
             <div class="hero-content">
                 <h2>Welcome to <?php echo APP_NAME; ?></h2>
                 <p>Your one-stop platform for career development, opportunities, and collaboration.</p>
-                <?php if (!isLoggedIn()): ?>
-                    <a href="register.php" class="btn btn-primary">Get Started</a>
-                <?php endif; ?>
+                <!-- Hero CTA removed per request -->
             </div>
         </section>
 
@@ -120,6 +136,9 @@ require_once 'includes/functions.php';
                             <li>Note sharing with peers</li>
                             <li>Personalized dashboard</li>
                         </ul>
+                        <div class="feature-cta">
+                            <a class="btn btn-primary btn-sm" href="register.php">Get Started</a>
+                        </div>
                     </div>
                     <div class="feature-card">
                         <h4>For Colleges</h4>
@@ -129,6 +148,9 @@ require_once 'includes/functions.php';
                             <li>Promote your institution</li>
                             <li>Track event participation</li>
                         </ul>
+                        <div class="feature-cta">
+                            <a class="btn btn-primary btn-sm" href="register.php">Get Started</a>
+                        </div>
                     </div>
                     <div class="feature-card">
                         <h4>For Companies</h4>
@@ -138,6 +160,9 @@ require_once 'includes/functions.php';
                             <li>Manage recruitment drives</li>
                             <li>Build employer brand</li>
                         </ul>
+                        <div class="feature-cta">
+                            <a class="btn btn-primary btn-sm" href="register.php">Get Started</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,5 +180,6 @@ require_once 'includes/functions.php';
         logout();
     }
     ?>
+    <!-- Floating CTA removed per request -->
 </body>
 </html>
