@@ -57,7 +57,9 @@ function destroySession() {
 // Logout function
 function logout() {
     destroySession();
-    header('Location: ../login.php');
+    // Redirect to main landing page after logout
+    // Use absolute path to ensure all portals (student/college/company) redirect correctly
+    header('Location: /stfinal/index.php');
     exit;
 }
 ?>

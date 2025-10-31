@@ -31,7 +31,8 @@ function destroySession() {
 // Logout function
 function logout() {
     destroySession();
-    header('Location: ../login.php');
+    // Redirect to main landing page after logout
+    header('Location: /stfinal/index.php');
     exit;
 }
 ?>
