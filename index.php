@@ -39,7 +39,6 @@ require_once 'includes/functions.php';
                         <li><a href="?logout=1">Logout</a></li>
                     <?php else: ?>
                         <li><a href="login.php">Login</a></li>
-                        <li><a href="register.php">Register</a></li>
                     <?php endif; ?>
                 </ul>
             </div>
