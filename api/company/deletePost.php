@@ -14,12 +14,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'company') {
 // Get POST data
 $data = json_decode(file_get_contents('php://input'), true);
 
-if (!isset($data['post_id'])) {
+if (!isset($data['post_id']) && !isset($data['id'])) {
     echo json_encode(['success' => false, 'error' => 'Post ID is required']);
     exit;
 }
 
-$postId = $data['post_id'];
+$postId = $data['post_id'] ?? $data['id'];
 $companyId = $_SESSION['user_id'];
 
 try {

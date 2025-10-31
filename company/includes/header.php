@@ -5,6 +5,7 @@
             <ul>
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="post_internship.php">Post Job</a></li>
+                <li><a href="create_post.php">Create Post</a></li>
                 <li><a href="manage_postings.php">Manage Postings</a></li>
                 <li><a href="?logout=1">Logout</a></li>
             </ul>

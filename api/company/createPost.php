@@ -14,52 +14,53 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'company') {
 // Get POST data
 $data = json_decode(file_get_contents('php://input'), true);
 
-if (!isset($data['category']) || !isset($data['title']) || !isset($data['content'])) {
-    echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+// Support both old and new field names
+$title = isset($data['title']) ? trim($data['title']) : '';
+$content = isset($data['content']) ? trim($data['content']) : '';
+$postType = isset($data['post_type']) ? trim($data['post_type']) : (isset($data['category']) ? trim($data['category']) : '');
+$imageUrl = isset($data['image_url']) ? trim($data['image_url']) : null;
+$tags = isset($data['tags']) ? trim($data['tags']) : null;
+$status = isset($data['status']) ? trim($data['status']) : 'published';
+
+// Validate required fields
+if (empty($title) || empty($content) || empty($postType)) {
+    echo json_encode(['success' => false, 'error' => 'Title, content, and post type are required']);
     exit;
 }
 
-$category = trim($data['category']);
-$title = trim($data['title']);
-$content = trim($data['content']);
-$companyId = $_SESSION['user_id'];
-
-// Validate inputs
-if (empty($category) || empty($title) || empty($content)) {
-    echo json_encode(['success' => false, 'error' => 'All fields are required']);
-    exit;
-}
-
-if (strlen($title) > 200) {
-    echo json_encode(['success' => false, 'error' => 'Title is too long (max 200 characters)']);
-    exit;
-}
-
-if (strlen($content) > 2000) {
-    echo json_encode(['success' => false, 'error' => 'Content is too long (max 2000 characters)']);
-    exit;
-}
+$userId = $_SESSION['user_id'];
 
 try {
-    // Check if company_posts table exists, if not create it
-    $pdo->exec("CREATE TABLE IF NOT EXISTS company_posts (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        company_id INT NOT NULL,
-        category VARCHAR(50) NOT NULL,
-        title VARCHAR(200) NOT NULL,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (company_id) REFERENCES users(id) ON DELETE CASCADE
-    )");
+    // Get company profile
+    $stmt = $pdo->prepare("SELECT id FROM companies WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $company = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Insert post
+    if (!$company) {
+        echo json_encode(['success' => false, 'error' => 'Company profile not found']);
+        exit;
+    }
+
+    // Set published_at if status is published
+    $publishedAt = ($status === 'published') ? date('Y-m-d H:i:s') : null;
+
+    // Insert post into company_posts table
     $stmt = $pdo->prepare("
-        INSERT INTO company_posts (company_id, category, title, content) 
-        VALUES (?, ?, ?, ?)
+        INSERT INTO company_posts (
+            company_id, title, content, post_type, image_url, tags, status, published_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ");
     
-    $stmt->execute([$companyId, $category, $title, $content]);
+    $stmt->execute([
+        $company['id'],
+        $title,
+        $content,
+        $postType,
+        $imageUrl,
+        $tags,
+        $status,
+        $publishedAt
+    ]);
     
     echo json_encode([
         'success' => true,
