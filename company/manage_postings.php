@@ -38,35 +38,39 @@ require_once 'includes/company_auth.php';
             margin-bottom: 30px;
         }
 
+        /* Use global .stat-card base styles from assets/css/dashboard.css for consistent theme */
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .stat-card.jobs {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .stat-card.posts {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .stat-card.active {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            padding: 18px;
+            color: #e6eef6;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
 
         .stat-card h3 {
-            font-size: 2rem;
-            margin-bottom: 5px;
+            font-size: 1.75rem;
+            margin-bottom: 6px;
+            color: #fff;
         }
 
         .stat-card p {
-            font-size: 0.9rem;
-            opacity: 0.9;
+            font-size: 0.95rem;
+            color: var(--muted);
         }
+
+        /* subtle accent dots for stat types to keep visual cue without heavy colors */
+        .stat-card .stat-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .stat-card.jobs .stat-dot { background: var(--accent1); }
+        .stat-card.posts .stat-dot { background: var(--accent2); }
+        .stat-card.active .stat-dot { background: #10b981; }
 
         .filters-section {
             background: white;
@@ -367,19 +371,31 @@ require_once 'includes/company_auth.php';
         <!-- Statistics -->
         <div class="stats-grid" id="stats-grid">
             <div class="stat-card">
-                <h3 id="total-postings">0</h3>
+                <div class="stat-title">
+                    <span class="stat-dot"></span>
+                    <h3 id="total-postings">0</h3>
+                </div>
                 <p>Total Postings</p>
             </div>
             <div class="stat-card jobs">
-                <h3 id="total-jobs">0</h3>
+                <div class="stat-title">
+                    <span class="stat-dot"></span>
+                    <h3 id="total-jobs">0</h3>
+                </div>
                 <p>Job Listings</p>
             </div>
             <div class="stat-card posts">
-                <h3 id="total-posts">0</h3>
+                <div class="stat-title">
+                    <span class="stat-dot"></span>
+                    <h3 id="total-posts">0</h3>
+                </div>
                 <p>Company Posts</p>
             </div>
             <div class="stat-card active">
-                <h3 id="active-jobs">0</h3>
+                <div class="stat-title">
+                    <span class="stat-dot"></span>
+                    <h3 id="active-jobs">0</h3>
+                </div>
                 <p>Active Jobs</p>
             </div>
         </div>
